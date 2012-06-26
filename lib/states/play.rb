@@ -4,7 +4,7 @@ module Game
     attr_reader :pixel
     attr_reader :world_scale
     attr_reader :space
-    attr_reader :map
+    attr_reader :map, :player
     
     DEFAULT_WORLD_SCALE = 3.0
     PHYSICS_STEP = 1 / 240.0

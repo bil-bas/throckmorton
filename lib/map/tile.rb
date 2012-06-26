@@ -47,12 +47,12 @@ module Game
       parent.space.add_shape @shape if @shape
 
       unless blocks_movement?
-        parent.add_object Enemy.new(x, y) if rand(100) < 5
+        parent.add_object Enemy.new(x, y) if rand(100) < 15
       end
     end
 
     def to_s
-      "#{self.class} (#{@grid_x}, #{@grid_y}) #{blocks_movement? ? "" : "no move"} #{@blocks_movement}"
+      "#{self.class} (#{@grid_x}, #{@grid_y}) #{blocks_movement? ? "" : "no move"}"
     end
 
     def draw

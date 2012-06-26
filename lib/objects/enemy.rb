@@ -13,6 +13,12 @@ module Game
             collision_type: :enemy
     end
 
+    def update
+      reset_forces
+      push parent.player.x, parent.player.y, 5
+      super
+    end
+
     def draw
       @image.draw_rot x, y, zorder, 0, 0.5, 0.5
     end
