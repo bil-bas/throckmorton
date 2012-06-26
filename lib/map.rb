@@ -10,7 +10,7 @@ module Game
       
       @grid_width, @grid_height = grid_width, grid_height
       
-      @tiles = [:white, :red, :blue].map do |color|
+      @tiles = ([:white] * 20 + [:red] + [:blue] * 10).map do |color|
         TexPlay.create_image $window, TILE_WIDTH, TILE_WIDTH, color: color
       end
       

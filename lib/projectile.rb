@@ -8,8 +8,8 @@ module Game
     def initialize(x, y, direction_x, direction_y, options = {})
       options = {
         rotation_speed: 0,
-        duration: 0.75,
-        speed: 3,
+        duration: 0.5,
+        speed: 2,
       }.merge! options
       
       @speed = options[:speed]

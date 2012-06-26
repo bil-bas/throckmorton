@@ -2,6 +2,9 @@ module Game
   class Play < Chingu::GameState
     attr_reader :time, :frame_time
     attr_reader :pixel
+    attr_reader :world_scale
+    
+    DEFAULT_WORLD_SCALE = 3.0
        
     def initialize
       super
@@ -11,7 +14,7 @@ module Game
       @objects = []   
       
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
-      
+      @world_scale = DEFAULT_WORLD_SCALE
       
       @map = Map.new 100
       
@@ -34,11 +37,11 @@ module Game
     
     def remove_object(object)
       @objects.delete object
-    end
+    end   
 
     def draw
-      $window.scale 2 do
-        $window.translate 160 - @player.x.round, 120 - @player.y.round do
+      $window.scale world_scale do
+        $window.translate ($window.width / (world_scale * 2)) - @player.x.round, ($window.height / (world_scale * 2))  - @player.y.round do
           @map.draw         
           @objects.each {|o| o.draw }        
           @player.draw
@@ -47,7 +50,7 @@ module Game
       
       draw_map_overlay if holding? :tab  
 
-      super      
+      super    
     end
     
     def draw_map_overlay
