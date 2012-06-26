@@ -2,7 +2,7 @@ module Game
   class Player < PhysicsObject
     DIAGONAL = 0.785
     WIDTH = 8
-    SHOOT_OFFSET = 7 # Pixels from center to create the projectile.
+    SHOOT_OFFSET = 10 # Pixels from center to create the projectile.
   
     def initialize(x, y)
       @speed = 75
