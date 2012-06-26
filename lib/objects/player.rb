@@ -4,13 +4,17 @@ module Game
     WIDTH = 8
     SHOOT_OFFSET = 10 # Pixels from center to create the projectile.
 
-    attr_accessor :health, :score
+    trait :timer
+
+    attr_accessor :health, :energy, :score
 
     def initialize(x, y)
       @speed = 75
       @facing_x, @facing_y = 1, 0 # Start off facing right.
+
       @score = 0
       @health = 100
+      @energy = 100
 
       image = TexPlay.create_image $window, WIDTH, WIDTH, color: Color.rgb(50, 50, 50)
 
@@ -19,16 +23,21 @@ module Game
             collision_type: :player
       
       on_input :space do
-        bullet = Projectile.new self.x + @facing_x * SHOOT_OFFSET, self.y + @facing_y * SHOOT_OFFSET,
-                                @facing_x, @facing_y,
-                                rotation_speed: 5,
-                                collision_type: :player_projectile,
-                                group: :player_projectiles
-        parent.add_object bullet
+        if energy >= 5
+          self.energy -= 5
+          bullet = Projectile.new self.x + @facing_x * SHOOT_OFFSET, self.y + @facing_y * SHOOT_OFFSET,
+                                  @facing_x, @facing_y,
+                                  rotation_speed: 5,
+                                  collision_type: :player_projectile,
+                                  group: :player_projectiles
+          parent.add_object bullet
+        end
       end
     end
         
-    def update                    
+    def update
+      @energy = [@energy + parent.frame_time, 100].min
+
       if holding_any? :up, :w
         if holding_any? :left, :a
           @facing_x, @facing_y = -DIAGONAL, -DIAGONAL
@@ -115,8 +124,8 @@ module Game
 
     def draw_gui
       @font ||= Font[24]
-      parent.pixel.draw 0, 0, Float::INFINITY, 250, 25, Color.rgba(0, 0, 0, 150)
-      @font.draw "Health: #{health} Score: #{score}", 0, 0, Float::INFINITY
+      parent.pixel.draw 0, 0, Float::INFINITY, $window.width, 24, Color.rgba(0, 0, 0, 150)
+      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score}", 0, 0, Float::INFINITY
     end
   end
 end

@@ -21,7 +21,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       @world_scale = DEFAULT_WORLD_SCALE
       
-      @map = Map.new 50
+      @map = Map.new 25
       
       @player = Player.new *@map.start_position
     end
@@ -60,7 +60,7 @@ module Game
     end
        
     def update      
-      @frame_time = Time.now.to_f - @time
+      @frame_time = [Time.now.to_f - @time, 0.1].min
       @time = Time.now.to_f
 
       @player.reset_forces
