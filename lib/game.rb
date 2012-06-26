@@ -13,9 +13,10 @@ module ZOrder
 end
 
 require_relative "window"
-require_relative "play"
-require_relative "map"
-require_relative "player"
-require_relative "projectile"
+require_relative "states/play"
+require_relative "map/map"
+require_relative "map/tile"
+require_relative "objects/player"
+require_relative "objects/projectile"
 
 Game::Window.new.show

@@ -8,7 +8,6 @@ module Game
       push_game_state Play
       
       init_fps
-      
     end  
     
 

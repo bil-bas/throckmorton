@@ -1,5 +1,5 @@
 module Game
-  class Map < Chingu::GameObject
+  class Map
     MINI_SCALE = 1 / 4.0
     TILE_WIDTH = 16
     
@@ -10,11 +10,11 @@ module Game
       
       @grid_width, @grid_height = grid_width, grid_height
       
-      @tiles = ([:white] * 20 + [:red] + [:blue] * 10).map do |color|
-        TexPlay.create_image $window, TILE_WIDTH, TILE_WIDTH, color: color
+      @tiles = grid_height.times.map do |y|
+        grid_width.times.map do |x|
+          Tile.new x, y
+        end
       end
-      
-      super(zorder: ZOrder::TILES)
     end
     
     def start_position
@@ -23,18 +23,16 @@ module Game
     
     def draw
       @background ||= $window.record(width, height) do
-        @grid_height.times do |y|
-          @grid_width.times do |x|
-            @tiles.sample.draw x * TILE_WIDTH, y * TILE_WIDTH, 0 
-          end
+        @tiles.each do |row|
+          row.each {|t| t.draw }
         end
       end
       
-      @background.draw 0, 0, zorder 
+      @background.draw 0, 0, ZOrder::TILES
     end   
 
     def draw_mini
-      @background.draw 0, 0, zorder
+      @background.draw 0, 0, ZOrder::TILES
     end    
   end
 end
