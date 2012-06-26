@@ -5,6 +5,8 @@ module Game
     def_delegators :"@body.pos", :x, :y, :x=, :y=
     def_delegators :"@body", :reset_forces
 
+    MARGIN = 1
+
     attr_reader :speed
 
     def exists?; !destroyed?; end
@@ -19,8 +21,14 @@ module Game
     end
 
     def init_physics(options)
-      vertices = [CP::Vec2.new(-width / 2, -height / 2), CP::Vec2.new(-width / 2, height / 2), CP::Vec2.new(width / 2, height / 2), CP::Vec2.new(width / 2, -height / 2)]
-      @shape = CP::Shape::Poly.new(@body, vertices, CP::Vec2.new(0, 0))
+      # rectangular
+      #vertices = [CP::Vec2.new(-width / 2 - MARGIN, -height / 2 - MARGIN),
+      #            CP::Vec2.new(-width / 2 - MARGIN, height / 2 + MARGIN),
+      #            CP::Vec2.new(width / 2 + MARGIN, height / 2 + MARGIN),
+      #            CP::Vec2.new(width / 2 + MARGIN, -height / 2 - MARGIN)]
+      #@shape = CP::Shape::Poly.new(@body, vertices, CP::Vec2.new(0, 0))
+
+      @shape = CP::Shape::Circle.new(@body, width / 2 + MARGIN, CP::Vec2.new(0, 0))
       @shape.collision_type = options[:collision_type]
       @shape.group = options[:group] if options.has_key? :group
       @shape.object = self
