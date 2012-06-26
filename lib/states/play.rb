@@ -98,6 +98,9 @@ module Game
 
       player.draw_gui
 
+      cursor_color = player.fire? ?  Color.rgba(255, 0, 255, 150) : Color.rgba(100, 0, 100, 100)
+      pixel.draw_rot $window.mouse_x, $window.mouse_y, Float::INFINITY, 0, 0.5, 0.5, 8, 8, cursor_color
+
       super    
     end
     

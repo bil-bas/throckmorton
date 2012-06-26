@@ -10,11 +10,11 @@ module Game
 
     def initialize(x, y)
       @speed = 75
-      @facing_x, @facing_y = 1, 0 # Start off facing right.
 
       @score = 0
       @health = 100
       @energy = 100
+      @fire_cost = 5
 
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
@@ -23,11 +23,12 @@ module Game
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
       
-      on_input :space do
-        if energy >= 5
-          self.energy -= 5
-          bullet = Projectile.new self.x + @facing_x * SHOOT_OFFSET, self.y + @facing_y * SHOOT_OFFSET,
-                                  @facing_x, @facing_y,
+      on_input :left_mouse_button do
+        if fire?
+          self.energy -= @fire_cost
+          bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
+                                  self.y + offset_y(angle, SHOOT_OFFSET),
+                                  angle,
                                   rotation_speed: 5,
                                   collision_type: :player_projectile,
                                   group: :player_projectiles
@@ -35,8 +36,11 @@ module Game
         end
       end
     end
+
+    def fire?; energy >= @fire_cost; end
         
     def update
+      self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
       @energy = [@energy + parent.frame_time, 100].min
 
       if holding_any? :up, :w

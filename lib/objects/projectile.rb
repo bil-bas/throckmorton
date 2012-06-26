@@ -5,7 +5,7 @@ module Game
     def time; parent.time; end    
     def frame_time; parent.frame_time; end
     
-    def initialize(x, y, direction_x, direction_y, options = {})
+    def initialize(x, y, direction, options = {})
       options = {
         rotation_speed: 0.0,
         duration: 0.5,
@@ -16,9 +16,7 @@ module Game
       
       @speed = options[:speed]
       @duration = options[:duration]
-      @rotation_speed = options[:rotation_speed]   
-    
-      @direction_x, @direction_y = direction_x, direction_y
+      @rotation_speed = options[:rotation_speed]
 
       image = TexPlay.create_image $window, 2, 6, color: COLOR
 
@@ -26,7 +24,7 @@ module Game
 
       @created_at = time
 
-      move @direction_x, @direction_y
+      move offset_x(direction, 1), offset_y(direction, 1)
     end
     
     def update
