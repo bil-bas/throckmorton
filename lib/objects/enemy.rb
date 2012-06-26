@@ -1,12 +1,14 @@
 module Game
   class Enemy < PhysicsObject
     DIAGONAL = 0.785
+    WIDTH = 9
 
     def initialize(x, y)
       @speed = 50
       @facing_x, @facing_y = 1, 0
 
-      image = TexPlay.create_image $window, 8, 8, color: :red
+      image = TexPlay.create_image $window, WIDTH, WIDTH
+      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
 
       super x: x, y: y, rotation_center: :center_center,
             image: image, zorder: ZOrder::PLAYER,

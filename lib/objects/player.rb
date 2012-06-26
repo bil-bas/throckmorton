@@ -1,7 +1,7 @@
 module Game
   class Player < PhysicsObject
     DIAGONAL = 0.785
-    WIDTH = 8
+    WIDTH = 9
     SHOOT_OFFSET = 10 # Pixels from center to create the projectile.
 
     trait :timer
@@ -16,7 +16,8 @@ module Game
       @health = 100
       @energy = 100
 
-      image = TexPlay.create_image $window, WIDTH, WIDTH, color: Color.rgb(50, 50, 50)
+      image = TexPlay.create_image $window, WIDTH, WIDTH
+      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
 
       super x: x, y: y, rotation_center: :center_center,
             image: image, zorder: ZOrder::PLAYER,
