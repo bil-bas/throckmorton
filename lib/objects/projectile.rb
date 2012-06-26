@@ -8,7 +8,6 @@ module Game
     def initialize(x, y, direction, options = {})
       options = {
         rotation_speed: 0.0,
-        duration: 0.5,
         speed: 50,
         rotation_center: :center_center,
         zorder: ZOrder::PROJECTILES,

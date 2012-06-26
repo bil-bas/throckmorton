@@ -8,13 +8,20 @@ module Game
 
     attr_accessor :health, :energy, :score
 
+    def fire_primary?; energy >= @fire_primary_cost; end
+    def fire_secondary?; energy >= @fire_secondary_cost; end
+
     def initialize(x, y)
       @speed = 75
 
       @score = 0
+
       @health = 100
+
       @energy = 100
-      @fire_cost = 5
+      @energy_per_second = 4
+      @fire_primary_cost = 5
+      @fire_secondary_cost = 25
 
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
@@ -24,24 +31,40 @@ module Game
             collision_type: :player
       
       on_input :left_mouse_button do
-        if fire?
-          self.energy -= @fire_cost
+        if fire_primary?
+          self.energy -= @fire_primary_cost
           bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
                                   self.y + offset_y(angle, SHOOT_OFFSET),
                                   angle,
                                   rotation_speed: 5,
                                   collision_type: :player_projectile,
-                                  group: :player_projectiles
+                                  group: :player_projectiles,
+                                  duration: 0.5
           parent.add_object bullet
+        end
+      end
+
+      on_input :right_mouse_button do
+        if fire_secondary?
+          self.energy -= @fire_secondary_cost
+          (0...360).step(30) do |angle|
+            bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
+                                    self.y + offset_y(angle, SHOOT_OFFSET),
+                                    angle,
+                                    rotation_speed: 5,
+                                    collision_type: :player_projectile,
+                                    group: :player_projectiles,
+                                    duration: 0.2
+
+            parent.add_object bullet
+          end
         end
       end
     end
 
-    def fire?; energy >= @fire_cost; end
-        
     def update
       self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
-      @energy = [@energy + parent.frame_time, 100].min
+      @energy = [@energy + @energy_per_second * parent.frame_time, 100].min
 
       if holding_any? :up, :w
         if holding_any? :left, :a
