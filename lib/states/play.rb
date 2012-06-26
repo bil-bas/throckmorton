@@ -32,8 +32,7 @@ module Game
       @space.damping = 0.05
 
       @space.on_collision(:player, :enemy) do |player, enemy|
-        # TODO: weaken player and enemy
-        p "player touched enemy"
+        player.health -= 1
         enemy.destroy
         true
       end
@@ -46,8 +45,7 @@ module Game
       end
 
       @space.on_collision(:enemy, :player_projectile) do |enemy, projectile|
-        # TODO: weaken enemy
-        p "player projectile touched enemy"
+        player.score += 1
         enemy.destroy
         projectile.destroy
         true
@@ -96,7 +94,9 @@ module Game
         end          
       end
       
-      draw_map_overlay if holding? :tab  
+      draw_map_overlay if holding? :tab
+
+      player.draw_gui
 
       super    
     end

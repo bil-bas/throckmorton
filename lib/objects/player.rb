@@ -3,10 +3,14 @@ module Game
     DIAGONAL = 0.785
     WIDTH = 8
     SHOOT_OFFSET = 10 # Pixels from center to create the projectile.
-  
+
+    attr_accessor :health, :score
+
     def initialize(x, y)
       @speed = 75
       @facing_x, @facing_y = 1, 0 # Start off facing right.
+      @score = 0
+      @health = 100
 
       image = TexPlay.create_image $window, WIDTH, WIDTH, color: Color.rgb(50, 50, 50)
 
@@ -107,6 +111,12 @@ module Game
     
     def draw_mini
       parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 14, 14, Color.rgb(0, 0, 0)
-    end 
+    end
+
+    def draw_gui
+      @font ||= Font[24]
+      parent.pixel.draw 0, 0, Float::INFINITY, 250, 25, Color.rgba(0, 0, 0, 150)
+      @font.draw "Health: #{health} Score: #{score}", 0, 0, Float::INFINITY
+    end
   end
 end
