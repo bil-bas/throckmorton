@@ -13,7 +13,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       
       
-      @map = Map.new 16
+      @map = Map.new 100
       
       @player = Player.new *@map.start_position
     end
@@ -45,15 +45,27 @@ module Game
         end          
       end
       
-      if holding? :tab 
-        $window.scale Map::MINI_SCALE do
+      draw_map_overlay if holding? :tab  
+
+      super      
+    end
+    
+    def draw_map_overlay
+      $window.flush
+      
+      pixel.draw 0, 0, 0, $window.width, $window.height, Color.rgba(0, 0, 0, 200)
+      
+      $window.scale Map::MINI_SCALE do         
+        $window.translate ($window.width / Map::MINI_SCALE) * 0.5 - (@map.width / 2),
+                          ($window.height / Map::MINI_SCALE) * 0.5 - (@map.height / 2) do
+                          
+          pixel.draw -8, -8, 0, @map.width + 16, @map.height + 16, Color::BLACK   
+          
           @map.draw_mini 
           @objects.each {|o| o.draw_mini }
           @player.draw_mini
         end
-      end    
-
-      super      
+      end
     end
   end
 end

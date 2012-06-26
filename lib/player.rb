@@ -6,7 +6,7 @@ module Game
       @speed = 100      
       @facing_x, @facing_y = 1, 0
       
-      super x: x, y: y, rotation_center: :center_center, image: @@image
+      super x: x, y: y, rotation_center: :center_center, image: @@image, zorder: ZOrder::PLAYER
       
       on_input :space do
         parent.add_object Projectile.new(self.x, self.y, @facing_x, @facing_y, rotation_speed: 5)        
@@ -35,8 +35,8 @@ module Game
       @image.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5
     end
     
-    def draw_mini    
-      parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 1, 1, Color.rgb(0, 0, 0)
+    def draw_mini
+      parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 14, 14, Color.rgb(0, 0, 0)
     end 
   end
 end
