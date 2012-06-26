@@ -7,9 +7,9 @@ module Game
     
     def initialize(x, y, direction_x, direction_y, options = {})
       options = {
-        rotation_speed: 0,
+        rotation_speed: 0.0,
         duration: 0.5,
-        speed: 2,
+        speed: 3,
       }.merge! options
       
       @speed = options[:speed]
@@ -22,9 +22,7 @@ module Game
            
       super x: x, y: y, rotation_center: :center_center, image: @@image, zorder: ZOrder::PROJECTILES
       
-      @created_at = time
-      
-      @speed = 3     
+      @created_at = time     
     end
     
     def destroy

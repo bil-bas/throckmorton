@@ -5,7 +5,7 @@ module Game
     def initialize(x, y)
       @@image ||= TexPlay.create_image $window, 8, 8, color: :black
       
-      @speed = 100      
+      @speed = 75      
       @facing_x, @facing_y = 1, 0
       
       super x: x, y: y, rotation_center: :center_center, image: @@image, zorder: ZOrder::PLAYER
