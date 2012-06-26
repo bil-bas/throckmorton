@@ -1,5 +1,5 @@
 module Game
-  class Projectile < Chingu::GameObject
+  class Projectile < PhysicsObject
     COLOR = Color.rgb(0, 255, 255)
   
     def time; parent.time; end    
@@ -10,24 +10,21 @@ module Game
         rotation_speed: 0.0,
         duration: 0.5,
         speed: 3,
+        rotation_center: :center_center,
+        zorder: ZOrder::PROJECTILES,
       }.merge! options
       
       @speed = options[:speed]
       @duration = options[:duration]
       @rotation_speed = options[:rotation_speed]   
     
-      @direction_x, @direction_y = direction_x, direction_y            
-      
-      @@image ||= TexPlay.create_image $window, 2, 6, color: COLOR
-           
-      super x: x, y: y, rotation_center: :center_center, image: @@image, zorder: ZOrder::PROJECTILES
-      
+      @direction_x, @direction_y = direction_x, direction_y
+
+      image = TexPlay.create_image $window, 2, 6, color: COLOR
+
+      super options.merge(x: x, y: y, image: image)
+
       @created_at = time     
-    end
-    
-    def destroy
-      parent.remove_object self
-      super
     end
     
     def update
@@ -38,7 +35,7 @@ module Game
         self.y += @direction_y * @speed
         self.angle += @rotation_speed
       end
-    end  
+    end
 
     def draw_mini    
       parent.pixel.draw_rot x, y, zorder, 0, 0.5, 0.5, 8, 8, COLOR

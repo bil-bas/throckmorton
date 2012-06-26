@@ -1,18 +1,20 @@
 module Game
-  class Enemy < Chingu::GameObject
+  class Enemy < PhysicsObject
     DIAGONAL = 0.785
 
     def initialize(x, y)
-      @@image ||= TexPlay.create_image $window, 8, 8, color: :red
-
       @speed = 75
       @facing_x, @facing_y = 1, 0
 
-      super x: x, y: y, rotation_center: :center_center, image: @@image, zorder: ZOrder::PLAYER
+      image = TexPlay.create_image $window, 8, 8, color: :red
+
+      super x: x, y: y, rotation_center: :center_center,
+            image: image, zorder: ZOrder::PLAYER,
+            collision_type: :enemy
     end
 
     def draw
-      @image.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5
+      @image.draw_rot x, y, zorder, 0, 0.5, 0.5
     end
 
     def draw_mini

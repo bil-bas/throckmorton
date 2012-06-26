@@ -4,6 +4,7 @@ GEM
     chingu (0.9rc7)
       gosu (>= 0.7.33)
       gosu (>= 0.7.33)
+    chipmunk (5.3.4.5-x86-mingw32)
     clipboard (0.9.9)
     ffi (1.0.9-x86-mingw32)
     fidgit (0.1.10)
@@ -20,6 +21,7 @@ PLATFORMS
 
 DEPENDENCIES
   chingu (~> 0.9rc7)
+  chipmunk (~> 5.3.4.5)
   fidgit (~> 0.1.10)
   gosu (~> 0.7.43)
   texplay (~> 0.3)

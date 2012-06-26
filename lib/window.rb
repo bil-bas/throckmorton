@@ -20,6 +20,9 @@ module Game
       recalculate_fps
       
       self.caption = "#{current_game_state.class.name} FPS: #{fps.round} [#{@potential_fps.round}]"
+
+    rescue => ex
+      puts ex
     end
     
     def draw
@@ -28,6 +31,9 @@ module Game
       super
       
       @used_time += (Time.now - start_at).to_f
+
+    rescue => ex
+      puts ex
     end
     
     def init_fps

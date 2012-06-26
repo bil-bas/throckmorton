@@ -2,7 +2,7 @@ source :rubygems
 
 gem "gosu", "~> 0.7.43"
 gem "chingu", "~> 0.9rc7"
-#gem "chipmunk", "~> 5.3.4.5"
+gem "chipmunk", "~> 5.3.4.5"
 gem "texplay", "~> 0.3" # Different version actually required depending on platform.
 gem "fidgit", "~> 0.1.10"
 

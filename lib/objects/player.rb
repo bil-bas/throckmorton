@@ -1,18 +1,27 @@
 module Game
-  class Player < Chingu::GameObject 
+  class Player < PhysicsObject
     DIAGONAL = 0.785
+    WIDTH = 8
+    SHOOT_OFFSET = 7 # Pixels from center to create the projectile.
   
     def initialize(x, y)
-      @@image ||= TexPlay.create_image $window, 8, 8, color: :black
-      
       @speed = 75      
       @facing_x, @facing_y = 1, 0
-      
-      super x: x, y: y, rotation_center: :center_center, image: @@image, zorder: ZOrder::PLAYER
+
+      image = TexPlay.create_image $window, WIDTH, WIDTH, color: Color.rgb(50, 50, 50)
+
+      super x: x, y: y, rotation_center: :center_center,
+            image: image, zorder: ZOrder::PLAYER,
+            collision_type: :player
       
       on_input :space do
-        parent.add_object Projectile.new(self.x, self.y, @facing_x, @facing_y, rotation_speed: 5)        
-      end 
+        bullet = Projectile.new self.x + @facing_x * SHOOT_OFFSET, self.y + @facing_y * SHOOT_OFFSET,
+                                @facing_x, @facing_y,
+                                rotation_speed: 5,
+                                collision_type: :player_projectile,
+                                group: :player_projectiles
+        parent.add_object bullet
+      end
     end
         
     def update                    
