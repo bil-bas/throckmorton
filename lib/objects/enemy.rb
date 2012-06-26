@@ -3,7 +3,7 @@ module Game
     DIAGONAL = 0.785
 
     def initialize(x, y)
-      @speed = 75
+      @speed = 50
       @facing_x, @facing_y = 1, 0
 
       image = TexPlay.create_image $window, 8, 8, color: :red

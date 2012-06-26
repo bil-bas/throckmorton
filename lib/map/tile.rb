@@ -7,16 +7,14 @@ module Game
     def blocks_projectiles?; @blocks_projectiles; end
     def blocks_sight?; @blocks_sight; end
 
-    def initialize(grid_x, grid_y)
+    def initialize(grid_x, grid_y, type)
       @grid_x, @grid_y = grid_x, grid_y
 
       @seen = true
 
       self.x, self.y = grid_x * WIDTH, grid_y * WIDTH
 
-      color = ([:white] * 20 + [:blue] * 10).sample
-
-      case color
+      case type
         when :white
           @blocks_movement = false
           @blocks_projectiles = false
@@ -42,7 +40,7 @@ module Game
           @shape.object = self
       end
 
-      image = TexPlay.create_image $window, WIDTH, WIDTH, color: color
+      image = TexPlay.create_image $window, WIDTH, WIDTH, color: type
 
       super x: x, y: y, zorder: ZOrder::TILES, image: image
 
@@ -51,6 +49,10 @@ module Game
       unless blocks_movement?
         parent.add_object Enemy.new(x, y) if rand(100) < 5
       end
+    end
+
+    def to_s
+      "#{self.class} (#{@grid_x}, #{@grid_y}) #{blocks_movement? ? "" : "no move"} #{@blocks_movement}"
     end
 
     def draw

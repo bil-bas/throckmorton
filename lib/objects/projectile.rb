@@ -9,7 +9,7 @@ module Game
       options = {
         rotation_speed: 0.0,
         duration: 0.5,
-        speed: 3,
+        speed: 50,
         rotation_center: :center_center,
         zorder: ZOrder::PROJECTILES,
       }.merge! options
@@ -24,15 +24,15 @@ module Game
 
       super options.merge(x: x, y: y, image: image)
 
-      @created_at = time     
+      @created_at = time
+
+      move @direction_x, @direction_y
     end
     
     def update
       if time - @created_at > @duration
         destroy
       else
-        self.x += @direction_x * @speed
-        self.y += @direction_y * @speed
         self.angle += @rotation_speed
       end
     end

@@ -3,6 +3,9 @@ module Game
     extend Forwardable
 
     def_delegators :"@body.pos", :x, :y, :x=, :y=
+    def_delegators :"@body", :reset_forces
+
+    attr_reader :speed
 
     def exists?; !destroyed?; end
     def destroyed?; !@shape.object; end
@@ -24,6 +27,21 @@ module Game
 
       parent.space.add_body @body
       parent.space.add_shape @shape
+    end
+
+    def move(right, down)
+      push(x + right, y + down, speed)
+    end
+
+    # Push towards a particular position (negative force to pull).
+    def push(x, y, push_force)
+      angle = Gosu::angle(self.x, self.y, x, y)
+      distance = distance(self.x, self.y, x, y)
+      x_offset = offset_x(angle, distance)
+      y_offset = offset_y(angle, distance)
+
+      @body.apply_force(CP::Vec2.new((x_offset / distance) * push_force * 20000, (y_offset / distance) * push_force * 20000),
+                              CP::Vec2.new(0, 0))
     end
 
     def destroy

@@ -22,7 +22,8 @@ module Game
       self.caption = "#{current_game_state.class.name} FPS: #{fps.round} [#{@potential_fps.round}]"
 
     rescue => ex
-      puts ex
+      puts ex.message, ex, ex.backtrace
+      exit
     end
     
     def draw
@@ -33,7 +34,8 @@ module Game
       @used_time += (Time.now - start_at).to_f
 
     rescue => ex
-      puts ex
+      puts ex.message, ex, ex.backtrace
+      exit
     end
     
     def init_fps

@@ -14,9 +14,7 @@ include Gosu
 include Chingu
 
 module ZOrder
-  TILES = 0
-  PROJECTILES = 1
-  PLAYER = 2
+  TILES, PROJECTILES, PLAYER = *(0..100)
 end
 
 t = Time.now

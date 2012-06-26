@@ -12,9 +12,24 @@ module Game
       
       @tiles = grid_height.times.map do |y|
         grid_width.times.map do |x|
-          Tile.new x, y
+          if distance(x, y, @grid_width / 2, @grid_height / 2) < 5
+            type = :white
+          else
+            type = ([:white] * 20 + [:blue] * 10).sample
+          end
+
+          Tile.new x, y, type
         end
       end
+    end
+
+    def tile_at_grid(x, y)
+      return nil if x < 0 or y < 0
+      @tiles[y][x] rescue nil
+    end
+
+    def tile_at_coordinate(x, y)
+      tile_at_grid x / TILE_WIDTH.to_f + 0.5, y / TILE_WIDTH.to_f + 0.5
     end
     
     def start_position

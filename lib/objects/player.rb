@@ -5,8 +5,8 @@ module Game
     SHOOT_OFFSET = 7 # Pixels from center to create the projectile.
   
     def initialize(x, y)
-      @speed = 75      
-      @facing_x, @facing_y = 1, 0
+      @speed = 75
+      @facing_x, @facing_y = 1, 0 # Start off facing right.
 
       image = TexPlay.create_image $window, WIDTH, WIDTH, color: Color.rgb(50, 50, 50)
 
@@ -52,11 +52,53 @@ module Game
       
       if holding_any? :w, :a, :s, :d,
                       :up, :down, :left, :right
-        self.x += @facing_x * @speed * parent.frame_time
-        self.y += @facing_y * @speed * parent.frame_time
+        move_x = @facing_x * @speed * parent.frame_time
+        move_y = @facing_y * @speed * parent.frame_time
+
+        if move_x != 0
+          if move_x > 0
+            blocked_tr = tile_blocked? width / 2 + move_x, -height / 2
+            blocked_br = tile_blocked? width / 2 + move_x, height / 2
+
+            unless blocked_tr or blocked_br
+              self.x += move_x
+            end
+          elsif move_x < 0
+            blocked_tl = tile_blocked? -width / 2 + move_x, -height / 2
+            blocked_bl = tile_blocked? -width / 2 + move_x, height / 2
+
+            unless blocked_tl or blocked_bl
+              self.x += move_x
+            end
+          end
+        end
+
+        if move_y != 0
+          if move_y > 0
+            blocked_bl = tile_blocked? -width / 2, height / 2 + move_y
+            blocked_br = tile_blocked? width / 2,  height / 2 + move_y
+
+            unless blocked_bl or blocked_br
+              self.y += move_y
+            end
+          elsif move_y < 0
+            blocked_tl = tile_blocked? -width / 2, -height / 2 + move_y
+            blocked_tr = tile_blocked? width / 2,  -height / 2 + move_y
+
+            unless blocked_tl or blocked_tr
+              self.y += move_y
+            end
+          end
+        end
       end
       
       super
+    end
+
+    def tile_blocked?(x, y)
+      tile = parent.map.tile_at_coordinate self.x + x, self.y + y
+
+      tile.nil? || tile.blocks_movement?
     end
     
     def draw

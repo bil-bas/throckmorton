@@ -4,6 +4,7 @@ module Game
     attr_reader :pixel
     attr_reader :world_scale
     attr_reader :space
+    attr_reader :map
     
     DEFAULT_WORLD_SCALE = 3.0
     PHYSICS_STEP = 1 / 240.0
@@ -20,7 +21,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       @world_scale = DEFAULT_WORLD_SCALE
       
-      @map = Map.new 100
+      @map = Map.new 50
       
       @player = Player.new *@map.start_position
     end
@@ -52,6 +53,11 @@ module Game
         true
       end
 
+      @space.on_collision(:player, :wall) do |player, wall|
+        #player.blocked_by_wall wall
+        false
+      end
+
       @physics_time = 0.0 # The amount of time we have backlogged for physics.
     end
        
@@ -59,21 +65,18 @@ module Game
       @frame_time = Time.now.to_f - @time
       @time = Time.now.to_f
 
-      update_physics
-      
-      @player.update
-      @objects.each {|o| o.update }
-      
-      super
-    end
-
-    def update_physics
+      @player.reset_forces
       #@objects.each {|o| o.reset_forces }
 
       @physics_time += frame_time
       num_steps = (@physics_time / PHYSICS_STEP).round
       @physics_time -= num_steps * PHYSICS_STEP
       num_steps.times { @space.step PHYSICS_STEP }
+
+      @player.update
+      @objects.each {|o| o.update }
+
+      super
     end
     
     def add_object(object)
