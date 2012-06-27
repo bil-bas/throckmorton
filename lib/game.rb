@@ -8,6 +8,8 @@ require 'texplay'
 #require 'fidgit'
 require 'chipmunk'
 
+require 'forwardable'
+
 puts "Loaded gems in #{Time.now - t}s"
 
 include Gosu

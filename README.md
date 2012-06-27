@@ -10,3 +10,4 @@ Controls
 * Aim with mouse
 * Fire with left mouse button
 * AOE burst with right mouse button
+* Hold tab: Map (and pause).
