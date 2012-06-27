@@ -38,7 +38,7 @@ module Game
           bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
                                   self.y + offset_y(angle, SHOOT_OFFSET),
                                   angle,
-                                  rotation_speed: 5,
+                                  rotation_speed: 15,
                                   collision_type: :player_projectile,
                                   group: :player_projectiles,
                                   duration: 0.5

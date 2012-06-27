@@ -22,7 +22,10 @@ module Game
     end
 
     def draw_mini
-      parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 14, 14, Color.rgb(255, 0, 0)
+      tile = self.tile
+      if tile and tile.seen?
+        parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 14, 14, Color.rgb(255, 0, 0)
+      end
     end
   end
 end

@@ -11,6 +11,7 @@ module Game
 
     def exists?; !destroyed?; end
     def destroyed?; !@shape.object; end
+    def tile; parent.map.tile_at_coordinate x, y; end
 
     def initialize(options = {})
       @body = CP::Body.new(1000, Float::INFINITY)
@@ -42,8 +43,9 @@ module Game
     end
 
     def draw
-      if parent.map.tile_at_coordinate(x, y).seen?
-        @image.draw_rot x, y, zorder, 0, 0.5, 0.5
+      tile = self.tile
+      if tile and tile.seen?
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
       end
     end
 

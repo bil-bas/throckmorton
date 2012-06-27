@@ -19,7 +19,7 @@ module Game
 
       image = TexPlay.create_image $window, 2, 6, color: COLOR
 
-      super options.merge(x: x, y: y, image: image)
+      super options.merge(x: x, y: y, image: image, angle: direction)
 
       @created_at = time
 
@@ -35,7 +35,7 @@ module Game
     end
 
     def draw_mini    
-      parent.pixel.draw_rot x, y, zorder, 0, 0.5, 0.5, 8, 8, COLOR
+      parent.pixel.draw_rot x, y, zorder, angle, 0.5, 0.5, 8, 8, COLOR
     end
   end
 end
