@@ -21,7 +21,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       @world_scale = DEFAULT_WORLD_SCALE
 
-      @map = Map.new 44
+      @map = Map.new 39, 27 # Odd width to fit corridors in nicely.
       @player = Player.new *@map.start_position
 
       on_input :escape do
@@ -87,7 +87,7 @@ module Game
 
         @map.update # Clear lighting.
         @player.update
-        @objects.each {|o| o.update if distance(o.x, o.y, player.x, player.y) < 250 }
+        @objects.each {|o| o.update }
 
         super
       end

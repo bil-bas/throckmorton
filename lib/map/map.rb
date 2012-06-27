@@ -8,7 +8,7 @@ module Game
     attr_reader :lighting_overlay
      
     def initialize(grid_width, grid_height = grid_width)
-      @width, @height = grid_height * Tile::WIDTH, grid_width * Tile::WIDTH
+      @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
 
       puts "Creating map #{grid_width}x#{grid_height} (#{@width}x#{@height} pixels)"
       t = Time.now
@@ -78,7 +78,7 @@ module Game
 
     def draw_lighting
       $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
-        #@revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
+        @revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
         lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE
       end
     end
