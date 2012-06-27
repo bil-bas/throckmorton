@@ -1,12 +1,7 @@
 t = Time.now
 
 require 'bundler/setup'
-
-require 'gosu'
-require 'chingu'
-require 'texplay'
-#require 'fidgit'
-require 'chipmunk'
+Bundler.require
 
 require 'forwardable'
 
