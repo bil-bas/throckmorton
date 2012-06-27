@@ -1,6 +1,6 @@
 module Game
   class Tile < Chingu::GameObject
-    WIDTH = 16
+    WIDTH = 32
 
     attr_reader :map, :grid_x, :grid_y
 
@@ -45,21 +45,22 @@ module Game
       end
 
       @@images ||= {}
-      @@images[type] = TexPlay.create_image $window, WIDTH, WIDTH, color: type
+      @@images[type] ||= TexPlay.create_image $window, WIDTH, WIDTH, color: type
 
       super x: x, y: y, zorder: ZOrder::TILES, image: @@images[type]
 
       parent.space.add_shape @shape if @shape
 
+
       unless blocks_movement? and distance(x, y, *map.start_position) > 20
         case rand(100)
-          when 0..14
+          when 0..12
             parent.add_object Enemy.new(x, y)
           when 15..17
             parent.add_object HealthPack.new(x, y)
-          when 18..19
+          when 18
             parent.add_object EnergyPack.new(x, y)
-          when 20..24
+          when 20..26
             parent.add_object Treasure.new(x, y)
         end
       end

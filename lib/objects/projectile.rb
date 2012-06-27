@@ -8,7 +8,7 @@ module Game
     def initialize(x, y, direction, options = {})
       options = {
         rotation_speed: 0.0,
-        speed: 50,
+        speed: 100,
         rotation_center: :center_center,
         zorder: ZOrder::PROJECTILES,
         color: Color::CYAN,
@@ -18,7 +18,7 @@ module Game
       @duration = options[:duration]
       @rotation_speed = options[:rotation_speed]
 
-      image = TexPlay.create_image $window, 2, 6, color: options[:color]
+      image = TexPlay.create_image $window, 3, 12, color: options[:color]
 
       super options.merge(x: x, y: y, image: image, angle: direction)
 

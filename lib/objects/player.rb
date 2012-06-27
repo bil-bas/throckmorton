@@ -1,8 +1,10 @@
+require 'set'
+
 module Game
   class Player < PhysicsObject
     DIAGONAL = 0.785
-    WIDTH = 9
-    SHOOT_OFFSET = 7 # Pixels from center to create the projectile.
+    WIDTH = 19
+    SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
     include LineOfSight
 
@@ -13,10 +15,10 @@ module Game
 
     def fire_primary?; energy >= @fire_primary_cost end
     def fire_secondary?; energy >= @fire_secondary_cost end
-    def can_see?(tile); @visible_tile_positions.has_key? [tile.grid_x, tile.grid_y] end
+    def can_see?(tile); @visible_tile_positions.include? [tile.grid_x, tile.grid_y] end
 
     def initialize(x, y)
-      @speed = 75
+      @speed = 150
 
       @score = 0
 
@@ -61,7 +63,7 @@ module Game
             bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
                                     self.y + offset_y(angle, SHOOT_OFFSET),
                                     angle,
-                                    speed: 20,
+                                    speed: 40,
                                     rotation_speed: 5,
                                     collision_type: :player_projectile,
                                     group: :player_projectiles,
@@ -154,18 +156,20 @@ module Game
       map = parent.map
       tile = map.tile_at_coordinate x, y
       tile_x, tile_y = tile.grid_x, tile.grid_y
-      @visible_tile_positions = {}
-      (-@visual_range..@visual_range).each do |offset_y|
-        (-@visual_range..@visual_range).each do |offset_x|
-          if distance(tile_x, tile_y, tile_x + offset_x, tile_y + offset_y) <= @visual_range
-            tile = map.tile_at_grid tile_x + offset_x, tile_y + offset_y
+      @visible_tile_positions = Set.new # Store list of [x, y] that are visible.
+
+      ((tile_y - @visual_range)..(tile_y + @visual_range)).each do |offset_y|
+        ((tile_x - @visual_range)..(tile_x + @visual_range)).each do |offset_x|
+          if distance(tile_x, tile_y, offset_x, offset_y) <= @visual_range
+            tile = map.tile_at_grid offset_x, offset_y
             if tile && line_of_sight?(tile)
-              @visible_tile_positions[[tile.grid_x, tile.grid_y]] = true
+              @visible_tile_positions << [tile.grid_x, tile.grid_y]
               tile.seen = true unless tile.seen?
             end
           end
         end
       end
+
       update_lighting
     end
 
@@ -178,9 +182,9 @@ module Game
                                          visual_range * scale_i, fill: true,
                                          color_control: lambda {|c, x, y|
 
-        if @visible_tile_positions.has_key? [x / scale_i, y / scale_i]
+        if @visible_tile_positions.include? [x / scale_i, y / scale_i]
           distance = distance(player_x, player_y, x / scale_f, y / scale_f)
-          [0.1, 0.1, 0, Math::log(distance / 3) + periodic_brightness]
+          [0.1, 0.1, 0, Math::log(distance / 4) + periodic_brightness]
         else
           Map::NO_LIGHT_COLOR
         end

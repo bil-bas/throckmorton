@@ -1,6 +1,6 @@
 module Game
   class HealthPack < Item
-    WIDTH = 9
+    WIDTH = 16
     HEAL_VALUE = 25
 
     def initialize(x, y)

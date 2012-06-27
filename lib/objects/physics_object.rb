@@ -5,7 +5,7 @@ module Game
     def_delegators :"@body.pos", :x, :y, :x=, :y=
     def_delegators :"@body", :reset_forces
 
-    MARGIN = 1
+    MARGIN = 2
 
     attr_reader :speed
 
@@ -48,7 +48,7 @@ module Game
 
     def draw
       tile = self.tile
-      if tile and tile.seen? and parent.player.can_see? tile
+      if tile and tile.seen? #and parent.player.can_see? tile
         @image.draw_rot x, y, zorder, angle, 0.5, 0.5
       end
     end

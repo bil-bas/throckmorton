@@ -1,22 +1,23 @@
 module Game
   class Enemy < PhysicsObject
     DIAGONAL = 0.785
-    WIDTH = 9
-    SHOOT_OFFSET = 7
+    WIDTH = 19
+    SHOOT_OFFSET = 14
 
     include LineOfSight
     attr_reader :health
 
     def initialize(x, y)
-      @speed = 50
+      @speed = 125
       @facing_x, @facing_y = 1, 0
 
-      image = TexPlay.create_image $window, WIDTH, WIDTH
-      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
+      unless defined? @@image
+        @@image = TexPlay.create_image $window, WIDTH, WIDTH
+        @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
+      end
 
       @archer = rand(100) < 20
       if @archer
-        image.set_pixel WIDTH / 2, WIDTH / 2
         scale = 0.75 # goblin archer?
         @health = 1
       else
@@ -25,7 +26,7 @@ module Game
       end
 
       super x: x, y: y, scale: scale,
-            image: image, zorder: ZOrder::ENEMY,
+            image: @@image, zorder: ZOrder::ENEMY,
             collision_type: :enemy
     end
 

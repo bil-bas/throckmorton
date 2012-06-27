@@ -1,6 +1,6 @@
 module Game
   class Map < BasicGameObject
-    MINI_SCALE = 1 / 1.5
+    MINI_SCALE = 1 / 4.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(0, 0, 0, 210) # Colour outside range of lighting.
 
@@ -9,7 +9,9 @@ module Game
      
     def initialize(grid_width, grid_height = grid_width)
       @width, @height = grid_height * Tile::WIDTH, grid_width * Tile::WIDTH
-      
+
+      puts "Creating map #{grid_width}x#{grid_height} (#{@width}x#{@height} pixels)"
+      t = Time.now
       @grid_width, @grid_height = grid_width, grid_height
       
       @tiles = grid_height.times.map do |y|
@@ -28,6 +30,8 @@ module Game
 
       @revealed_overlay = TexPlay.create_image $window, @grid_width, @grid_height, color: Color.rgba(0, 0, 0, 255)
       @lighting_overlay = TexPlay.create_image $window, @grid_width * LIGHTING_SCALE, @grid_height * LIGHTING_SCALE
+
+      puts "Map created in #{((Time.now - t).to_f * 1000).to_i}ms"
 
       super()
     end
@@ -55,12 +59,15 @@ module Game
     
     def draw
       @background ||= $window.record(width, height) do
+        t = Time.now
         @tiles.each do |row|
           row.each {|t| t.draw }
         end
+        puts "Recorded tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
       end
-      
+
       @background.draw 0, 0, ZOrder::TILES
+
       draw_lighting
     end
 
@@ -71,7 +78,7 @@ module Game
 
     def draw_lighting
       $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
-        @revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
+        #@revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
         lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE
       end
     end

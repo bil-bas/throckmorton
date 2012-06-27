@@ -1,7 +1,7 @@
 module Game
  class Window < Chingu::Window
     def initialize
-      super 640, 480, false
+      super 800, 600, false
       
       enable_undocumented_retrofication
       

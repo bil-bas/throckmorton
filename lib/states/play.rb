@@ -6,8 +6,8 @@ module Game
     attr_reader :space
     attr_reader :map, :player
     
-    DEFAULT_WORLD_SCALE = 3.0
-    PHYSICS_STEP = 1 / 240.0
+    DEFAULT_WORLD_SCALE = 2
+    PHYSICS_STEP = 1 / 60.0
        
     def initialize
       super
@@ -21,7 +21,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       @world_scale = DEFAULT_WORLD_SCALE
 
-      @map = Map.new 25
+      @map = Map.new 30
       @player = Player.new *@map.start_position
 
       on_input :escape do
@@ -50,6 +50,11 @@ module Game
       @space.on_collision(:enemy, :player_projectile) do |enemy, projectile|
         enemy.health -= 1
         projectile.destroy
+        false
+      end
+
+      # No friendly fire.
+      @space.on_collision(:enemy, :enemy_projectile) do |enemy, projectile|
         false
       end
 
