@@ -59,9 +59,9 @@ module Game
           when 0..14
             parent.add_object Enemy.new(x, y)
           when 15..17
-            parent.add_object MedicKit.new(x, y)
+            parent.add_object HealthPack.new(x, y)
           when 18..19
-            parent.add_object EnergyBar.new(x, y)
+            parent.add_object EnergyPack.new(x, y)
           when 20..24
             parent.add_object Treasure.new(x, y)
         end

@@ -1,5 +1,5 @@
 module Game
-  class EnergyBar < Item
+  class EnergyPack < Item
     WIDTH = 9
     HEAL_VALUE = 25
 

@@ -1,5 +1,5 @@
 module Game
-  class MedicKit < Item
+  class HealthPack < Item
     WIDTH = 9
     HEAL_VALUE = 25
 
