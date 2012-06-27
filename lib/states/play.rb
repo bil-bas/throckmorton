@@ -80,6 +80,7 @@ module Game
       @physics_time -= num_steps * PHYSICS_STEP
       num_steps.times { @space.step PHYSICS_STEP }
 
+      @map.update # Clear lighting.
       @player.update
       @objects.each {|o| o.update }
 
@@ -108,11 +109,11 @@ module Game
       player.draw_gui
 
       cursor_color = player.fire_primary? ?  Color.rgba(255, 0, 255, 150) : Color.rgba(100, 0, 100, 100)
-      pixel.draw_rot $window.mouse_x, $window.mouse_y, Float::INFINITY, 0, 0.5, 0.5, 8, 8, cursor_color
+      pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 8, 8, cursor_color
 
       super    
     end
-    
+
     def draw_map_overlay
       $window.flush
       

@@ -1,16 +1,12 @@
 module Game
-  class Treasure < PhysicsObject
+  class Treasure < Item
     WIDTH = 9
     SCORE_VALUE = 25
 
     def initialize(x, y)
       image = TexPlay.create_image $window, WIDTH, WIDTH, color: :yellow
 
-      super x: x, y: y,
-            image: image, zorder: ZOrder::ITEM,
-            collision_type: :item
-
-      @shape.sensor = true
+      super x: x, y: y, image: image
     end
 
     def activated_by(player)

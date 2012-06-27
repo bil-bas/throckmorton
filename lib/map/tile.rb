@@ -2,16 +2,20 @@ module Game
   class Tile < Chingu::GameObject
     WIDTH = 16
 
-    attr_reader :grid_x, :grid_y
+    attr_reader :map, :grid_x, :grid_y
 
-    attr_writer :seen
     def seen?; @seen; end
     def blocks_movement?; @blocks_movement; end
     def blocks_projectiles?; @blocks_projectiles; end
     def blocks_sight?; @blocks_sight; end
 
+    def seen=(value)
+      map.reveal self if value and !@seen
+      @seen = value
+    end
+
     def initialize(map, grid_x, grid_y, type)
-      @grid_x, @grid_y = grid_x, grid_y
+      @map, @grid_x, @grid_y = map, grid_x, grid_y
 
       @seen = false
 
@@ -66,10 +70,6 @@ module Game
 
     def to_s
       "#{self.class} (#{@grid_x}, #{@grid_y}) #{blocks_movement? ? "" : "no move"}"
-    end
-
-    def draw
-      super if seen?
     end
   end
 end

@@ -1,16 +1,12 @@
 module Game
-  class EnergyBar < PhysicsObject
+  class EnergyBar < Item
     WIDTH = 9
     HEAL_VALUE = 25
 
     def initialize(x, y)
       image = TexPlay.create_image $window, WIDTH, WIDTH, color: :cyan
 
-      super x: x, y: y,
-            image: image, zorder: ZOrder::ITEM,
-            collision_type: :item
-
-      @shape.sensor = true
+      super x: x, y: y, image: image
     end
 
     def activated_by(player)

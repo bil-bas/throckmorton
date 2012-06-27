@@ -1,12 +1,14 @@
 module Game
-  class Map
+  class Map < BasicGameObject
     MINI_SCALE = 1 / 4.0
-    TILE_WIDTH = 16
-    
+    LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
+    NO_LIGHT_COLOR = Color.rgba(0, 0, 0, 200) # Colour outside range of lighting.
+
     attr_reader :grid_width, :grid_height, :width, :height
+    attr_reader :lighting_overlay
      
     def initialize(grid_width, grid_height = grid_width)
-      @width, @height = grid_height * TILE_WIDTH, grid_width * TILE_WIDTH
+      @width, @height = grid_height * Tile::WIDTH, grid_width * Tile::WIDTH
       
       @grid_width, @grid_height = grid_width, grid_height
       
@@ -23,6 +25,15 @@ module Game
           Tile.new self, x, y, type
         end
       end
+
+      @revealed_overlay = TexPlay.create_image $window, @grid_width, @grid_height, color: Color.rgba(0, 0, 0, 255)
+      @lighting_overlay = TexPlay.create_image $window, @grid_width * LIGHTING_SCALE, @grid_height * LIGHTING_SCALE
+
+      super()
+    end
+
+    def update
+      @lighting_overlay.clear color: NO_LIGHT_COLOR
     end
 
     def tile_at_grid(x, y)
@@ -31,15 +42,15 @@ module Game
     end
 
     def tile_at_coordinate(x, y)
-      tile_at_grid x / TILE_WIDTH.to_f + 0.5, y / TILE_WIDTH.to_f + 0.5
+      tile_at_grid x / Tile::WIDTH.to_f + 0.5, y / Tile::WIDTH.to_f + 0.5
     end
     
     def start_position
       [width / 2, height / 2]
     end
 
-    def redraw
-      @background = nil
+    def reveal(tile)
+      @revealed_overlay.set_pixel tile.grid_x, tile.grid_y, color: :alpha
     end
     
     def draw
@@ -50,10 +61,19 @@ module Game
       end
       
       @background.draw 0, 0, ZOrder::TILES
-    end   
+      draw_lighting
+    end
 
     def draw_mini
       @background.draw 0, 0, ZOrder::TILES
-    end    
+      draw_lighting
+    end
+
+    def draw_lighting
+      $window.translate -Tile::WIDTH / 2,  -Tile::WIDTH / 2 do
+        @revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
+        lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE
+      end
+    end
   end
 end

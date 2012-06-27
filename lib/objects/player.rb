@@ -9,9 +9,11 @@ module Game
     trait :timer
 
     attr_accessor :health, :max_health, :energy, :max_energy, :score
+    attr_reader :visual_range
 
-    def fire_primary?; energy >= @fire_primary_cost; end
-    def fire_secondary?; energy >= @fire_secondary_cost; end
+    def fire_primary?; energy >= @fire_primary_cost end
+    def fire_secondary?; energy >= @fire_secondary_cost end
+    def can_see?(tile); @visible_tile_positions.has_key? [tile.grid_x, tile.grid_y] end
 
     def initialize(x, y)
       @speed = 75
@@ -152,20 +154,27 @@ module Game
       tile = map.tile_at_coordinate x, y
       tile_x, tile_y = tile.grid_x, tile.grid_y
 
-      saw_new_tile = false
+      @visible_tile_positions = {}
       (-@visual_range..@visual_range).each do |offset_y|
         (-@visual_range..@visual_range).each do |offset_x|
           if distance(tile_x, tile_y, tile_x + offset_x, tile_y + offset_y) <= @visual_range
             tile = map.tile_at_grid tile_x + offset_x, tile_y + offset_y
-            if tile && line_of_sight?(tile) && !tile.seen?
-              tile.seen = true
-              saw_new_tile = true
+            if tile && line_of_sight?(tile)
+              @visible_tile_positions[[tile.grid_x, tile.grid_y]] = true
+              tile.seen = true unless tile.seen?
             end
           end
         end
       end
 
-      map.redraw if saw_new_tile
+      player_x, player_y = x / Tile::WIDTH, y / Tile::WIDTH
+      map.lighting_overlay.circle player_x, player_y, visual_range, fill: true, color_control: lambda {|c, x, y|
+        if @visible_tile_positions.has_key? [x, y]
+          [0, 0, 0, Math::log(distance(player_x, player_y, x, y) / 2.5)]
+        else
+          Map::NO_LIGHT_COLOR
+        end
+      }
     end
 
     def tile_blocked?(x, y)
@@ -184,8 +193,8 @@ module Game
 
     def draw_gui
       @font ||= Font[24]
-      parent.pixel.draw 0, 0, Float::INFINITY, $window.width, 24, Color.rgba(0, 0, 0, 150)
-      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score}", 0, 0, Float::INFINITY
+      parent.pixel.draw 0, 0, ZOrder::GUI, $window.width, 24, Color.rgba(0, 0, 0, 150)
+      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score}", 0, 0, ZOrder::GUI
     end
   end
 end
