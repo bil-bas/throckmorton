@@ -21,7 +21,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       @world_scale = DEFAULT_WORLD_SCALE
 
-      @map = Map.new 39, 27 # Odd width to fit corridors in nicely.
+      @map = Map.new 33, 27 # Odd width to fit corridors in nicely.
       @player = Player.new *@map.start_position
 
       on_input :escape do

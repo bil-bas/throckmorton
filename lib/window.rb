@@ -1,5 +1,7 @@
 module Game
  class Window < Chingu::Window
+   attr_reader :potential_fps
+
     def initialize
       super 800, 600, false
       
@@ -8,6 +10,8 @@ module Game
       push_game_state Play
       
       init_fps
+
+      self.caption = "Game of Scones (by Spooner) --- WASD or Arrows to move; Mouse to aim and fire; Hold TAB to view map"
     end  
     
 
@@ -18,8 +22,6 @@ module Game
       
       @used_time += (Time.now - start_at).to_f
       recalculate_fps
-      
-      self.caption = "#{current_game_state.class.name} FPS: #{fps.round} [#{@potential_fps.round}]"
 
     rescue => ex
       puts ex.message, ex, ex.backtrace

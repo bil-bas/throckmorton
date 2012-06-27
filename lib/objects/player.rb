@@ -208,7 +208,7 @@ module Game
     def draw_gui
       @font ||= Font[24]
       parent.pixel.draw 0, 0, ZOrder::GUI, $window.width, 24, Color.rgba(0, 0, 0, 150)
-      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score}", 0, 0, ZOrder::GUI
+      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
     end
   end
 end
