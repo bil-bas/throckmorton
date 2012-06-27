@@ -11,13 +11,14 @@ module Game
         speed: 50,
         rotation_center: :center_center,
         zorder: ZOrder::PROJECTILES,
+        color: Color::CYAN,
       }.merge! options
       
       @speed = options[:speed]
       @duration = options[:duration]
       @rotation_speed = options[:rotation_speed]
 
-      image = TexPlay.create_image $window, 2, 6, color: COLOR
+      image = TexPlay.create_image $window, 2, 6, color: options[:color]
 
       super options.merge(x: x, y: y, image: image, angle: direction)
 
