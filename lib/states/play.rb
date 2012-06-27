@@ -24,6 +24,11 @@ module Game
       @map = Map.new 25
       
       @player = Player.new *@map.start_position
+
+      on_input :escape do
+        pop_game_state
+        push_game_state self.class
+      end
     end
 
     def init_physics

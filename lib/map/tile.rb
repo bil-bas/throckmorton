@@ -2,6 +2,9 @@ module Game
   class Tile < Chingu::GameObject
     WIDTH = 16
 
+    attr_reader :grid_x, :grid_y
+
+    attr_writer :seen
     def seen?; @seen; end
     def blocks_movement?; @blocks_movement; end
     def blocks_projectiles?; @blocks_projectiles; end
@@ -10,7 +13,7 @@ module Game
     def initialize(grid_x, grid_y, type)
       @grid_x, @grid_y = grid_x, grid_y
 
-      @seen = true
+      @seen = false
 
       self.x, self.y = grid_x * WIDTH, grid_y * WIDTH
 
@@ -40,9 +43,10 @@ module Game
           @shape.object = self
       end
 
-      image = TexPlay.create_image $window, WIDTH, WIDTH, color: type
+      @@images ||= {}
+      @@images[type] = TexPlay.create_image $window, WIDTH, WIDTH, color: type
 
-      super x: x, y: y, zorder: ZOrder::TILES, image: image
+      super x: x, y: y, zorder: ZOrder::TILES, image: @@images[type]
 
       parent.space.add_shape @shape if @shape
 

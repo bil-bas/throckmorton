@@ -23,6 +23,8 @@ module Game
       @fire_primary_cost = 5
       @fire_secondary_cost = 25
 
+      @visual_range = 5
+
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
 
@@ -132,8 +134,32 @@ module Game
           end
         end
       end
+
+      see_tiles
       
       super
+    end
+
+    def see_tiles
+      map = parent.map
+      tile = map.tile_at_coordinate x, y
+      tile_x, tile_y = tile.grid_x, tile.grid_y
+
+      saw_new_tile = false
+      (-@visual_range..@visual_range).each do |offset_y|
+        (-@visual_range..@visual_range).each do |offset_x|
+          if distance(tile_x, tile_y, tile_x + offset_x, tile_y + offset_y) <= @visual_range
+            tile = map.tile_at_grid tile_x + offset_x, tile_y + offset_y
+            if tile && !tile.seen?
+              tile.seen = true
+              saw_new_tile = true
+            end
+          end
+        end
+      end
+
+      map.redraw if saw_new_tile
+
     end
 
     def tile_blocked?(x, y)

@@ -35,6 +35,10 @@ module Game
     def start_position
       [width / 2, height / 2]
     end
+
+    def redraw
+      @background = nil
+    end
     
     def draw
       @background ||= $window.record(width, height) do

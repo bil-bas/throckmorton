@@ -21,10 +21,6 @@ module Game
       super
     end
 
-    def draw
-      @image.draw_rot x, y, zorder, 0, 0.5, 0.5
-    end
-
     def draw_mini
       parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 14, 14, Color.rgb(255, 0, 0)
     end

@@ -41,6 +41,12 @@ module Game
       push(x + right, y + down, speed)
     end
 
+    def draw
+      if parent.map.tile_at_coordinate(x, y).seen?
+        @image.draw_rot x, y, zorder, 0, 0.5, 0.5
+      end
+    end
+
     # Push towards a particular position (negative force to pull).
     def push(x, y, push_force)
       angle = Gosu::angle(self.x, self.y, x, y)
