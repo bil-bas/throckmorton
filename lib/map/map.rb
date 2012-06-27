@@ -1,8 +1,8 @@
 module Game
   class Map < BasicGameObject
-    MINI_SCALE = 1 / 4.0
+    MINI_SCALE = 1 / 1.5
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
-    NO_LIGHT_COLOR = Color.rgba(0, 0, 0, 200) # Colour outside range of lighting.
+    NO_LIGHT_COLOR = Color.rgba(0, 0, 0, 210) # Colour outside range of lighting.
 
     attr_reader :grid_width, :grid_height, :width, :height
     attr_reader :lighting_overlay
