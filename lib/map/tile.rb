@@ -9,7 +9,7 @@ module Game
     def blocks_sight?; @blocks_sight; end
 
     def seen=(value)
-      map.reveal self if value and !@seen
+      map.reveal self if value && !@seen
       @seen = value
     end
 
@@ -52,7 +52,7 @@ module Game
       parent.space.add_shape @shape if @shape
 
 
-      unless blocks_movement? and distance(x, y, *map.start_position) > 20
+      unless blocks_movement? && distance(x, y, *map.start_position) > 20
         case rand(100)
           when 0..12
             parent.add_object Enemy.new(x, y)

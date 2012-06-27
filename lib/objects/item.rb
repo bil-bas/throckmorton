@@ -14,7 +14,7 @@ module Game
 
     def draw
       tile = self.tile
-      if tile and tile.seen?
+      if tile && tile.seen?
         @image.draw_rot x, y, zorder, angle, 0.5, 0.5
       end
     end

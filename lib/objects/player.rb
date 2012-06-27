@@ -3,7 +3,7 @@ require 'set'
 module Game
   class Player < PhysicsObject
     DIAGONAL = 0.785
-    WIDTH = 19
+    WIDTH = 17
     SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
     include LineOfSight

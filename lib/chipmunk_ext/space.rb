@@ -8,7 +8,7 @@ module CP
         Array(b).each do |d|
           add_collision_handler(c, d) do |x, y|
             # Prevent collisions between objects that have already been destroyed.
-            if x.object and y.object
+            if x.object && y.object
               yield x.object, y.object
             else
               false

@@ -1,7 +1,7 @@
 module Game
   class Enemy < PhysicsObject
     DIAGONAL = 0.785
-    WIDTH = 19
+    WIDTH = 17
     SHOOT_OFFSET = 14
 
     include LineOfSight
@@ -40,7 +40,7 @@ module Game
       reset_forces
       push parent.player.x, parent.player.y, (@archer ? 3 : 5)
 
-      if @archer and rand(100) == 0 and line_of_sight?(parent.player.tile)
+      if @archer && rand(100) == 0 && line_of_sight?(parent.player.tile)
         angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
         bullet = Projectile.new x + offset_x(angle, SHOOT_OFFSET),
                                 y + offset_y(angle, SHOOT_OFFSET),
@@ -58,14 +58,14 @@ module Game
 
     def draw
       tile = self.tile
-      if tile and tile.seen? and parent.player.can_see? tile
+      if tile && tile.seen? && parent.player.can_see?(tile)
         @image.draw_rot x, y, zorder, angle, 0.5, 0.5, scale, scale
       end
     end
 
     def draw_mini
       tile = self.tile
-      if tile and tile.seen?
+      if tile && tile.seen?
         parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 10 * scale, 10 * scale, Color.rgb(255, 0, 0)
       end
     end
