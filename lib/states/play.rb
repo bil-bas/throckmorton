@@ -123,13 +123,13 @@ module Game
     def draw_map_overlay
       $window.flush
       
-      pixel.draw 0, 0, 0, $window.width, $window.height, Color.rgba(0, 0, 0, 200)
+      pixel.draw 0, 0, 0, $window.width, $window.height, Color.rgba(0, 0, 0, 150)
       
       $window.scale Map::MINI_SCALE do         
         $window.translate ($window.width / Map::MINI_SCALE) * 0.5 - (@map.width / 2),
                           ($window.height / Map::MINI_SCALE) * 0.5 - (@map.height / 2) do
                           
-          pixel.draw -8, -8, 0, @map.width + 16, @map.height + 16, Color::BLACK   
+          pixel.draw -Tile::WIDTH, -Tile::WIDTH   , 0, @map.width + Tile::WIDTH, @map.height + Tile::WIDTH, Color.rgb(150, 150, 150)
           
           @map.draw_mini 
           @objects.each {|o| o.draw_mini }
