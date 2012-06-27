@@ -51,7 +51,14 @@ module Game
       parent.space.add_shape @shape if @shape
 
       unless blocks_movement?
-        parent.add_object Enemy.new(x, y) if rand(100) < 15
+        case rand(100)
+          when 0..14
+            parent.add_object Enemy.new(x, y)
+          when 15..17
+            parent.add_object MedicKit.new(x, y)
+          when 18..19
+            parent.add_object EnergyBar.new(x, y)
+        end
       end
     end
 

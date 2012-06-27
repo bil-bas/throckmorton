@@ -12,7 +12,9 @@ module Game
       
       @tiles = grid_height.times.map do |y|
         grid_width.times.map do |x|
-          if distance(x, y, @grid_width / 2, @grid_height / 2) < 5
+          if x == 0 || y == 0 || x == @grid_width - 1 || y == @grid_height - 1
+            type = :blue
+          elsif distance(x, y, @grid_width / 2, @grid_height / 2) < 5
             type = :white
           else
             type = ([:white] * 20 + [:blue] * 10).sample

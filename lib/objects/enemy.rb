@@ -10,8 +10,8 @@ module Game
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
 
-      super x: x, y: y, rotation_center: :center_center,
-            image: image, zorder: ZOrder::PLAYER,
+      super x: x, y: y,
+            image: image, zorder: ZOrder::ENEMY,
             collision_type: :enemy
     end
 

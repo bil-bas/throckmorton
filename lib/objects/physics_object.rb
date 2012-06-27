@@ -14,6 +14,10 @@ module Game
     def tile; parent.map.tile_at_coordinate x, y; end
 
     def initialize(options = {})
+      options = {
+          rotation_center: :center_center,
+      }.merge! options
+
       @body = CP::Body.new(1000, Float::INFINITY)
 
       super options

@@ -21,7 +21,7 @@ module Game
       @pixel = TexPlay.create_image $window, 1, 1, color: :white
       @world_scale = DEFAULT_WORLD_SCALE
       
-      @map = Map.new 25
+      @map = Map.new 32
       
       @player = Player.new *@map.start_position
 
@@ -39,25 +39,25 @@ module Game
       @space.on_collision(:player, :enemy) do |player, enemy|
         player.health -= 1
         enemy.destroy
-        true
+        false
       end
 
       @space.on_collision(:player, :enemy_projectile) do |player, projectile|
         # TODO: weaken player
         p "enemy projectile touched player"
         projectile.destroy
-        true
+        false
       end
 
       @space.on_collision(:enemy, :player_projectile) do |enemy, projectile|
         player.score += 1
         enemy.destroy
         projectile.destroy
-        true
+        false
       end
 
-      @space.on_collision(:player, :wall) do |player, wall|
-        #player.blocked_by_wall wall
+      @space.on_collision(:player, :item) do |player, item|
+        item.activated_by player
         false
       end
 

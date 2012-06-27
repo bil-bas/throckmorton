@@ -14,7 +14,7 @@ include Gosu
 include Chingu
 
 module ZOrder
-  TILES, PROJECTILES, PLAYER = *(0..100)
+  TILES, PROJECTILES, ITEM, ENEMY, PLAYER = *(0..100)
 end
 
 t = Time.now
@@ -32,6 +32,8 @@ require_relative "map/tile"
 
 require_relative "objects/physics_object"
 require_relative "objects/player"
+require_relative "objects/medic_kit"
+require_relative "objects/energy_bar"
 require_relative "objects/enemy"
 require_relative "objects/projectile"
 

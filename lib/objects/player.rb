@@ -2,11 +2,11 @@ module Game
   class Player < PhysicsObject
     DIAGONAL = 0.785
     WIDTH = 9
-    SHOOT_OFFSET = 10 # Pixels from center to create the projectile.
+    SHOOT_OFFSET = 7 # Pixels from center to create the projectile.
 
     trait :timer
 
-    attr_accessor :health, :energy, :score
+    attr_accessor :health, :max_health, :energy, :max_energy, :score
 
     def fire_primary?; energy >= @fire_primary_cost; end
     def fire_secondary?; energy >= @fire_secondary_cost; end
@@ -16,9 +16,12 @@ module Game
 
       @score = 0
 
-      @health = 100
+      @max_health = 100
+      @health = @max_health
+      @health_per_second = 0.5
 
-      @energy = 100
+      @max_energy = 100
+      @energy = @max_energy
       @energy_per_second = 4
       @fire_primary_cost = 5
       @fire_secondary_cost = 25
@@ -27,8 +30,9 @@ module Game
 
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
+      image.set_pixel WIDTH / 2, 1
 
-      super x: x, y: y, rotation_center: :center_center,
+      super x: x, y: y,
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
       
@@ -66,7 +70,8 @@ module Game
 
     def update
       self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
-      @energy = [@energy + @energy_per_second * parent.frame_time, 100].min
+      @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
+      @health = [@health + @health_per_second * parent.frame_time, @max_health].min
 
       if holding_any? :up, :w
         if holding_any? :left, :a
@@ -169,7 +174,7 @@ module Game
     end
     
     def draw
-      @image.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5
+      @image.draw_rot x.round, y.round, zorder, angle, 0.5, 0.5
     end
     
     def draw_mini
