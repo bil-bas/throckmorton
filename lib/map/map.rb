@@ -20,7 +20,7 @@ module Game
             type = ([:white] * 20 + [:blue] * 10).sample
           end
 
-          Tile.new x, y, type
+          Tile.new self, x, y, type
         end
       end
     end

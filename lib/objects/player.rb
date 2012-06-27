@@ -4,6 +4,8 @@ module Game
     WIDTH = 9
     SHOOT_OFFSET = 7 # Pixels from center to create the projectile.
 
+    include LineOfSight
+
     trait :timer
 
     attr_accessor :health, :max_health, :energy, :max_energy, :score
@@ -155,7 +157,7 @@ module Game
         (-@visual_range..@visual_range).each do |offset_x|
           if distance(tile_x, tile_y, tile_x + offset_x, tile_y + offset_y) <= @visual_range
             tile = map.tile_at_grid tile_x + offset_x, tile_y + offset_y
-            if tile && !tile.seen?
+            if tile && line_of_sight?(tile) && !tile.seen?
               tile.seen = true
               saw_new_tile = true
             end
@@ -164,7 +166,6 @@ module Game
       end
 
       map.redraw if saw_new_tile
-
     end
 
     def tile_blocked?(x, y)

@@ -30,6 +30,8 @@ require_relative "states/play"
 require_relative "map/map"
 require_relative "map/tile"
 
+require_relative "mixins/line_of_sight"
+
 require_relative "objects/physics_object"
 require_relative "objects/player"
 require_relative "objects/medic_kit"

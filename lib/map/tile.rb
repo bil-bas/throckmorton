@@ -10,7 +10,7 @@ module Game
     def blocks_projectiles?; @blocks_projectiles; end
     def blocks_sight?; @blocks_sight; end
 
-    def initialize(grid_x, grid_y, type)
+    def initialize(map, grid_x, grid_y, type)
       @grid_x, @grid_y = grid_x, grid_y
 
       @seen = false
@@ -50,7 +50,7 @@ module Game
 
       parent.space.add_shape @shape if @shape
 
-      unless blocks_movement?
+      unless blocks_movement? and distance(x, y, *map.start_position) > 20
         case rand(100)
           when 0..14
             parent.add_object Enemy.new(x, y)
