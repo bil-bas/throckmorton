@@ -61,10 +61,11 @@ module Game
             bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
                                     self.y + offset_y(angle, SHOOT_OFFSET),
                                     angle,
+                                    speed: 20,
                                     rotation_speed: 5,
                                     collision_type: :player_projectile,
                                     group: :player_projectiles,
-                                    duration: 0.2
+                                    duration: 0.4
 
             parent.add_object bullet
           end
@@ -167,10 +168,17 @@ module Game
         end
       end
 
+      update_lighting
+    end
+
+    def update_lighting
       player_x, player_y = x / Tile::WIDTH, y / Tile::WIDTH
-      map.lighting_overlay.circle player_x, player_y, visual_range, fill: true, color_control: lambda {|c, x, y|
+      periodic_brightness = Math::sin(milliseconds / 200.0) * 0.05 + 0.05
+
+      parent.map.lighting_overlay.circle player_x, player_y, visual_range, fill: true, color_control: lambda {|c, x, y|
         if @visible_tile_positions.has_key? [x, y]
-          [0, 0, 0, Math::log(distance(player_x, player_y, x, y) / 2.5)]
+          distance = distance(player_x, player_y, x, y)
+          [0.1, 0.1, 0, Math::log(distance / 2.5) + periodic_brightness]
         else
           Map::NO_LIGHT_COLOR
         end
