@@ -58,6 +58,8 @@ module Game
             parent.add_object MedicKit.new(x, y)
           when 18..19
             parent.add_object EnergyBar.new(x, y)
+          when 20..24
+            parent.add_object Treasure.new(x, y)
         end
       end
     end

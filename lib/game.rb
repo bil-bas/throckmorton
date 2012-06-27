@@ -36,6 +36,7 @@ require_relative "objects/medic_kit"
 require_relative "objects/energy_bar"
 require_relative "objects/enemy"
 require_relative "objects/projectile"
+require_relative "objects/treasure"
 
 puts "Loaded scripts in #{Time.now - t}s"
 
