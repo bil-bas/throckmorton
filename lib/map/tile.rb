@@ -6,7 +6,6 @@ module Game
 
     def seen?; @seen; end
     def blocks_movement?; @blocks_movement; end
-    def blocks_projectiles?; @blocks_projectiles; end
     def blocks_sight?; @blocks_sight; end
 
     def seen=(value)
@@ -24,14 +23,12 @@ module Game
       case type
         when :white
           @blocks_movement = false
-          @blocks_projectiles = false
           @blocks_sight = false
 
           @body = @shape = nil
 
         when :blue
           @blocks_movement = true
-          @blocks_projectiles = true
           @blocks_sight = true
 
           @@body ||= CP::Body.new_static

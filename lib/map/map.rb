@@ -70,7 +70,7 @@ module Game
     end
 
     def draw_lighting
-      $window.translate -Tile::WIDTH / 2,  -Tile::WIDTH / 2 do
+      $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
         @revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
         lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE
       end

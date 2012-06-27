@@ -154,7 +154,6 @@ module Game
       map = parent.map
       tile = map.tile_at_coordinate x, y
       tile_x, tile_y = tile.grid_x, tile.grid_y
-
       @visible_tile_positions = {}
       (-@visual_range..@visual_range).each do |offset_y|
         (-@visual_range..@visual_range).each do |offset_x|
@@ -167,18 +166,21 @@ module Game
           end
         end
       end
-
       update_lighting
     end
 
     def update_lighting
       player_x, player_y = x / Tile::WIDTH, y / Tile::WIDTH
       periodic_brightness = Math::sin(milliseconds / 200.0) * 0.05 + 0.05
+      scale_i = Map::LIGHTING_SCALE
+      scale_f = scale_i.to_f
+      parent.map.lighting_overlay.circle player_x * scale_i, player_y * scale_i,
+                                         visual_range * scale_i, fill: true,
+                                         color_control: lambda {|c, x, y|
 
-      parent.map.lighting_overlay.circle player_x, player_y, visual_range, fill: true, color_control: lambda {|c, x, y|
-        if @visible_tile_positions.has_key? [x, y]
-          distance = distance(player_x, player_y, x, y)
-          [0.1, 0.1, 0, Math::log(distance / 2.5) + periodic_brightness]
+        if @visible_tile_positions.has_key? [x / scale_i, y / scale_i]
+          distance = distance(player_x, player_y, x / scale_f, y / scale_f)
+          [0.1, 0.1, 0, Math::log(distance / 3) + periodic_brightness]
         else
           Map::NO_LIGHT_COLOR
         end
