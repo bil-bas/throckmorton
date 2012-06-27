@@ -48,8 +48,7 @@ module Game
       end
 
       @space.on_collision(:enemy, :player_projectile) do |enemy, projectile|
-        player.score += 1
-        enemy.destroy
+        enemy.health -= 1
         projectile.destroy
         false
       end
@@ -72,19 +71,21 @@ module Game
       @frame_time = [Time.now.to_f - @time, 0.1].min
       @time = Time.now.to_f
 
-      @player.reset_forces
-      #@objects.each {|o| o.reset_forces }
+      unless @paused
+        @player.reset_forces
+        #@objects.each {|o| o.reset_forces }
 
-      @physics_time += frame_time
-      num_steps = (@physics_time / PHYSICS_STEP).round
-      @physics_time -= num_steps * PHYSICS_STEP
-      num_steps.times { @space.step PHYSICS_STEP }
+        @physics_time += frame_time
+        num_steps = (@physics_time / PHYSICS_STEP).round
+        @physics_time -= num_steps * PHYSICS_STEP
+        num_steps.times { @space.step PHYSICS_STEP }
 
-      @map.update # Clear lighting.
-      @player.update
-      @objects.each {|o| o.update }
+        @map.update # Clear lighting.
+        @player.update
+        @objects.each {|o| o.update }
 
-      super
+        super
+      end
     end
     
     def add_object(object)
@@ -103,8 +104,13 @@ module Game
           @player.draw
         end          
       end
-      
-      draw_map_overlay if holding? :tab
+
+      if holding? :tab
+        draw_map_overlay
+        @paused = true
+      else
+        @paused = false
+      end
 
       player.draw_gui
 

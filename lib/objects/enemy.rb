@@ -5,6 +5,7 @@ module Game
     SHOOT_OFFSET = 7
 
     include LineOfSight
+    attr_reader :health
 
     def initialize(x, y)
       @speed = 50
@@ -13,12 +14,25 @@ module Game
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
 
-      super x: x, y: y,
+      @archer = rand(100) < 20
+      if @archer
+        image.set_pixel WIDTH / 2, WIDTH / 2
+        scale = 0.75 # goblin archer?
+        @health = 1
+      else
+        scale = [0.9, 0.9, 0.9, 1.2].sample # orcs and ogre?
+        @health = scale > 1 ? 4 : 2
+      end
+
+      super x: x, y: y, scale: scale,
             image: image, zorder: ZOrder::ENEMY,
             collision_type: :enemy
+    end
 
-      @archer = rand(100) < 20
-      image.set_pixel WIDTH / 2, WIDTH / 2 if @archer
+    def health=(value)
+      @health = [value, 0].max
+      destroy if @health <= 0
+      @health
     end
 
     def update
@@ -44,14 +58,14 @@ module Game
     def draw
       tile = self.tile
       if tile and tile.seen? and parent.player.can_see? tile
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5, scale, scale
       end
     end
 
     def draw_mini
       tile = self.tile
       if tile and tile.seen?
-        parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 10, 10, Color.rgb(255, 0, 0)
+        parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 10 * scale, 10 * scale, Color.rgb(255, 0, 0)
       end
     end
   end
