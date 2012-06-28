@@ -16,6 +16,8 @@ module Game
     def can_see?(tile); @visible_tile_positions.include? [tile.grid_x, tile.grid_y] end
 
     def initialize(x, y)
+      info { "Creating player at #{x}, #{y}" }
+
       @score = 0
 
       @health_per_second = 0.5

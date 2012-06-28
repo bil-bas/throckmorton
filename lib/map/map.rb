@@ -10,7 +10,7 @@ module Game
     def initialize(grid_width, grid_height = grid_width)
       @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
 
-      puts "Creating map #{grid_width}x#{grid_height} (#{@width}x#{@height} pixels)"
+      info "Creating map #{grid_width}x#{grid_height} (#{@width}x#{@height} pixels)"
       t = Time.now
       @grid_width, @grid_height = grid_width, grid_height
       
@@ -31,7 +31,7 @@ module Game
       @revealed_overlay = TexPlay.create_image $window, @grid_width, @grid_height, color: Color.rgba(0, 0, 0, 255)
       @lighting_overlay = TexPlay.create_image $window, @grid_width * LIGHTING_SCALE, @grid_height * LIGHTING_SCALE
 
-      puts "Map created in #{((Time.now - t).to_f * 1000).to_i}ms"
+      info "Map created in #{((Time.now - t).to_f * 1000).to_i}ms"
 
       super()
     end
@@ -63,7 +63,7 @@ module Game
         @tiles.each do |row|
           row.each {|t| t.draw }
         end
-        puts "Recorded tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
+        info "Recorded tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
       end
 
       @background.draw 0, 0, ZOrder::TILES

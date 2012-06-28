@@ -7,7 +7,9 @@ Bundler.require :default
 
 require 'forwardable'
 
-puts "Loaded gems in #{Time.now - t}s"
+require_relative 'standard_ext/object' # Set up logging
+
+info { "Loaded gems in #{Time.now - t}s" }
 
 include Gosu
 include Chingu
@@ -44,4 +46,4 @@ require_relative "objects/enemy"
 require_relative "objects/projectile"
 require_relative "objects/treasure"
 
-puts "Loaded scripts in #{Time.now - t}s"
+debug { "Loaded scripts in #{Time.now - t}s" }

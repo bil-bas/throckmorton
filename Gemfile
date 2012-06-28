@@ -10,11 +10,11 @@ gem "texplay", "~> 0.3" # Different version actually required depending on platf
 #gem 'msgpack', "~> 0.4.7"
 
 gem "slop", "~> 3.3.2"
+gem 'log4r', '~> 1.1.10'
 
 group :development do
   gem 'rspec', '~> 2.10.0'
   gem 'rr', '~> 1.0.4'
-  #gem 'rspec-rr', '~> 0.1.0', require: 'spec/rr'
 
   #gem "pry", "~> 0.9.7.4"
   #gem "pry-remote", "~> 0.1.0"

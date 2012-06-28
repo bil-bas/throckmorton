@@ -24,7 +24,7 @@ module Game
       recalculate_fps
 
     rescue => ex
-      puts ex.message, ex, ex.backtrace
+      fatal ex
       exit
     end
     
@@ -36,7 +36,7 @@ module Game
       @used_time += (Time.now - start_at).to_f
 
     rescue => ex
-      puts ex.message, ex, ex.backtrace
+      fatal ex
       exit
     end
     
