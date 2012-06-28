@@ -3,7 +3,6 @@ require_relative "teststrap"
 describe "Game" do
   describe "run" do
     it "should display help text" do
-
       TEXT =<<END
 ruby bin#{File::SEPARATOR}game_of_scones [options]
 

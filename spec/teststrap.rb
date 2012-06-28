@@ -7,4 +7,4 @@ RSpec.configure do |config|
   config.mock_framework = :rr
 end
 
-require_relative "../lib/game"
+require_relative "../lib/main"
