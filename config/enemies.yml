@@ -2,23 +2,24 @@
   :frequency: 10
 
   :health: 10
-  :speed: 75
+  :speed: 6
   :scale: 0.6
 
   :melee:
     :damage: 2
 
-  :projectile:
+  :ranged:
     :damage: 2
     :speed: 35
     :duration: 0.5
+    :skirmish: !ruby/range 60..80
     :fire_chance: 0.01 # Per frame.
 
 :orc:
   :frequency: 20
 
   :health: 18
-  :speed: 160
+  :speed: 8
   :scale: 0.9
 
   :melee:
@@ -28,7 +29,7 @@
   :frequency: 5
 
   :health: 40
-  :speed: 60
+  :speed: 4
   :scale: 1.2
 
   :melee:

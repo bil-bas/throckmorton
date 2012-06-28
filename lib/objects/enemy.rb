@@ -16,7 +16,7 @@ module Game
       config = self.class.config[type]
       raise [@type, config].inspect unless config
 
-      @projectile = config[:projectile]
+      @ranged = config[:ranged]
       @damage = config[:melee][:damage] || raise
       @facing_x, @facing_y = 1, 0
 
@@ -34,23 +34,37 @@ module Game
 
     def update
       reset_forces
-      push parent.player.x, parent.player.y, (@archer ? 3 : 5)
+
+      # Skirmish or advance
+      range = distance(x, y, parent.player.x, parent.player.y)
+      if @ranged and @ranged[:skirmish].include? range
+        fire_ranged
+      elsif @ranged and range < @ranged[:skirmish].min
+        push -parent.player.x, -parent.player.y, speed
+      else
+        push parent.player.x, parent.player.y, speed
+      end
+
       self.angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
 
-      if @projectile && rand() <= @projectile[:fire_chance] && line_of_sight?(parent.player.tile)
+
+
+      super
+    end
+
+    def fire_ranged
+      if rand() <= @ranged[:fire_chance] && line_of_sight?(parent.player.tile)
         angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
         bullet = Projectile.new x + offset_x(angle, SHOOT_OFFSET),
                                 y + offset_y(angle, SHOOT_OFFSET),
                                 angle,
-                                speed: @projectile[:speed],
+                                speed: @ranged[:speed],
                                 collision_type: :enemy_projectile,
                                 group: :enemy_projectiles,
-                                duration: @projectile[:duration],
+                                duration: @ranged[:duration],
                                 color: Color::BLACK
         parent.add_object bullet
       end
-
-      super
     end
 
     def draw
