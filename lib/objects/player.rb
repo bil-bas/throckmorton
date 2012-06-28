@@ -16,8 +16,6 @@ module Game
     def can_see?(tile); @visible_tile_positions.include? [tile.grid_x, tile.grid_y] end
 
     def initialize(x, y)
-      @speed = 150
-
       @score = 0
 
       @health_per_second = 0.5
@@ -35,7 +33,7 @@ module Game
       image.set_pixel WIDTH / 2 - 1, 1
       image.set_pixel WIDTH / 2 + 1, 1
 
-      super x: x, y: y, health: 100,
+      super x: x, y: y, health: 100, speed: 150,
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
       
@@ -77,7 +75,7 @@ module Game
     def update
       self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
       @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
-      @health += @health_per_second * parent.frame_time
+      self.health += @health_per_second * parent.frame_time
 
       if holding_any? :up, :w
         if holding_any? :left, :a

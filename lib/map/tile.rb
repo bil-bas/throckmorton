@@ -54,8 +54,10 @@ module Game
 
       unless blocks_movement? && distance(x, y, *map.start_position) > 20
         case rand(100)
-          when 0..12
-            parent.add_object Enemy.new(x, y)
+          when 0..10
+            @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten
+            parent.add_object Enemy.new(@@possibilities.sample, x, y)
+
           when 15..17
             parent.add_object HealthPack.new(x, y)
           when 18

@@ -6,7 +6,7 @@ module Game
     attr_reader :health, :max_health
 
     def initialize(options = {})
-      @max_health = @health = options[:health]
+      @max_health = @health = options[:health] || raise
       super(options)
     end
 

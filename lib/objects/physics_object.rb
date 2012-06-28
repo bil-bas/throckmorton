@@ -18,6 +18,8 @@ module Game
           rotation_center: :center_center,
       }.merge! options
 
+      @speed = options[:speed]
+
       @body = CP::Body.new(1000, Float::INFINITY)
 
       super options
