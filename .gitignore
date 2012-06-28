@@ -1,2 +1,4 @@
 .idea
+.rspec
+pkg
 /game.log
