@@ -163,7 +163,8 @@ module Game
 
     def see_tiles
       map = parent.map
-      tile = map.tile_at_coordinate x, y
+
+      tile = self.tile
       tile_x, tile_y = tile.grid_x, tile.grid_y
       @visible_tile_positions = Set.new # Store list of [x, y] that are visible.
 
@@ -184,7 +185,6 @@ module Game
 
     def update_lighting
       player_x, player_y = x / Tile::WIDTH, y / Tile::WIDTH
-      periodic_brightness = Math::sin(milliseconds / 200.0) * 0.05 + 0.05
       scale_i = Map::LIGHTING_SCALE
       scale_f = scale_i.to_f
       parent.map.lighting_overlay.circle player_x * scale_i, player_y * scale_i,
@@ -193,7 +193,7 @@ module Game
 
         if @visible_tile_positions.include? [x / scale_i, y / scale_i]
           distance = distance(player_x, player_y, x / scale_f, y / scale_f)
-          [0.1, 0.1, 0, Math::log((2 * distance) / visual_range) + periodic_brightness]
+          [0, 0.1, 0.05, Math::log((2 * distance) / visual_range)]
         else
           Map::NO_LIGHT_COLOR
         end
