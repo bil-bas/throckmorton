@@ -16,7 +16,9 @@ module Game
     init
 
     attr_reader :speed, :id
+    attr_accessor :velocity_x, :velocity_y
 
+    def needs_sync?; true; end
     def time; parent.time; end
     def frame_time; parent.frame_time; end
     def exists?; !destroyed? end
@@ -28,6 +30,8 @@ module Game
       options = {
           rotation_center: :center_center,
       }.merge! options
+
+      @velocity_x, @velocity_y = 0, 0 # TODO: Use these!
 
       @speed = options[:speed]
 
@@ -89,6 +93,8 @@ module Game
       @shape.object = nil
 
       super
+
+      Messages::Destroy.send(self) if parent.server?
 
       info { "Destroyed #{short_name} at #{tile.grid_position}" }
     end

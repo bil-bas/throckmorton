@@ -24,7 +24,7 @@ module Game
       recalculate_fps
 
     rescue => ex
-      fatal ex
+      fatal { "#{ex.class}: #{ex}\n#{ex.backtrace.join("\n")}" }
       exit
     end
     
@@ -36,7 +36,7 @@ module Game
       @used_time += (Time.now - start_at).to_f
 
     rescue => ex
-      fatal ex
+      fatal { "#{ex.class}: #{ex}\n#{ex.backtrace.join("\n")}" }
       exit
     end
     

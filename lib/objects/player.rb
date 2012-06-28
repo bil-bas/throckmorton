@@ -8,13 +8,19 @@ module Game
 
     trait :timer
 
-    attr_accessor :energy, :max_energy, :score
-    attr_reader :visual_range
+    attr_accessor :max_energy, :score
+    attr_reader :visual_range, :energy
 
     def fire_primary?; energy >= @fire_primary_cost end
     def fire_secondary?; energy >= @fire_secondary_cost end
     def can_see?(tile); @visible_tile_positions.include? [tile.grid_x, tile.grid_y] end
     def short_name; "player"; end
+
+    def energy=(value)
+      @energy = value
+      Messages::Set.send(self, :energy, @energy) if parent.server?
+      @energy
+    end
 
     def initialize(x, y)
       @score = 0
@@ -35,7 +41,7 @@ module Game
       image.set_pixel WIDTH / 2 - 1, 3
       image.set_pixel WIDTH / 2 + 1, 3
 
-      super x: x, y: y, health: 100, speed: 150,
+      super x: x, y: y, max_health: 100, speed: 150,
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
 

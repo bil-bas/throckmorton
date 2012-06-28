@@ -8,6 +8,9 @@ module Game
     
     DEFAULT_WORLD_SCALE = 2
     PHYSICS_STEP = 1 / 60.0
+
+    def server?; @server; end
+    def client?; !@server; end
        
     def initialize
       super
@@ -15,6 +18,7 @@ module Game
       init_physics
       
       @time = Time.now.to_f
+      @server = false
 
       @objects = []   
       
@@ -91,6 +95,10 @@ module Game
         @objects.each {|o| o.update }
 
         super
+
+        if server?
+          Messages::Sync.send [@player] + @objects.reject {|o| o.needs_sync? }
+        end
       end
     end
     

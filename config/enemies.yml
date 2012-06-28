@@ -1,7 +1,7 @@
 :goblin_archer:
   :frequency: 10
 
-  :health: 10
+  :max_health: 10
   :speed: 6
   :scale: 0.6
 
@@ -19,7 +19,7 @@
 :ogre:
   :frequency: 5
 
-  :health: 40
+  :max_health: 40
   :speed: 4
   :scale: 1.2
 
@@ -30,7 +30,7 @@
 :orc:
   :frequency: 20
 
-  :health: 18
+  :max_health: 18
   :speed: 8
   :scale: 0.9
 
@@ -41,7 +41,7 @@
 :tick:
   :frequency: 5
 
-  :health: 1
+  :max_health: 1
   :speed: 10
   :scale: 0.2
 

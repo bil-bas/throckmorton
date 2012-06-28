@@ -12,7 +12,9 @@ module Game
       end
     end
 
-    def initialize(type, x, y)
+
+
+    def initialize(type, x, y, options = {})
       @type = type
       config = self.class.config[type]
       raise [@type, config].inspect unless config
@@ -29,9 +31,12 @@ module Game
         @@image.set_pixel WIDTH / 2 + 1, 3
       end
 
-      super x: x, y: y, scale: config[:scale], health: config[:health],
+      super x: x, y: y, scale: config[:scale],
+            max_health: config[:max_health], health: options[:health],
             image: @@image, zorder: ZOrder::ENEMY,
             collision_type: :enemy, speed: config[:speed]
+
+      Messages::CreateEnemy.send(self) if parent.server?
 
       info { "Created #{short_name} at #{tile.grid_position}" }
     end

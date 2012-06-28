@@ -7,7 +7,7 @@ gem "texplay", "~> 0.3" # Different version actually required depending on platf
 #gem "fidgit", "~> 0.1.10"
 
 #gem 'renet', "~> 0.1.14"
-#gem 'msgpack', "~> 0.4.7"
+gem 'msgpack', "~> 0.4.7"
 
 gem "slop", "~> 3.3.2"
 gem 'log4r', '~> 1.1.10'
