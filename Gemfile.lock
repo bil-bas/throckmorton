@@ -6,9 +6,9 @@ GEM
       gosu (>= 0.7.33)
     chipmunk (5.3.4.5-x86-mingw32)
     gosu (0.7.43-x86-mingw32)
+    slop (3.3.2)
     texplay (0.3.5-x86-mingw32)
       gosu (>= 0.7.25)
-    texplay (0.4.2)
 
 PLATFORMS
   x86-mingw32
@@ -17,4 +17,5 @@ DEPENDENCIES
   chingu (~> 0.9rc7)
   chipmunk (~> 5.3.4.5)
   gosu (~> 0.7.43)
+  slop (~> 3.3.2)
   texplay (~> 0.3)

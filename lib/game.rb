@@ -1,3 +1,5 @@
+Config = RbConfig if defined? RbConfig # Hack for deprecation warning.
+
 t = Time.now
 
 require 'bundler/setup'
@@ -20,6 +22,7 @@ require_relative "standard_ext/class"
 require_relative "chipmunk_ext/space"
 require_relative "chingu_ext/game_object"
 
+require_relative "version"
 require_relative "window"
 
 require_relative "states/play"
@@ -42,4 +45,28 @@ require_relative "objects/treasure"
 
 puts "Loaded scripts in #{Time.now - t}s"
 
-Game::Window.new.show
+
+module Game
+  class << self
+    def run(args)
+      opts = Slop.parse args, help: true do
+        banner "ruby #{$0} [options]\n"
+
+        on :server, 'Create dedicated server'
+        on :port, 'UDP port to use', as: :int, default: 7500
+        on :v, :version, 'Game version'
+      end
+
+      if opts.version?
+        puts "Game version: #{VERSION}"
+
+      elsif opts.server?
+        raise NotImplimentedError
+        Server.new.start opts.port
+
+      else
+        Window.new.show
+      end
+    end
+  end
+end

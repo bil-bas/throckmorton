@@ -9,6 +9,8 @@ gem "texplay", "~> 0.3" # Different version actually required depending on platf
 #gem 'renet', "~> 0.1.14"
 #gem 'msgpack', "~> 0.4.7"
 
+gem "slop", "~> 3.3.2"
+
 group :development do
   #gem "pry", "~> 0.9.7.4"
   #gem "pry-remote", "~> 0.1.0"
