@@ -30,9 +30,10 @@ module Game
       @visual_range = 5
 
       image = TexPlay.create_image $window, WIDTH, WIDTH
-      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
-      image.set_pixel WIDTH / 2 - 1, 1
-      image.set_pixel WIDTH / 2 + 1, 1
+      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(200, 200, 200), fill: true
+      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
+      image.set_pixel WIDTH / 2 - 1, 3
+      image.set_pixel WIDTH / 2 + 1, 3
 
       super x: x, y: y, health: 100, speed: 150,
             image: image, zorder: ZOrder::PLAYER,
