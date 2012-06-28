@@ -32,6 +32,7 @@ require_relative "mixins/line_of_sight"
 require_relative "objects/physics_object"
 require_relative "objects/item"
 
+require_relative "objects/entity"
 require_relative "objects/player"
 require_relative "objects/health_path"
 require_relative "objects/energy_pack"

@@ -1,16 +1,14 @@
 require 'set'
 
 module Game
-  class Player < PhysicsObject
+  class Player < Entity
     DIAGONAL = 0.785
     WIDTH = 17
     SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
-    include LineOfSight
-
     trait :timer
 
-    attr_accessor :health, :max_health, :energy, :max_energy, :score
+    attr_accessor :energy, :max_energy, :score
     attr_reader :visual_range
 
     def fire_primary?; energy >= @fire_primary_cost end
@@ -22,14 +20,12 @@ module Game
 
       @score = 0
 
-      @max_health = 100
-      @health = @max_health
       @health_per_second = 0.5
 
       @max_energy = 100
       @energy = @max_energy
       @energy_per_second = 4
-      @fire_primary_cost = 5
+      @fire_primary_cost = 4
       @fire_secondary_cost = 25
 
       @visual_range = 5
@@ -39,7 +35,7 @@ module Game
       image.set_pixel WIDTH / 2 - 1, 1
       image.set_pixel WIDTH / 2 + 1, 1
 
-      super x: x, y: y,
+      super x: x, y: y, health: 100,
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
       
@@ -52,7 +48,8 @@ module Game
                                   rotation_speed: 30,
                                   collision_type: :player_projectile,
                                   group: :player_projectiles,
-                                  duration: 0.5
+                                  duration: 0.5,
+                                  damage: 10
           parent.add_object bullet
         end
       end
@@ -68,7 +65,8 @@ module Game
                                     rotation_speed: 5,
                                     collision_type: :player_projectile,
                                     group: :player_projectiles,
-                                    duration: 0.4
+                                    duration: 0.4,
+                                    damage: 30
 
             parent.add_object bullet
           end

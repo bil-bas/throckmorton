@@ -1,11 +1,10 @@
 module Game
-  class Enemy < PhysicsObject
+  class Enemy < Entity
     DIAGONAL = 0.785
     WIDTH = 17
     SHOOT_OFFSET = 14
 
-    include LineOfSight
-    attr_reader :health
+    attr_reader :damage
 
     def initialize(x, y)
       @speed = 125
@@ -21,21 +20,22 @@ module Game
       @archer = rand(100) < 20
       if @archer
         scale = 0.6 # goblin archer?
-        @health = 1
+        health = 10
+        @damage = 2
       else
         scale = [0.9, 0.9, 0.9, 1.2].sample # orcs and ogre?
-        @health = scale > 1 ? 4 : 2
+        if scale > 1
+          health =  40
+          @damage = 10
+        else
+          health = 18
+          @damage = 4
+        end
       end
 
-      super x: x, y: y, scale: scale,
+      super x: x, y: y, scale: scale, health: health,
             image: @@image, zorder: ZOrder::ENEMY,
             collision_type: :enemy
-    end
-
-    def health=(value)
-      @health = [value, 0].max
-      destroy if @health <= 0
-      @health
     end
 
     def update

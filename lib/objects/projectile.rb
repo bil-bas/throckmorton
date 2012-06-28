@@ -1,7 +1,9 @@
 module Game
   class Projectile < PhysicsObject
     COLOR = Color.rgb(0, 255, 255)
-  
+
+    attr_reader :damage
+
     def time; parent.time; end    
     def frame_time; parent.frame_time; end
     
@@ -12,9 +14,11 @@ module Game
         rotation_center: :center_center,
         zorder: ZOrder::PROJECTILES,
         color: Color::CYAN,
+        damage: 1,
       }.merge! options
       
       @speed = options[:speed]
+      @damage = options[:damage]
       @duration = options[:duration]
       @rotation_speed = options[:rotation_speed]
 

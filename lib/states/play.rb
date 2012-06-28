@@ -36,19 +36,19 @@ module Game
       @space.damping = 0.05
 
       @space.on_collision(:player, :enemy) do |player, enemy|
-        player.health -= 5
+        player.health -= enemy.damage
         enemy.destroy
         false
       end
 
       @space.on_collision(:player, :enemy_projectile) do |player, projectile|
-        player.health -= 1
+        player.health -= projectile.damage
         projectile.destroy
         false
       end
 
       @space.on_collision(:enemy, :player_projectile) do |enemy, projectile|
-        enemy.health -= 1
+        enemy.health -= projectile.damage
         projectile.destroy
         false
       end
