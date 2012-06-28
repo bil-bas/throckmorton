@@ -8,3 +8,5 @@ RSpec.configure do |config|
 end
 
 require_relative "../lib/main"
+
+Object.instance_variable_get(:@std_outputter).level = 6
