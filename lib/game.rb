@@ -1,9 +1,9 @@
-Config = RbConfig if defined? RbConfig # Hack for deprecation warning.
+Config = RbConfig if defined? RbConfig unless defined? RSpec # Hack for deprecation warning.
 
 t = Time.now
 
 require 'bundler/setup'
-Bundler.require
+Bundler.require :default
 
 require 'forwardable'
 
@@ -50,10 +50,11 @@ module Game
   class << self
     def run(args)
       opts = Slop.parse args, help: true do
-        banner "ruby #{$0} [options]\n"
+        banner "ruby bin#{File::SEPARATOR}game_of_scones [options]\n"
 
         on :server, 'Create dedicated server'
         on :port, 'UDP port to use', as: :int, default: 7500
+
         on :v, :version, 'Game version'
       end
 
@@ -61,10 +62,10 @@ module Game
         puts "Game version: #{VERSION}"
 
       elsif opts.server?
-        raise NotImplimentedError
+        raise NotImplementedError
         Server.new.start opts.port
 
-      else
+      elsif !opts.help?
         Window.new.show
       end
     end
