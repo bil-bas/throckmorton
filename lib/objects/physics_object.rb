@@ -7,11 +7,22 @@ module Game
 
     MARGIN = 2
 
-    attr_reader :speed
+    class << self
+      attr_accessor :next_id
+      def init
+        @next_id = 0
+      end
+    end
+    init
 
-    def exists?; !destroyed?; end
-    def destroyed?; !@shape.object; end
-    def tile; parent.map.tile_at_coordinate x, y; end
+    attr_reader :speed, :id
+
+    def time; parent.time; end
+    def frame_time; parent.frame_time; end
+    def exists?; !destroyed? end
+    def destroyed?; !@shape.object end
+    def tile; parent.map.tile_at_coordinate x, y end
+    def id_string; id ? "##{id}" : "" end
 
     def initialize(options = {})
       options = {
@@ -19,6 +30,9 @@ module Game
       }.merge! options
 
       @speed = options[:speed]
+
+      @id = PhysicsObject.next_id
+      PhysicsObject.next_id += 1
 
       @body = CP::Body.new(1000, Float::INFINITY)
 
@@ -75,6 +89,8 @@ module Game
       @shape.object = nil
 
       super
+
+      info { "Destroyed #{short_name} at #{tile.grid_position}" }
     end
   end
 end

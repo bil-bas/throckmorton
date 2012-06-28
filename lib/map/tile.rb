@@ -4,9 +4,10 @@ module Game
 
     attr_reader :map, :grid_x, :grid_y
 
-    def seen?; @seen; end
-    def blocks_movement?; @blocks_movement; end
-    def blocks_sight?; @blocks_sight; end
+    def seen?; @seen end
+    def blocks_movement?; @blocks_movement end
+    def blocks_sight?; @blocks_sight end
+    def grid_position; [@grid_x, @grid_y] end
 
     def seen=(value)
       map.reveal self if value && !@seen
@@ -50,22 +51,6 @@ module Game
       super x: x, y: y, zorder: ZOrder::TILES, image: @@images[type]
 
       parent.space.add_shape @shape if @shape
-
-
-      unless blocks_movement? && distance(x, y, *map.start_position) > 20
-        case rand(100)
-          when 0..10
-            @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten
-            parent.add_object Enemy.new(@@possibilities.sample, x, y)
-
-          when 15..17
-            parent.add_object HealthPack.new(x, y)
-          when 18
-            parent.add_object EnergyPack.new(x, y)
-          when 20..26
-            parent.add_object Treasure.new(x, y)
-        end
-      end
     end
 
     def to_s

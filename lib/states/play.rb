@@ -22,6 +22,7 @@ module Game
       @world_scale = DEFAULT_WORLD_SCALE
 
       @map = Map.new 33, 27 # Odd width to fit corridors in nicely.
+      @map.populate
       @player = Player.new *@map.start_position
 
       on_input :escape do

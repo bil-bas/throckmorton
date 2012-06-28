@@ -60,4 +60,4 @@ require_relative "objects/enemy"
 require_relative "objects/projectile"
 require_relative "objects/treasure"
 
-debug { "Loaded scripts in #{Time.now - t}s" }
+info { "Loaded scripts in #{Time.now - t}s" }

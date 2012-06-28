@@ -2,12 +2,11 @@ module Game
   class Projectile < PhysicsObject
     COLOR = Color.rgb(0, 255, 255)
 
-    attr_reader :damage
+    attr_reader :damage, :type
 
-    def time; parent.time; end    
-    def frame_time; parent.frame_time; end
+    def short_name; "#{type}#{id_string}" end
     
-    def initialize(x, y, direction, options = {})
+    def initialize(type, x, y, direction, options = {})
       options = {
         rotation_speed: 0.0,
         speed: 100,
@@ -16,7 +15,8 @@ module Game
         color: Color::CYAN,
         damage: 1,
       }.merge! options
-      
+
+      @type = type
       @speed = options[:speed]
       @damage = options[:damage]
       @duration = options[:duration]
@@ -29,6 +29,8 @@ module Game
       @created_at = time
 
       move offset_x(direction, 1), offset_y(direction, 1)
+
+      info { "Created #{short_name} at #{tile.grid_position}" }
     end
     
     def update

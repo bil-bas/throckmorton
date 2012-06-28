@@ -8,6 +8,7 @@ module Game
     def initialize(options = {})
       @max_health = @health = options[:health] || raise
       super(options)
+
     end
 
     def health=(value)

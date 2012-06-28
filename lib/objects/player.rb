@@ -14,10 +14,9 @@ module Game
     def fire_primary?; energy >= @fire_primary_cost end
     def fire_secondary?; energy >= @fire_secondary_cost end
     def can_see?(tile); @visible_tile_positions.include? [tile.grid_x, tile.grid_y] end
+    def short_name; "player"; end
 
     def initialize(x, y)
-      info { "Creating player at #{x}, #{y}" }
-
       @score = 0
 
       @health_per_second = 0.5
@@ -38,11 +37,14 @@ module Game
       super x: x, y: y, health: 100, speed: 150,
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
+
+      info { "Created #{short_name} at #{tile.grid_position}" }
       
       on_input :left_mouse_button do
         if fire_primary?
           self.energy -= @fire_primary_cost
-          bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
+          bullet = Projectile.new :zap,
+                                  self.x + offset_x(angle, SHOOT_OFFSET),
                                   self.y + offset_y(angle, SHOOT_OFFSET),
                                   angle,
                                   rotation_speed: 30,
@@ -58,7 +60,8 @@ module Game
         if fire_secondary?
           self.energy -= @fire_secondary_cost
           (0...360).step(30) do |angle|
-            bullet = Projectile.new self.x + offset_x(angle, SHOOT_OFFSET),
+            bullet = Projectile.new :burst,
+                                    self.x + offset_x(angle, SHOOT_OFFSET),
                                     self.y + offset_y(angle, SHOOT_OFFSET),
                                     angle,
                                     speed: 40,

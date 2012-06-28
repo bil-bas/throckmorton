@@ -82,5 +82,24 @@ module Game
         lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE
       end
     end
+
+    # Fill with mobs and objects.
+    def populate
+      player_position = start_position
+      @tiles.flatten.reject {|t| t.blocks_movement? || distance(t.x, t.y, *player_position) < 20 }.each do |tile|
+        case rand(100)
+          when 0..10
+            @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten
+            parent.add_object Enemy.new(@@possibilities.sample, tile.x, tile.y)
+
+          when 15..17
+            parent.add_object HealthPack.new(tile.x, tile.y)
+          when 18
+            parent.add_object EnergyPack.new(tile.x, tile.y)
+          when 20..26
+            parent.add_object Treasure.new(tile.x, tile.y)
+        end
+      end
+    end
   end
 end

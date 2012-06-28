@@ -1,6 +1,8 @@
 module Game
   # Items are picked up by the player.
   class Item < PhysicsObject
+    def short_name; "#{self.class}#{id_string}" end
+
     def initialize(options)
       options = {
           zorder: ZOrder::ITEM,
@@ -10,6 +12,8 @@ module Game
       super options
 
       @shape.sensor = true
+
+      info { "Created #{short_name} at #{tile.grid_position}" }
     end
 
     def draw

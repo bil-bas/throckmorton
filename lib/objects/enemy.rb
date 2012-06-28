@@ -3,7 +3,8 @@ module Game
     WIDTH = 17
     SHOOT_OFFSET = 14
 
-    attr_reader :damage
+    attr_reader :damage, :type
+    def short_name; "#{type}#{id_string}" end
 
     class << self
       def config
@@ -30,6 +31,8 @@ module Game
       super x: x, y: y, scale: config[:scale], health: config[:health],
             image: @@image, zorder: ZOrder::ENEMY,
             collision_type: :enemy, speed: config[:speed]
+
+      info { "Created #{short_name} at #{tile.grid_position}" }
     end
 
     def update
@@ -55,7 +58,8 @@ module Game
     def fire_ranged
       if rand() <= @ranged[:fire_chance] && line_of_sight?(parent.player.tile)
         angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
-        bullet = Projectile.new x + offset_x(angle, SHOOT_OFFSET),
+        bullet = Projectile.new :arrow,
+                                x + offset_x(angle, SHOOT_OFFSET),
                                 y + offset_y(angle, SHOOT_OFFSET),
                                 angle,
                                 speed: @ranged[:speed],
