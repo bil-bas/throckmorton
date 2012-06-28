@@ -14,11 +14,13 @@ module Game
       unless defined? @@image
         @@image = TexPlay.create_image $window, WIDTH, WIDTH
         @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
+        @@image.set_pixel WIDTH / 2 - 1, 1
+        @@image.set_pixel WIDTH / 2 + 1, 1
       end
 
       @archer = rand(100) < 20
       if @archer
-        scale = 0.75 # goblin archer?
+        scale = 0.6 # goblin archer?
         @health = 1
       else
         scale = [0.9, 0.9, 0.9, 1.2].sample # orcs and ogre?
@@ -39,6 +41,7 @@ module Game
     def update
       reset_forces
       push parent.player.x, parent.player.y, (@archer ? 3 : 5)
+      self.angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
 
       if @archer && rand(100) == 0 && line_of_sight?(parent.player.tile)
         angle = Gosu::angle(x, y, parent.player.x, parent.player.y)

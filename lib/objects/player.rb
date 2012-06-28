@@ -36,7 +36,8 @@ module Game
 
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(50, 50, 50), fill: true
-      image.set_pixel WIDTH / 2, 1
+      image.set_pixel WIDTH / 2 - 1, 1
+      image.set_pixel WIDTH / 2 + 1, 1
 
       super x: x, y: y,
             image: image, zorder: ZOrder::PLAYER,
@@ -184,7 +185,7 @@ module Game
 
         if @visible_tile_positions.include? [x / scale_i, y / scale_i]
           distance = distance(player_x, player_y, x / scale_f, y / scale_f)
-          [0.1, 0.1, 0, Math::log(distance / 4) + periodic_brightness]
+          [0.1, 0.1, 0, Math::log((2 * distance) / visual_range) + periodic_brightness]
         else
           Map::NO_LIGHT_COLOR
         end
