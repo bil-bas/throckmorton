@@ -58,7 +58,7 @@ module Game
                                   collision_type: :player_projectile,
                                   group: :player_projectiles,
                                   duration: 0.5,
-                                  damage: 10
+                                  damage: 5..15
           parent.add_object bullet
         end
       end
@@ -76,7 +76,7 @@ module Game
                                     collision_type: :player_projectile,
                                     group: :player_projectiles,
                                     duration: 0.4,
-                                    damage: 30
+                                    damage: 25..40
 
             parent.add_object bullet
           end
