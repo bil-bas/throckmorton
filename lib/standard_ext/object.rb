@@ -4,6 +4,7 @@ class Object
     def logger(source = nil)
       source = "-" if source == "Object"
 
+      # TODO: This is woefully wasteful. Probably better to create a bespoke outputter eventually.
       unless @loggers.has_key? source
         @loggers[source] = Log4r::Logger.new source
         @loggers[source].outputters << @std_outputter if @std_outputter
@@ -23,7 +24,9 @@ class Object
         @std_outputter.formatter = formatter
       end
 
-      @file_outputter = Log4r::FileOutputter.new 'game_log', filename:  'game.log'
+      log_file = File.join(USER_DATA_PATH, "#{APP_NAME.downcase}.log")
+      File.delete log_file rescue nil
+      @file_outputter = Log4r::FileOutputter.new 'game_log', filename: log_file
       @file_outputter.formatter = formatter
     end
   end

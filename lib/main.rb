@@ -1,11 +1,23 @@
 Config = RbConfig if defined? RbConfig unless defined? RSpec # Hack for deprecation warning.
 
+require 'forwardable'
+require 'fileutils'
+
+APP_NAME = "Game_of_Scones"
+
+USER_DATA_PATH = if ENV['APPDATA']
+                   pretty_name = APP_NAME.split("_").map(&:capitalize).join(" ").gsub(/ (?:And|Or|Of) /, &:downcase)
+                   File.join ENV['APPDATA'].gsub("\\", "/"), pretty_name
+                 else
+                   File.expand_path "~/.#{APP_NAME}"
+                 end
+
+FileUtils.mkdir_p USER_DATA_PATH
+
 t = Time.now
 
 require 'bundler/setup'
 Bundler.require :default
-
-require 'forwardable'
 
 require_relative 'standard_ext/object' # Set up logging
 
@@ -19,6 +31,8 @@ module ZOrder
 end
 
 t = Time.now
+
+
 
 require_relative "standard_ext/class"
 require_relative "chipmunk_ext/space"
