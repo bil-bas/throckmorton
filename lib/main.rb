@@ -41,6 +41,7 @@ require_relative "chingu_ext/game_object"
 require_relative "game"
 require_relative "version"
 require_relative "window"
+require_relative "server"
 
 require_relative "states/play"
 

@@ -1,4 +1,4 @@
-require_relative "teststrap"
+require_relative "../teststrap"
 
 describe "Game" do
   describe "run" do
@@ -7,7 +7,7 @@ describe "Game" do
 ruby bin#{File::SEPARATOR}game_of_scones [options]
 
         --server       Create dedicated server
-        --port         UDP port to use
+        --port         UDP port to use (default: 7500)
     -v, --version      Game version
     -h, --help         Display this help message.
 END
@@ -23,16 +23,13 @@ END
     end
 
     it "should start up as server with default port" do
-      pending "server implementation"
-      mock(Game::Server).new.mock!.listen 7500
+      mock(Game::Server).new 7500
       Game.run %w{--server}
     end
 
     it "should start up as server with specified port" do
-      pending "server implementation"
-
-      mock(Game::Server).new.mock!.listen 99
-      Game.run ["--server", "--port 99"]
+      mock(Game::Server).new 99
+      Game.run %w{--server --port=99}
     end
   end
 end
