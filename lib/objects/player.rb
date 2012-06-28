@@ -77,7 +77,7 @@ module Game
     def update
       self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
       @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
-      @health = [@health + @health_per_second * parent.frame_time, @max_health].min
+      @health += @health_per_second * parent.frame_time
 
       if holding_any? :up, :w
         if holding_any? :left, :a
