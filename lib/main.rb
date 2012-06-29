@@ -1,5 +1,10 @@
 Config = RbConfig if defined? RbConfig unless defined? RSpec # Hack for deprecation warning.
 
+if $0 == __FILE__
+  puts "Run the game using: ruby bin/game_of_scones"
+  exit 1
+end
+
 require 'forwardable'
 require 'fileutils'
 
