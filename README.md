@@ -40,6 +40,6 @@ Terrain
 
 * Ground
 * Wall (blocks move/sight/attack)
-* Rocks (blocks move/attack)
+* Rocks (blocks move)
 * Lava (Enemies won't enter it, but hurts player if they move over it)
 * Water (no effect so far)

@@ -2,7 +2,7 @@
   :frequency: 10
 
   :max_health: 10
-  :speed: 6
+  :speed: 9
   :scale: 0.6
 
   :melee:
@@ -20,7 +20,7 @@
   :frequency: 5
 
   :max_health: 40
-  :speed: 4
+  :speed: 6
   :scale: 1.2
 
   :melee:
@@ -42,7 +42,7 @@
   :frequency: 5
 
   :max_health: 1
-  :speed: 10
+  :speed: 12
   :scale: 0.2
 
   :melee:

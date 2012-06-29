@@ -41,7 +41,7 @@ module Game
       image.set_pixel WIDTH / 2 - 1, 3
       image.set_pixel WIDTH / 2 + 1, 3
 
-      super x: x, y: y, max_health: 100, speed: 150,
+      super x: x, y: y, max_health: 100, speed: 18,
             image: image, zorder: ZOrder::PLAYER,
             collision_type: :player
 
@@ -89,71 +89,40 @@ module Game
       @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
       self.health += @health_per_second * parent.frame_time
 
-      if holding_any? :up, :w
-        if holding_any? :left, :a
-          @facing_x, @facing_y = -DIAGONAL, -DIAGONAL
-        elsif holding_any? :right, :d
-          @facing_x, @facing_y = DIAGONAL, -DIAGONAL
-        else          
-          @facing_x, @facing_y = 0, -1
-        end
-        
-      elsif holding_any? :down, :s
-        if holding_any? :left, :a
-          @facing_x, @facing_y = -DIAGONAL, DIAGONAL
-        elsif holding_any? :right, :d
-          @facing_x, @facing_y = DIAGONAL, DIAGONAL
-        else          
-          @facing_x, @facing_y = 0, +1
-        end
-        
-      elsif holding_any? :left, :a
-        @facing_x, @facing_y = -1, 0
-        
-      elsif holding_any? :right, :d
-        @facing_x, @facing_y = +1, 0
-      end     
-      
-      if holding_any? :w, :a, :s, :d,
-                      :up, :down, :left, :right
-        move_x = @facing_x * @speed * parent.frame_time
-        move_y = @facing_y * @speed * parent.frame_time
+      reset_forces
 
-        if move_x != 0
-          if move_x > 0
-            blocked_tr = tile_blocked? width / 2 + move_x, -height / 2
-            blocked_br = tile_blocked? width / 2 + move_x, height / 2
+      move_angle =  if holding_any? :up, :w
+                      if holding_any? :left, :a
+                        305
+                      elsif holding_any? :right, :d
+                        45
+                      else
+                        0
+                      end
 
-            unless blocked_tr or blocked_br
-              self.x += move_x
-            end
-          elsif move_x < 0
-            blocked_tl = tile_blocked? -width / 2 + move_x, -height / 2
-            blocked_bl = tile_blocked? -width / 2 + move_x, height / 2
+                    elsif holding_any? :down, :s
+                      if holding_any? :left, :a
+                        225
+                      elsif holding_any? :right, :d
+                        135
+                      else
+                        180
+                      end
 
-            unless blocked_tl or blocked_bl
-              self.x += move_x
-            end
-          end
-        end
+                    elsif holding_any? :left, :a
+                      270
 
-        if move_y != 0
-          if move_y > 0
-            blocked_bl = tile_blocked? -width / 2, height / 2 + move_y
-            blocked_br = tile_blocked? width / 2,  height / 2 + move_y
+                    elsif holding_any? :right, :d
+                      90
+                    end
 
-            unless blocked_bl or blocked_br
-              self.y += move_y
-            end
-          elsif move_y < 0
-            blocked_tl = tile_blocked? -width / 2, -height / 2 + move_y
-            blocked_tr = tile_blocked? width / 2,  -height / 2 + move_y
 
-            unless blocked_tl or blocked_tr
-              self.y += move_y
-            end
-          end
-        end
+      if move_angle
+        move offset_x(move_angle, 1), offset_y(move_angle, 1)
+      else
+        # Slow down quickly.
+        @body.vel.x *= 0.9
+        @body.vel.y *= 0.9
       end
 
       see_tiles

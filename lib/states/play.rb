@@ -108,9 +108,6 @@ module Game
       @time = Time.now.to_f
 
       unless @paused
-        @player.reset_forces
-        #@objects.each {|o| o.reset_forces }
-
         @physics_time += frame_time
         num_steps = (@physics_time / PHYSICS_STEP).round
         @physics_time -= num_steps * PHYSICS_STEP
