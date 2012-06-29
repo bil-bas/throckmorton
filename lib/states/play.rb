@@ -67,9 +67,14 @@ module Game
       # Lava hurts you, but enemies just stand at the edge :)
       @space.on_collision(:player, :lava) do |player, lava|
         if server?
-          player.health -= 10 * frame_time
+          player.health -= 0.2
         end
         false
+      end
+
+      # Ogre doesn't care about lava and just runs through!
+      @space.on_collision(:enemy, :lava) do |entity, lava|
+        entity.type != :ogre
       end
 
       # No friendly fire.
@@ -90,9 +95,13 @@ module Game
         false
       end
 
-      # Ticks are afraid of the water.
+      # Ticks are afraid of the water, but can pass though small places.
       @space.on_collision(:enemy, :water) do |entity, water|
         entity.type == :tick
+      end
+
+      @space.on_collision(:enemy, :obstacle) do |entity, water|
+        entity.type != :tick
       end
 
       @space.on_collision(:player_projectile, :enemy_projectile) do |p1, p2|
