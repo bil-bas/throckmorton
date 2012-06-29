@@ -26,7 +26,7 @@ Enemy names are arbitrary and subject to changes based on final setting.
 * Goblin archers - small, weak, try to stay at range and shoot arrows
 * Orcs - medium strength
 * Ogres - high damage and health, but slow
-* Ticks - tiny, weak, but very fast-moving
+* Ticks - tiny, weak, but very fast-moving. Afraid of water!
 
 Objects
 -------

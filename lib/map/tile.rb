@@ -27,7 +27,7 @@ module Game
       @@body.pos = CP::Vec2.new(0, 0)
 
       case @type
-        when :wall, :lava
+        when :wall, :lava, :water
           vertices = [CP::Vec2.new(-WIDTH / 2, -WIDTH / 2),
                       CP::Vec2.new(-WIDTH / 2, +WIDTH / 2),
                       CP::Vec2.new(+WIDTH / 2, +WIDTH / 2),
@@ -108,6 +108,8 @@ module Game
             @shape.collision_type = :obstacle
           when :lava
             @shape.collision_type = :lava
+          when :water
+            @shape.collision_type = :water
         end
 
         parent.space.add_shape @shape

@@ -85,6 +85,16 @@ module Game
         false
       end
 
+      # Most things can move through water happily.
+      @space.on_collision([:player, :player_projectile, :enemy_projectile], :water) do |entity, water|
+        false
+      end
+
+      # Ticks are afraid of the water.
+      @space.on_collision(:enemy, :water) do |entity, water|
+        entity.type == :tick
+      end
+
       @space.on_collision(:player_projectile, :enemy_projectile) do |p1, p2|
         if server?
           p1.destroy
