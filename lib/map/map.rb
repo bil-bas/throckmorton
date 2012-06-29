@@ -61,7 +61,11 @@ module Game
       @background ||= $window.record(width, height) do
         t = Time.now
         @tiles.each do |row|
-          row.each {|t| t.draw }
+          $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
+            $window.scale 2 do
+              row.each {|t| t.draw }
+            end
+          end
         end
         info "Recorded tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
       end

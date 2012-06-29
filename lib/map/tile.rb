@@ -79,10 +79,12 @@ module Game
 
       @@images ||= {}
       unless @@images.has_key? @type
-        @@images[@type] = TexPlay.create_image $window, WIDTH, WIDTH, color: color
+        @@images[@type] = TexPlay.create_image $window, WIDTH / 2, WIDTH / 2,
+                                               color: color
         @@images[@type].clear color_control: lambda {|c|
           c[0..2].map {|c| c + rand(-5..5) * 0.003 }
         }
+
 
         if @type == :rocks
           20.times do
@@ -90,12 +92,14 @@ module Game
             #@shape = CP::Shape::Circle.new(@@body, radius,
             #                               CP::Vec2.new(x - WIDTH / 2 + rock_x,
             #                                            y - WIDTH / 2 + rock_y))
-            @@images[@type].circle rock_x, rock_y, radius, color: Color.rgb(rand(80..120), rand(30..50), 10), fill: true
+            @@images[@type].circle rock_x, rock_y, radius, fill: true,
+                                   color: Color.rgb(rand(80..120), rand(30..50), 10)
           end
         end
       end
 
-      super x: x, y: y, zorder: ZOrder::TILES, image: @@images[@type], angle: [0, 90, 180, 270].sample
+      super x: x, y: y, zorder: ZOrder::TILES, image: @@images[@type],
+            angle: [0, 90, 180, 270].sample
 
       if @shape
         @shape.group = 1
@@ -114,6 +118,10 @@ module Game
 
         parent.space.add_shape @shape
       end
+    end
+
+    def draw
+      image.draw x / 2, y / 2, zorder
     end
 
     def to_s
