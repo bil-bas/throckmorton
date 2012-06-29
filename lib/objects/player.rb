@@ -36,7 +36,7 @@ module Game
       @visual_range = 5
 
       image = TexPlay.create_image $window, WIDTH, WIDTH
-      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(200, 200, 200), fill: true
+      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(20, 160, 100), fill: true
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
       image.set_pixel WIDTH / 2 - 1, 3
       image.set_pixel WIDTH / 2 + 1, 3

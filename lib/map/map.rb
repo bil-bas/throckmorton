@@ -17,11 +17,11 @@ module Game
       @tiles = grid_height.times.map do |y|
         grid_width.times.map do |x|
           if x == 0 || y == 0 || x == @grid_width - 1 || y == @grid_height - 1
-            type = :blue
+            type = :wall
           elsif distance(x, y, @grid_width / 2, @grid_height / 2) < 5
-            type = :white
+            type = ([:floor] * 10 + [:water]).sample
           else
-            type = ([:white] * 20 + [:blue] * 10).sample
+            type = ([:floor] * 30 + [:water] + [:rocks] + [:wall] * 13).sample
           end
 
           Tile.new self, x, y, type
@@ -86,7 +86,7 @@ module Game
     # Fill with mobs and objects.
     def populate
       player_position = start_position
-      @tiles.flatten.reject {|t| t.blocks_movement? || distance(t.x, t.y, *player_position) < 20 }.each do |tile|
+      @tiles.flatten.select {|t| t.spawn_object? && distance(t.x, t.y, *player_position) > 20 }.each do |tile|
         case rand(100)
           when 0..10
             @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten

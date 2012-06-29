@@ -18,7 +18,7 @@ module Game
       init_physics
       
       @time = Time.now.to_f
-      @server = false
+      @server = true
 
       @objects = []   
       
@@ -41,36 +41,54 @@ module Game
       @space.damping = 0.05
 
       @space.on_collision(:player, :enemy) do |player, enemy|
-        player.health -= rand enemy.damage
-        enemy.destroy
+        if server?
+          player.health -= rand enemy.damage
+          enemy.destroy
+        end
         false
       end
 
       @space.on_collision(:player, :enemy_projectile) do |player, projectile|
-        player.health -= rand projectile.damage
-        projectile.destroy
+        if server?
+          player.health -= rand projectile.damage
+          projectile.destroy
+        end
         false
       end
 
       @space.on_collision(:enemy, :player_projectile) do |enemy, projectile|
-        enemy.health -= rand projectile.damage
-        projectile.destroy
+        if server?
+          enemy.health -= rand projectile.damage
+          projectile.destroy
+        end
         false
       end
 
       # No friendly fire.
-      @space.on_collision(:enemy, :enemy_projectile) do |enemy, projectile|
+      @space.on_collision(:enemy, :enemy_projectile) do
+        false
+      end
+      @space.on_collision(:player, :player_projectile) do
+        false
+      end
+
+      # Can fire over obstacles (but can't walk through them)
+      @space.on_collision([:player_projectile, :enemy_projectile], :obstacle) do
         false
       end
 
       @space.on_collision(:player_projectile, :enemy_projectile) do |p1, p2|
-        p1.destroy
-        p2.destroy
+        if server?
+          p1.destroy
+          p2.destroy
+        end
         false
       end
 
       @space.on_collision(:player, :item) do |player, item|
-        item.activated_by player
+        if server?
+          item.activated_by player
+        end
         false
       end
 
