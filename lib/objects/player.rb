@@ -6,10 +6,12 @@ module Game
     WIDTH = 17
     SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
+    include LightSource
+
     trait :timer
 
     attr_accessor :max_energy, :score
-    attr_reader :visual_range, :energy
+    attr_reader :energy
 
     def fire_primary?; energy >= @fire_primary_cost end
     def fire_secondary?; energy >= @fire_secondary_cost end
@@ -33,8 +35,6 @@ module Game
       @fire_primary_cost = 4
       @fire_secondary_cost = 25
 
-      @visual_range = 5
-
       image = TexPlay.create_image $window, WIDTH, WIDTH
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(20, 160, 100), fill: true
       image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
@@ -43,7 +43,7 @@ module Game
 
       super x: x, y: y, max_health: 100, speed: 18,
             image: image, zorder: ZOrder::PLAYER,
-            collision_type: :player
+            collision_type: :player, illumination_range: 5
 
       info { "Created #{short_name} at #{tile.grid_position}" }
       
@@ -124,51 +124,8 @@ module Game
         @body.vel.x *= 0.9
         @body.vel.y *= 0.9
       end
-
-      see_tiles
       
       super
-    end
-
-    def see_tiles
-      map = parent.map
-
-      tile = self.tile
-      tile_x, tile_y = tile.grid_x, tile.grid_y
-      @visible_tile_positions = Set.new # Store list of [x, y] that are visible.
-
-      ((tile_y - @visual_range)..(tile_y + @visual_range)).each do |offset_y|
-        ((tile_x - @visual_range)..(tile_x + @visual_range)).each do |offset_x|
-          if distance(tile_x, tile_y, offset_x, offset_y) <= @visual_range
-            tile = map.tile_at_grid offset_x, offset_y
-            if tile && line_of_sight?(tile)
-              @visible_tile_positions << [tile.grid_x, tile.grid_y]
-              tile.seen = true unless tile.seen?
-            end
-          end
-        end
-      end
-
-      update_lighting
-    end
-
-    def update_lighting
-      player_x, player_y = x / Tile::WIDTH, y / Tile::WIDTH
-      scale_i = Map::LIGHTING_SCALE
-      scale_f = scale_i.to_f
-      parent.map.lighting_overlay.circle player_x * scale_i, player_y * scale_i,
-                                         visual_range * scale_i, fill: true,
-                                         color_control: lambda {|c, x, y|
-
-        if @visible_tile_positions.include? [x / scale_i, y / scale_i]
-          # Makes the tile lighter and a bit less red (more cyan).
-          distance = distance(player_x, player_y, x / scale_f, y / scale_f)
-          brightness = 1 - Math::log((2 * distance) / visual_range)
-          [brightness * 0.9, brightness, brightness, 1]
-        else
-          Map::NO_LIGHT_COLOR
-        end
-      }
     end
 
     def tile_blocked?(x, y)

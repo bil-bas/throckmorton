@@ -6,6 +6,8 @@ module Game
 
     attr_reader :grid_width, :grid_height, :width, :height
     attr_reader :lighting_overlay
+
+    LIGHTING_UPDATE_INTERVAL = 1 / 10.0
      
     def initialize(grid_width, grid_height = grid_width)
       @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
@@ -37,7 +39,15 @@ module Game
     end
 
     def update
-      @lighting_overlay.clear color: NO_LIGHT_COLOR
+      @duration_until_lighting_update ||= LIGHTING_UPDATE_INTERVAL
+      @duration_until_lighting_update -= parent.frame_time
+      if @duration_until_lighting_update <= 0
+        @duration_until_lighting_update += LIGHTING_UPDATE_INTERVAL
+
+        @lighting_overlay.clear color: NO_LIGHT_COLOR
+
+        parent.player.illuminate
+      end
     end
 
     def tile_at_grid(x, y)

@@ -54,6 +54,7 @@ require_relative "map/map"
 require_relative "map/tile"
 
 require_relative "mixins/line_of_sight"
+require_relative "mixins/light_source"
 
 require_relative "objects/physics_object"
 require_relative "objects/item"
