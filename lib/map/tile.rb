@@ -7,6 +7,7 @@ module Game
     def seen?; @seen end
     def blocks_movement?; @blocks_movement end
     def blocks_sight?; @blocks_sight end
+    def blocks_attack?; @blocks_attack end
     def grid_position; [@grid_x, @grid_y] end
     def spawn_object?; @type == :floor end
 
@@ -26,12 +27,13 @@ module Game
       @@body.pos = CP::Vec2.new(0, 0)
 
       case @type
-        when :wall
+        when :wall, :lava
           vertices = [CP::Vec2.new(-WIDTH / 2, -WIDTH / 2),
                       CP::Vec2.new(-WIDTH / 2, +WIDTH / 2),
                       CP::Vec2.new(+WIDTH / 2, +WIDTH / 2),
                       CP::Vec2.new(+WIDTH / 2, -WIDTH / 2)]
           @shape = CP::Shape::Poly.new(@@body, vertices, CP::Vec2.new(x, y))
+
         when :rocks
           @shape = CP::Shape::Circle.new(@@body, 15, CP::Vec2.new(x, y))
       end
@@ -40,6 +42,7 @@ module Game
         when :floor
           @blocks_movement = false
           @blocks_sight = false
+          @blocks_attack = false
 
           @body = @shape = nil
 
@@ -48,18 +51,28 @@ module Game
         when :water
           @blocks_movement = false
           @blocks_sight = false
+          @blocks_attack = false
 
           color = Color.rgb 0, 50, 100
+
+        when :lava
+          @blocks_movement = false
+          @blocks_sight = false
+          @blocks_attack = false
+
+          color = Color.rgb 200, 0, 0
 
         when :wall
           @blocks_movement = true
           @blocks_sight = true
+          @blocks_attack = true
 
           color = Color.rgb 60, 30, 10
 
         when :rocks
           @blocks_movement = true
           @blocks_sight = false
+          @blocks_attack = true
 
           color = Color.rgb 110, 100, 100
       end
@@ -72,8 +85,8 @@ module Game
         }
 
         if @type == :rocks
-          30.times do
-            rock_x, rock_y, radius = rand(4..28), rand(4..28), rand(3..5)
+          20.times do
+            rock_x, rock_y, radius = rand(4..28), rand(4..28), rand(2..4)
             #@shape = CP::Shape::Circle.new(@@body, radius,
             #                               CP::Vec2.new(x - WIDTH / 2 + rock_x,
             #                                            y - WIDTH / 2 + rock_y))
@@ -93,6 +106,8 @@ module Game
             @shape.collision_type = :wall
           when :rocks
             @shape.collision_type = :obstacle
+          when :lava
+            @shape.collision_type = :lava
         end
 
         parent.space.add_shape @shape

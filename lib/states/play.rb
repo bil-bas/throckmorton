@@ -64,6 +64,14 @@ module Game
         false
       end
 
+      # Lava hurts you, but enemies just stand at the edge :)
+      @space.on_collision(:player, :lava) do |player, lava|
+        if server?
+          player.health -= 10 * frame_time
+        end
+        false
+      end
+
       # No friendly fire.
       @space.on_collision(:enemy, :enemy_projectile) do
         false
@@ -72,8 +80,8 @@ module Game
         false
       end
 
-      # Can fire over obstacles (but can't walk through them)
-      @space.on_collision([:player_projectile, :enemy_projectile], :obstacle) do
+      # Can fire over obstacles & lava (but can't walk through them).
+      @space.on_collision([:player_projectile, :enemy_projectile], [:obstacle, :lava]) do
         false
       end
 

@@ -5,13 +5,27 @@ module Game
     end
 
     def line_of_sight?(target_tile)
-      line_of_sight_blocked_by(target_tile).nil?
+      line_blocked_by(target_tile, :blocks_sight?).nil?
+    end
+
+    def line_of_attack?(target_tile)
+      line_blocked_by(target_tile, :blocks_attack?).nil?
+    end
+
+    def line_of_sight_blocked_by(target_tile)
+      line_blocked_by(target_tile, :blocks_sight?)
+    end
+
+    def line_of_attack_blocked_by(target_tile)
+      line_blocked_by(target_tile, :blocks_attack?)
     end
 
     # Returns the tile that blocks sight, otherwise nil.
     # Implements 'Bresenham's line algorithm'
     # @return [Tile, Wall, nil]
-    def line_of_sight_blocked_by(target_tile)
+    protected
+    def line_blocked_by(target_tile, type)
+
       raise unless target_tile.is_a? Tile
 
       # Check for the special case of looking diagonally.
@@ -28,8 +42,8 @@ module Game
         # 23.  OR  .34
         # 1..      12.
         # Blocked only if BOTH are blocked - return blockage from just one if both are blocked.
-        blockage1 = zig_zag_blocked_by(tile, step_x, step_y, dx - 1, true)
-        blockage2 = zig_zag_blocked_by(tile, step_x, step_y, dx - 1, false)
+        blockage1 = zig_zag_blocked_by(tile, step_x, step_y, dx - 1, true, type)
+        blockage2 = zig_zag_blocked_by(tile, step_x, step_y, dx - 1, false, type)
         if blockage1 && blockage2
           # Choose the blockage that is closest to us, since the other is irrelevant.
           [blockage1, blockage2].min_by do |blockage|
@@ -41,12 +55,12 @@ module Game
           blockage2
         end
       else
-        ray_trace_blocked_by tile, step_x, step_y, dx, dy
+        ray_trace_blocked_by tile, step_x, step_y, dx, dy, type
       end
     end
 
     protected
-    def zig_zag_blocked_by(from, step_x, step_y, length, x_first)
+    def zig_zag_blocked_by(from, step_x, step_y, length, x_first, type)
       current = from
       x, y = from.grid_x, from.grid_y
       map = parent.map
@@ -59,7 +73,7 @@ module Game
         end
 
         current = map.tile_at_grid(x, y)
-        return current if current.blocks_sight?
+        return current if current.send type
 
         if x_first
           y += step_y
@@ -68,14 +82,14 @@ module Game
         end
 
         current = map.tile_at_grid(x, y)
-        return current if current.blocks_sight?
+        return current if current.send type
       end
 
       nil
     end
 
     protected
-    def ray_trace_blocked_by(from, step_x, step_y, dx, dy)
+    def ray_trace_blocked_by(from, step_x, step_y, dx, dy, type)
       map = parent.map
       x, y = from.grid_x, from.grid_y
 
@@ -101,7 +115,7 @@ module Game
 
         # Look at the next tile and see which wall is in the way.
         current = map.tile_at_grid(x, y)
-        return current if current.blocks_sight?
+        return current if current.send type
       end
 
       nil

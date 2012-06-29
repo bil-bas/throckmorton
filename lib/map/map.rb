@@ -21,7 +21,7 @@ module Game
           elsif distance(x, y, @grid_width / 2, @grid_height / 2) < 5
             type = ([:floor] * 10 + [:water]).sample
           else
-            type = ([:floor] * 30 + [:water] + [:rocks] + [:wall] * 13).sample
+            type = ([:floor] * 40 + [:water] * 2 + [:rocks] + [:lava] + [:wall] * 16).sample
           end
 
           Tile.new self, x, y, type

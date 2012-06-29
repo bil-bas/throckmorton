@@ -62,7 +62,7 @@ module Game
     end
 
     def fire_ranged
-      if rand() <= @ranged[:fire_chance] && line_of_sight?(parent.player.tile)
+      if rand() <= @ranged[:fire_chance] && line_of_attack?(parent.player.tile)
         angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
         bullet = Projectile.new :arrow,
                                 x + offset_x(angle, SHOOT_OFFSET),
