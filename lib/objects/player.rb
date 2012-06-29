@@ -161,8 +161,10 @@ module Game
                                          color_control: lambda {|c, x, y|
 
         if @visible_tile_positions.include? [x / scale_i, y / scale_i]
+          # Makes the tile lighter and a bit less red (more cyan).
           distance = distance(player_x, player_y, x / scale_f, y / scale_f)
-          [0, 0.1, 0.05, Math::log((2 * distance) / visual_range)]
+          brightness = 1 - Math::log((2 * distance) / visual_range)
+          [brightness * 0.9, brightness, brightness, 1]
         else
           Map::NO_LIGHT_COLOR
         end

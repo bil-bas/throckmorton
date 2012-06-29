@@ -2,7 +2,7 @@ module Game
   class Map < BasicGameObject
     MINI_SCALE = 1 / 2.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
-    NO_LIGHT_COLOR = Color.rgba(0, 0, 0, 210) # Colour outside range of lighting.
+    NO_LIGHT_COLOR = Color.rgba(70, 70, 70, 255) # Colour outside range of lighting.
 
     attr_reader :grid_width, :grid_height, :width, :height
     attr_reader :lighting_overlay
@@ -83,7 +83,8 @@ module Game
     def draw_lighting
       $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
         @revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
-        lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE
+        lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE,
+                              Color::WHITE, :multiply
       end
     end
 
