@@ -26,11 +26,15 @@ module Game
 
       super options.merge(x: x, y: y, image: image, angle: direction)
 
+      if tile.blocks_attack?
+        destroy # Prevent
+      else
+        info { "Created #{short_name} at #{tile.grid_position}" }
+      end
+
       @created_at = time
 
       move offset_x(direction, 1), offset_y(direction, 1)
-
-      info { "Created #{short_name} at #{tile.grid_position}" }
     end
     
     def update
