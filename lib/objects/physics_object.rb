@@ -15,7 +15,7 @@ module Game
     end
     init
 
-    attr_reader :speed, :id
+    attr_reader :speed, :id, :body
     attr_accessor :velocity_x, :velocity_y
 
     def needs_sync?; true; end

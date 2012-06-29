@@ -66,6 +66,7 @@ module Game
 
       # Lava hurts you, but enemies just stand at the edge :)
       @space.on_collision(:player, :lava) do |player, lava|
+        player.body.vel *= 0.96
         if server?
           player.health -= 0.2
         end
@@ -91,12 +92,18 @@ module Game
       end
 
       # Most things can move through water happily.
-      @space.on_collision([:player, :player_projectile, :enemy_projectile], :water) do |entity, water|
+      @space.on_collision(:player, :water) do |entity, water|
+        player.body.vel *= 0.96
+        false
+      end
+
+      @space.on_collision([:player_projectile, :enemy_projectile], :water) do |entity, water|
         false
       end
 
       # Ticks are afraid of the water, but can pass though small places.
       @space.on_collision(:enemy, :water) do |entity, water|
+        entity.body.vel *= 0.96
         entity.type == :tick
       end
 
