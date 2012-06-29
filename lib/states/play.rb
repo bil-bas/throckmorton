@@ -103,8 +103,15 @@ module Game
 
       # Ticks are afraid of the water, but can pass though small places.
       @space.on_collision(:enemy, :water) do |entity, water|
-        entity.body.vel *= 0.96
-        entity.type == :tick
+        case entity.type
+          when :tick
+            true
+          when :goblin_archer
+            false # Good swimmers.
+          else
+            entity.body.vel *= 0.97 # Bad swimmers.
+            false
+        end
       end
 
       @space.on_collision(:enemy, :obstacle) do |entity, water|
