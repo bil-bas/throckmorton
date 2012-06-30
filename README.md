@@ -10,7 +10,7 @@ Currently, the favourite possible final name for the game is "Froglodytes" (Wher
 primitive, underground, froggish people).
 
 
-* Author: Spooner (Bil Bas)
+* Author: [Spooner (Bil Bas)](https://spooner.github.com) bil dot bagpuss @ gmail dot com
 * [Github Project](https://github.com/Spooner/game_of_scones)
 * [Wiki](https://github.com/Spooner/game_of_scones/wiki) (Includes description of what is currently implemented as well as a todo list)
 
