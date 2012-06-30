@@ -6,8 +6,6 @@ module Game
     WIDTH = 17
     SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
-    include Mixins::LightSource
-
     trait :timer
 
     attr_accessor :max_energy, :score

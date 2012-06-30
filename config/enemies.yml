@@ -16,7 +16,7 @@
     :fire_chance: 0.01 # Per frame.
 
 
-:ogre:
+:fire_beetle:
   :frequency: 5
 
   :max_health: 50

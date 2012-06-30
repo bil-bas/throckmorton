@@ -17,29 +17,3 @@ Controls
 * Fire with left mouse button (low energy cost)
 * AOE burst with right mouse button - shoots in all directions at once (high energy cost)
 * Hold tab: Map (also pauses in SP).
-
-Enemies
--------
-
-Enemy names are arbitrary and subject to changes based on final setting.
-
-* Goblin archers - small, weak, try to stay at range and shoot arrows
-* Orcs - medium strength
-* Fire Ogres - high damage and health, but slow. Immune to fire, so can walk through lava.
-* Ticks - tiny, weak, but very fast-moving. Afraid of water, but can squeeze past rockslides!
-
-Objects
--------
-
-* Health pack (green) Pick up automatically unless full health.
-* Energy pack (cyan) Pick up automatically unless full health.
-* Treasure chest (yellow) Adds score.
-
-Terrain
--------
-
-* Ground
-* Wall (blocks move/sight/attack)
-* Rocks (blocks move)
-* Lava (Enemies won't enter it, but hurts player if they move over it)
-* Water (no effect so far)

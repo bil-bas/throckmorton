@@ -43,6 +43,10 @@ module Game
     end
 
     def update
+      update_lighting
+    end
+
+    def update_lighting
       @duration_until_lighting_update ||= LIGHTING_UPDATE_INTERVAL
       @duration_until_lighting_update -= parent.frame_time
       if @duration_until_lighting_update <= 0
@@ -57,6 +61,10 @@ module Game
         # TODO: All these "static" tile's brightness should be pre-calculated!
         @tiles_by_type[:lava].each do |tile|
           tile.illuminate viewer, @lighting_overlay, range: 2
+        end
+
+        parent.objects.find_all {|o| o.is_a?(Entity) && o.type == :fire_beetle }.each do |object|
+          object.illuminate viewer, @lighting_overlay, range: 1
         end
       end
     end

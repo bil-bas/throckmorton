@@ -4,8 +4,8 @@ module Game
     attr_reader :pixel
     attr_reader :world_scale
     attr_reader :space
-    attr_reader :map, :player
-    
+    attr_reader :map, :player, :objects
+
     DEFAULT_WORLD_SCALE = 2
     PHYSICS_STEP = 1 / 60.0
 
@@ -73,9 +73,9 @@ module Game
         false
       end
 
-      # Ogre doesn't care about lava and just runs through!
+      # fire_beetle doesn't care about lava and just runs through!
       @space.on_collision(:enemy, :lava) do |entity, lava|
-        entity.type != :ogre
+        entity.type != :fire_beetle
       end
 
       # No friendly fire.

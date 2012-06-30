@@ -2,6 +2,8 @@ module Game
   class PhysicsObject < Chingu::GameObject
     extend Forwardable
 
+    include Mixins::LightSource
+
     def_delegators :"@body.pos", :x, :y, :x=, :y=
     def_delegators :"@body", :reset_forces
 
