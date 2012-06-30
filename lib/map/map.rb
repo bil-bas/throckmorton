@@ -15,7 +15,9 @@ module Game
       info "Creating map #{grid_width}x#{grid_height} (#{@width}x#{@height} pixels)"
       t = Time.now
       @grid_width, @grid_height = grid_width, grid_height
-      
+
+      @tiles_by_type = Hash.new {|h, k| h[k] = [] }
+
       @tiles = grid_height.times.map do |y|
         grid_width.times.map do |x|
           if x == 0 || y == 0 || x == @grid_width - 1 || y == @grid_height - 1
@@ -26,7 +28,9 @@ module Game
             type = ([:floor] * 40 + [:water] * 2 + [:rocks] + [:lava] + [:wall] * 16).sample
           end
 
-          Tile.new self, x, y, type
+          tile = Tile.new self, x, y, type
+          @tiles_by_type[type] << tile
+          tile
         end
       end
 
@@ -46,7 +50,14 @@ module Game
 
         @lighting_overlay.clear color: NO_LIGHT_COLOR
 
-        parent.player.illuminate
+        viewer = parent.player
+        parent.player.illuminate viewer, @lighting_overlay
+
+        # TODO: Should be illuminated by config (range and brightness and colour).
+        # TODO: All these "static" tile's brightness should be pre-calculated!
+        @tiles_by_type[:lava].each do |tile|
+          tile.illuminate viewer, @lighting_overlay, range: 2
+        end
       end
     end
 

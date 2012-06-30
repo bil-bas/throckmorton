@@ -43,6 +43,9 @@ require_relative "standard_ext/class"
 require_relative "chipmunk_ext/space"
 require_relative "chingu_ext/game_object"
 
+require_relative "mixins/line_of_sight"
+require_relative "mixins/light_source"
+
 require_relative "game"
 require_relative "version"
 require_relative "window"
@@ -52,9 +55,6 @@ require_relative "states/play"
 
 require_relative "map/map"
 require_relative "map/tile"
-
-require_relative "mixins/line_of_sight"
-require_relative "mixins/light_source"
 
 require_relative "objects/physics_object"
 require_relative "objects/item"

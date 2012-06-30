@@ -2,6 +2,8 @@ module Game
   class Tile < Chingu::GameObject
     WIDTH = 32
 
+    include Mixins::LightSource
+
     attr_reader :map, :grid_x, :grid_y, :type
 
     def seen?; @seen end
