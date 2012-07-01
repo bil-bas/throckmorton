@@ -1,6 +1,7 @@
 module Game
   class Tile < Chingu::GameObject
     WIDTH = 32
+    SCALE = 0.5 # Textures are 16x16, but blown up to 32x32 (compared to the non-terrain objects)
 
     include Mixins::LightSource
 
@@ -78,7 +79,7 @@ module Game
 
           color = Color.rgb 110, 100, 100
       end
-
+#=begin
       @@images ||= {}
       unless @@images.has_key? @type
         @@images[@type] = TexPlay.create_image $window, WIDTH / 2, WIDTH / 2,
@@ -102,6 +103,34 @@ module Game
 
       super x: x, y: y, zorder: ZOrder::TILES, image: @@images[@type],
             angle: [0, 90, 180, 270].sample
+#=end
+=begin
+      # USING PERLIN NOISES!
+
+      @@floor_noise ||= begin
+        generator = Perlin::Generator.new 128, 0.5, 1
+        generator.chunk 0, 0, 600, 500
+      end
+
+      image = TexPlay.create_image $window, WIDTH * SCALE, WIDTH * SCALE, color: color
+      reduced_x, reduced_y = (x * SCALE).round, (y * SCALE).round
+      image.clear color_control: lambda {|c, x, y|
+        c[0..2].map {|c| c + @@floor_noise[reduced_x + x][reduced_y + y] * 0.02 }
+      }
+
+      if @type == :rocks
+        20.times do
+          rock_x, rock_y, radius = rand(4..28), rand(4..28), rand(2..4)
+          #@shape = CP::Shape::Circle.new(@@body, radius,
+          #                               CP::Vec2.new(x - WIDTH / 2 + rock_x,
+          #                                            y - WIDTH / 2 + rock_y))
+          image.circle rock_x, rock_y, radius, fill: true,
+                                 color: Color.rgb(rand(80..120), rand(30..50), 10)
+        end
+      end
+
+      super x: x, y: y, zorder: ZOrder::TILES, image: image
+=end
 
       if @shape
         @shape.group = 1
@@ -123,7 +152,7 @@ module Game
     end
 
     def draw
-      image.draw x / 2, y / 2, zorder
+      image.draw x * SCALE, y * SCALE, zorder
     end
 
     def to_s
