@@ -31,6 +31,13 @@ info { "Loaded gems in #{Time.now - t}s" }
 include Gosu
 include Chingu
 
+# Setup Chingu's autoloading media directories.
+media_dir = File.expand_path("../../media", __FILE__)
+Image.autoload_dirs.unshift File.join(media_dir, 'images')
+Sample.autoload_dirs.unshift File.join(media_dir, 'sounds')
+Song.autoload_dirs.unshift File.join(media_dir, 'music')
+Font.autoload_dirs.unshift File.join(media_dir, 'fonts')
+
 module ZOrder
   TILES, PROJECTILES, ITEM, ENEMY, PLAYER, LIGHT, GUI, CURSOR = *(0..100)
 end
