@@ -3,8 +3,8 @@ require_relative 'message'
 module Game
   class Messages::CreateItem < Messages::Message
     class << self
-      def process(state, type, x, y, options = {})
-        state.add_object Item.const_get(type).new(x, y, options)
+      def process(state, type, x, y)
+        state.add_object Game.const_get(type).new(x, y)
       end
 
       protected

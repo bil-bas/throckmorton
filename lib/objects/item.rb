@@ -14,7 +14,7 @@ module Game
 
       @shape.sensor = true
 
-      Messages::CreateItem.send(self) if parent.server?
+      Messages::CreateItem.broadcast(self) if parent.server?
 
       info { "Created #{short_name} at #{tile.grid_position}" }
     end

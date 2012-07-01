@@ -9,8 +9,8 @@ module Game
     DEFAULT_WORLD_SCALE = 2
     PHYSICS_STEP = 1 / 60.0
 
-    def server?; @server; end
-    def client?; !@server; end
+    def server?; true end #@server end
+    def client?; true end #!@server; end
        
     def initialize
       super
@@ -20,19 +20,25 @@ module Game
       @time = Time.now.to_f
       @server = true
 
-      @objects = []   
-      
-      @pixel = TexPlay.create_image $window, 1, 1, color: :white
+      @objects = []
       @world_scale = DEFAULT_WORLD_SCALE
 
-      @map = Map.new 33, 27 # Odd width to fit corridors in nicely.
-      @map.populate
-      @player = Player.new *@map.start_position
-
-      on_input :escape do
-        pop_game_state
-        push_game_state self.class
+      @map = Map.new
+      if server?
+        @map.generate
+        @player = Player.new @map.width / 2, @map.height / 2
       end
+
+      if client?
+        @pixel = TexPlay.create_image $window, 1, 1, color: :white
+
+        on_input :escape do
+          pop_game_state
+          push_game_state self.class
+        end
+      end
+
+      Messages::Message.parent = self
     end
 
     def init_physics
@@ -153,7 +159,7 @@ module Game
         super
 
         if server?
-          Messages::Sync.send [@player] + @objects.reject {|o| o.needs_sync? }
+          Messages::Sync.broadcast [@player] + @objects.reject {|o| o.needs_sync? }
         end
       end
     end
@@ -167,27 +173,29 @@ module Game
     end   
 
     def draw
-      $window.scale world_scale do
-        $window.translate ($window.width / (world_scale * 2)) - @player.x.round, ($window.height / (world_scale * 2))  - @player.y.round do
-          @map.draw         
-          @objects.each {|o| o.draw }        
-          @player.draw
-        end          
+      if client?
+        $window.scale world_scale do
+          $window.translate ($window.width / (world_scale * 2)) - @player.x.round, ($window.height / (world_scale * 2))  - @player.y.round do
+            @map.draw
+            @objects.each {|o| o.draw }
+            @player.draw
+          end
+        end
+
+        if holding? :tab
+          draw_map_overlay
+          @paused = true
+        else
+          @paused = false
+        end
+
+        player.draw_gui
+
+        cursor_color = player.fire_primary? ?  Color.rgba(255, 0, 255, 150) : Color.rgba(100, 0, 100, 100)
+        pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 8, 8, cursor_color
+
+        super
       end
-
-      if holding? :tab
-        draw_map_overlay
-        @paused = true
-      else
-        @paused = false
-      end
-
-      player.draw_gui
-
-      cursor_color = player.fire_primary? ?  Color.rgba(255, 0, 255, 150) : Color.rgba(100, 0, 100, 100)
-      pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 8, 8, cursor_color
-
-      super    
     end
 
     def draw_map_overlay

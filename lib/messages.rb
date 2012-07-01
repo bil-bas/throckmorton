@@ -2,7 +2,7 @@ module Game
   module Messages
   end
 
-  %w{create_enemy create_item destroy set sync}.each do |message|
+  %w{create_enemy create_item create_map destroy set sync}.each do |message|
     require_relative "messages/#{message}"
 
     # Make sure the eiginclass knows the name of the class.

@@ -56,10 +56,13 @@ require_relative "mixins/light_source"
 require_relative "game"
 require_relative "version"
 require_relative "window"
-require_relative "server"
+
+require_relative "network/client"
+require_relative "network/server"
 
 require_relative "states/play"
 
+require_relative "map/world_maker"
 require_relative "map/map"
 require_relative "map/tile"
 

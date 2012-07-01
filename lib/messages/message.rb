@@ -3,19 +3,28 @@ module Game
     GUARANTEED = true
 
     class << self
-      attr_accessor :identifier
-
-      def name; self.class.name[/\w+$/] end
+      attr_accessor :identifier, :parent
 
       # Process incoming data.
       def process(state, *data)
         raise NotImplementedError
       end
 
-      def send(*data)
+      def post(player_id, *data)
         # TODO: Send data across network!
-        packet = [identifier, create_data(*data)].to_msgpack
-        #debug { [packet.length, packet] }
+        #@network.send_message player_id, packet(*data)
+        create_data(*data) # Just throw it away!
+        #process parent, *create_data(*data)
+      end
+
+      def broadcast(*data)
+        # TODO: Send data across network!
+        #@network.broadcast packet(*data)
+        post 0, *data
+      end
+
+      def packet(*data)
+        [identifier, create_data(*data)].to_msgpack
       end
 
       protected

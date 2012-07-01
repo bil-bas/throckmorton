@@ -18,7 +18,7 @@ module Game
 
     def energy=(value)
       @energy = value
-      Messages::Set.send(self, :energy, @energy) if parent.server?
+      Messages::Set.broadcast(self, :energy, @energy) if parent.server?
       @energy
     end
 
@@ -33,59 +33,71 @@ module Game
       @fire_primary_cost = 4
       @fire_secondary_cost = 25
 
-      image = TexPlay.create_image $window, WIDTH, WIDTH
-      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(20, 160, 100), fill: true
-      image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
-      image.set_pixel WIDTH / 2 - 1, 3
-      image.set_pixel WIDTH / 2 + 1, 3
+      self.width, self.height = WIDTH, WIDTH
 
       super x: x, y: y, max_health: 100, speed: 18,
-            image: image, zorder: ZOrder::PLAYER,
+            zorder: ZOrder::PLAYER,
             collision_type: :player, illumination_range: 5
 
-      info { "Created #{short_name} at #{tile.grid_position}" }
-      
-      on_input :left_mouse_button do
-        if fire_primary?
-          self.energy -= @fire_primary_cost
-          bullet = Projectile.new :zap,
-                                  self.x + offset_x(angle, SHOOT_OFFSET),
-                                  self.y + offset_y(angle, SHOOT_OFFSET),
-                                  angle,
-                                  rotation_speed: 30,
-                                  collision_type: :player_projectile,
-                                  group: :player_projectiles,
-                                  duration: 0.5,
-                                  damage: 5..15
-          parent.add_object bullet
-        end
+      if parent.client?
+        image = TexPlay.create_image $window, WIDTH, WIDTH
+        image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(20, 160, 100), fill: true
+        image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
+        image.set_pixel WIDTH / 2 - 1, 3
+        image.set_pixel WIDTH / 2 + 1, 3
+        self.image = image
       end
 
-      on_input :right_mouse_button do
-        if fire_secondary?
-          self.energy -= @fire_secondary_cost
-          (0...360).step(30) do |angle|
-            bullet = Projectile.new :burst,
+      info { "Created #{short_name} at #{tile.grid_position}" }
+
+      if parent.client?
+        on_input :left_mouse_button do
+          if fire_primary?
+            self.energy -= @fire_primary_cost
+            bullet = Projectile.new :zap,
                                     self.x + offset_x(angle, SHOOT_OFFSET),
                                     self.y + offset_y(angle, SHOOT_OFFSET),
                                     angle,
-                                    speed: 40,
-                                    rotation_speed: 5,
+                                    rotation_speed: 30,
                                     collision_type: :player_projectile,
                                     group: :player_projectiles,
-                                    duration: 0.4,
-                                    damage: 25..40
-
+                                    duration: 0.5,
+                                    damage: 5..15
             parent.add_object bullet
+          end
+        end
+
+        on_input :right_mouse_button do
+          if fire_secondary?
+            self.energy -= @fire_secondary_cost
+            (0...360).step(30) do |angle|
+              bullet = Projectile.new :burst,
+                                      self.x + offset_x(angle, SHOOT_OFFSET),
+                                      self.y + offset_y(angle, SHOOT_OFFSET),
+                                      angle,
+                                      speed: 40,
+                                      rotation_speed: 5,
+                                      collision_type: :player_projectile,
+                                      group: :player_projectiles,
+                                      duration: 0.4,
+                                      damage: 25..40
+
+              parent.add_object bullet
+            end
           end
         end
       end
     end
 
     def update
-      self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
-      @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
-      self.health += @health_per_second * parent.frame_time
+      if parent.client?
+        self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
+      end
+
+      if parent.server?
+        @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
+        self.health += @health_per_second * parent.frame_time
+      end
 
       reset_forces
 

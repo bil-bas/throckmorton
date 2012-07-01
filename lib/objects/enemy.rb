@@ -8,10 +8,9 @@ module Game
 
     class << self
       def config
-          @config ||= YAML.load_file(File.expand_path("../../../config/enemies.yml", __FILE__))
+        @config ||= YAML.load_file(File.expand_path("../../../config/enemies.yml", __FILE__))
       end
     end
-
 
 
     def initialize(type, x, y, options = {})
@@ -23,20 +22,25 @@ module Game
       @damage = config[:melee][:damage] || raise
       @facing_x, @facing_y = 1, 0
 
-      unless defined? @@image
-        @@image = TexPlay.create_image $window, WIDTH, WIDTH
-        @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
-        @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
-        @@image.set_pixel WIDTH / 2 - 1, 3
-        @@image.set_pixel WIDTH / 2 + 1, 3
-      end
+      self.width, self.height = WIDTH, WIDTH
 
       super x: x, y: y, scale: config[:scale],
             max_health: config[:max_health], health: options[:health],
-            image: @@image, zorder: ZOrder::ENEMY,
+            zorder: ZOrder::ENEMY,
             collision_type: :enemy, speed: config[:speed]
 
-      Messages::CreateEnemy.send(self) if parent.server?
+      if parent.client?
+        unless defined? @@image
+          @@image = TexPlay.create_image $window, WIDTH, WIDTH
+          @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
+          @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
+          @@image.set_pixel WIDTH / 2 - 1, 3
+          @@image.set_pixel WIDTH / 2 + 1, 3
+        end
+        self.image = @@image
+      end
+
+      Messages::CreateEnemy.broadcast(self) if parent.server?
 
       info { "Created #{short_name} at #{tile.grid_position}" }
     end

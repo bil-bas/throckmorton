@@ -15,7 +15,7 @@ module Game
     def health=(value)
       return if @health == 0
       @health = [[value, 0].max, max_health].min
-      Messages::Set.send(self, :health, @health) if parent.server?
+      Messages::Set.broadcast(self, :health, @health) if parent.server?
       destroy if @health <= 0
       @health
     end

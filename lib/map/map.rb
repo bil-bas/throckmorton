@@ -9,41 +9,69 @@ module Game
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
      
-    def initialize(grid_width, grid_height = grid_width)
-      @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
+    def initialize
+      super()
+    end
 
-      info "Creating map #{grid_width}x#{grid_height} (#{@width}x#{@height} pixels)"
+    def generate
+      maker = WorldMaker.new
+
+      tile_data = maker.generate_tile_data 33, 27
+      create_tiles_from_data tile_data
+
+      object_data = maker.generate_object_data @tiles
+      create_objects_from_data object_data
+      # TODO: send tile data to players.
+
+      create_lighting if parent.client?
+
+      Messages::CreateMap.broadcast tile_data, object_data
+    end
+
+    def create_lighting
+      @revealed_overlay = TexPlay.create_image $window, grid_width, grid_height, color: Color.rgba(0, 0, 0, 255)
+      @lighting_overlay = TexPlay.create_image $window, grid_width * LIGHTING_SCALE, grid_height * LIGHTING_SCALE
+    end
+
+    # Create tiles from tile data (2d array of types - strings or )
+    def create_tiles_from_data(data)
       t = Time.now
-      @grid_width, @grid_height = grid_width, grid_height
 
       @tiles_by_type = Hash.new {|h, k| h[k] = [] }
 
-      @tiles = grid_height.times.map do |y|
-        grid_width.times.map do |x|
-          if x == 0 || y == 0 || x == @grid_width - 1 || y == @grid_height - 1
-            type = :wall
-          elsif distance(x, y, @grid_width / 2, @grid_height / 2) < 5
-            type = ([:floor] * 10 + [:water]).sample
-          else
-            type = ([:floor] * 40 + [:water] * 2 + [:rocks] + [:lava] + [:wall] * 16).sample
-          end
-
-          tile = Tile.new self, x, y, type
+      @tiles = data.map.with_index do |row, y|
+        row.map.with_index do |type, x|
+          tile = Tile.new self, x, y, type.to_sym
           @tiles_by_type[type] << tile
           tile
         end
       end
 
-      @revealed_overlay = TexPlay.create_image $window, @grid_width, @grid_height, color: Color.rgba(0, 0, 0, 255)
-      @lighting_overlay = TexPlay.create_image $window, @grid_width * LIGHTING_SCALE, @grid_height * LIGHTING_SCALE
+      @grid_width, @grid_height = @tiles[0].size, @tiles.size
+      @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
 
-      info "Map created in #{((Time.now - t).to_f * 1000).to_i}ms"
+      info "Creating map #{grid_width}x#{grid_height} (#{width}x#{height} pixels)"
+      info "Tiles created in #{((Time.now - t).to_f * 1000).to_i}ms"
+    end
 
-      super()
+    def create_objects_from_data(data)
+      t = Time.now
+      data.each do |class_name, x, y, type|
+        klass = Game.const_get class_name
+        #raise class_name unless [Item, Enemy].any? {|c| klass.is_a? c }
+
+        if type
+          # Type will be a string if it has been serialized.
+          parent.add_object klass.new(type.to_sym, x, y)
+        else
+          parent.add_object klass.new(x, y)
+        end
+      end
+      info "Objects created in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
 
     def update
-      update_lighting
+      update_lighting if parent.client?
     end
 
     def update_lighting
@@ -77,13 +105,11 @@ module Game
     def tile_at_coordinate(x, y)
       tile_at_grid x / Tile::WIDTH.to_f + 0.5, y / Tile::WIDTH.to_f + 0.5
     end
-    
-    def start_position
-      [width / 2, height / 2]
-    end
 
     def reveal(tile)
-      @revealed_overlay.set_pixel tile.grid_x, tile.grid_y, color: :alpha
+      if parent.client?
+        @revealed_overlay.set_pixel tile.grid_x, tile.grid_y, color: :alpha
+      end
     end
     
     def draw
@@ -118,22 +144,6 @@ module Game
     end
 
     # Fill with mobs and objects.
-    def populate
-      player_position = start_position
-      @tiles.flatten.select {|t| t.spawn_object? && distance(t.x, t.y, *player_position) > 20 }.each do |tile|
-        case rand(100)
-          when 0..10
-            @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten
-            parent.add_object Enemy.new(@@possibilities.sample, tile.x, tile.y)
 
-          when 15..17
-            parent.add_object HealthPack.new(tile.x, tile.y)
-          when 18
-            parent.add_object EnergyPack.new(tile.x, tile.y)
-          when 20..26
-            parent.add_object Treasure.new(tile.x, tile.y)
-        end
-      end
-    end
   end
 end

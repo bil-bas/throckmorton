@@ -1,6 +1,7 @@
 module Game
   class Projectile < PhysicsObject
     COLOR = Color.rgb(0, 255, 255)
+    WIDTH = 5 # TODO: Need to make this more useful a value.
 
     attr_reader :damage, :type
 
