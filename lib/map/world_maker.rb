@@ -10,7 +10,7 @@ module Game
           elsif distance(x, y, width / 2, height / 2) < 5
             type = ([:floor] * 10 + [:water]).sample
           else
-            type = ([:floor] * 40 + [:water] * 2 + [:rocks] + [:lava] + [:wall] * 16).sample
+            type = ([:floor] * 40 + [:water] * 2 + [:rocks] * 1 + [:lava] * 1 + [:wall] * 16).sample
           end
 
           type

@@ -40,7 +40,7 @@ module Game
             collision_type: :player, illumination_range: 5
 
       if parent.client?
-        image = TexPlay.create_image $window, WIDTH, WIDTH
+        image = TexPlay.create_image $window, WIDTH, WIDTH, color: alpha
         image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(20, 160, 100), fill: true
         image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
         image.set_pixel WIDTH / 2 - 1, 3

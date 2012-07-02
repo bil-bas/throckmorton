@@ -49,88 +49,45 @@ module Game
 
           @body = @shape = nil
 
-          color = Color.rgb 110, 100, 100
-
         when :water
           @blocks_movement = false
           @blocks_sight = false
           @blocks_attack = false
-
-          color = Color.rgb 0, 50, 100
 
         when :lava
           @blocks_movement = false
           @blocks_sight = false
           @blocks_attack = false
 
-          color = Color.rgb 200, 0, 0
-
         when :wall
           @blocks_movement = true
           @blocks_sight = true
           @blocks_attack = true
 
-          color = Color.rgb 60, 30, 10
-
         when :rocks
           @blocks_movement = true
           @blocks_sight = false
           @blocks_attack = true
-
-          color = Color.rgb 110, 100, 100
+        else
+          raise @type.inspect
       end
-#=begin
-      @@images ||= {}
-      unless @@images.has_key? @type
-        @@images[@type] = TexPlay.create_image $window, WIDTH / 2, WIDTH / 2,
-                                               color: color
-        @@images[@type].clear color_control: lambda {|c|
-          c[0..2].map {|c| c + rand(-5..5) * 0.003 }
-        }
-
-
-        if @type == :rocks
-          20.times do
-            rock_x, rock_y, radius = rand(4..28), rand(4..28), rand(2..4)
-            #@shape = CP::Shape::Circle.new(@@body, radius,
-            #                               CP::Vec2.new(x - WIDTH / 2 + rock_x,
-            #                                            y - WIDTH / 2 + rock_y))
-            @@images[@type].circle rock_x, rock_y, radius, fill: true,
-                                   color: Color.rgb(rand(80..120), rand(30..50), 10)
-          end
-        end
-      end
-
-      super x: x, y: y, zorder: ZOrder::TILES, image: @@images[@type],
-            angle: [0, 90, 180, 270].sample
-#=end
-=begin
-      # USING PERLIN NOISES!
-
-      @@floor_noise ||= begin
-        generator = Perlin::Generator.new 128, 0.5, 1
-        generator.chunk 0, 0, 600, 500
-      end
-
-      image = TexPlay.create_image $window, WIDTH * SCALE, WIDTH * SCALE, color: color
-      reduced_x, reduced_y = (x * SCALE).round, (y * SCALE).round
-      image.clear color_control: lambda {|c, x, y|
-        c[0..2].map {|c| c + @@floor_noise[reduced_x + x][reduced_y + y] * 0.02 }
-      }
 
       if @type == :rocks
+        image = TexPlay.create_image $window, 16, 16, clear: :alpha
         20.times do
           rock_x, rock_y, radius = rand(4..28), rand(4..28), rand(2..4)
           #@shape = CP::Shape::Circle.new(@@body, radius,
           #                               CP::Vec2.new(x - WIDTH / 2 + rock_x,
           #                                            y - WIDTH / 2 + rock_y))
           image.circle rock_x, rock_y, radius, fill: true,
-                                 color: Color.rgb(rand(80..120), rand(30..50), 10)
+                       color: Color.rgb(rand(80..120), rand(30..50), 10)
         end
+      else
+        self.width = self.height = WIDTH
+        image = nil
       end
 
       super x: x, y: y, zorder: ZOrder::TILES, image: image
-=end
 
       if @shape
         @shape.group = 1
@@ -151,12 +108,15 @@ module Game
       end
     end
 
+    def self.floor_layer; @@floor_layer; end
+    def self.static_layer; @@static_layer; end
+
     def draw
-      image.draw x * SCALE, y * SCALE, zorder
+      image.draw x * SCALE, y * SCALE, zorder if image
     end
 
     def to_s
-      "#{self.class} (#{@grid_x}, #{@grid_y}) #{blocks_movement? ? "" : "no move"}"
+      "#{self.class} (#{@grid_x}, #{@grid_y})#{blocks_movement? ? "" : " no move"}"
     end
   end
 end

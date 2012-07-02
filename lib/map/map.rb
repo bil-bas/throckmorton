@@ -1,8 +1,8 @@
 module Game
   class Map < BasicGameObject
-    MINI_SCALE = 1 / 2.0
+    MINI_SCALE = 1 / 3.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
-    NO_LIGHT_COLOR = Color.rgba(70, 70, 70, 255) # Colour outside range of lighting.
+    NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
     attr_reader :grid_width, :grid_height, :width, :height
     attr_reader :lighting_overlay
@@ -16,7 +16,7 @@ module Game
     def generate
       maker = WorldMaker.new
 
-      tile_data = maker.generate_tile_data 33, 27
+      tile_data = maker.generate_tile_data 50, 37 # Largest, at 800x600, is 50, 37
       create_tiles_from_data tile_data
 
       object_data = maker.generate_object_data @tiles
@@ -52,13 +52,57 @@ module Game
 
       info "Creating map #{grid_width}x#{grid_height} (#{width}x#{height} pixels)"
       info "Tiles created in #{((Time.now - t).to_f * 1000).to_i}ms"
+
+      render_tiles
+    end
+
+    def render_tiles
+      t = Time.now
+
+      @static_layer = begin
+        image = TexPlay.create_image $window, $window.width, $window.height, color: :black
+
+        $window.render_to_image image do
+          @tiles_by_type[:wall].each do |tile|
+            $window.clip_to tile.x / 2, tile.y / 2, 16, 16 do
+              Image["textures/#{tile.type}_0.png"].draw 0, 0, 0
+            end
+          end
+
+          @tiles_by_type[:rocks].each do |tile|
+            tile.draw
+          end
+        end
+        image.refresh_cache
+        image.clear dest_select: :black
+
+        image
+      end
+
+      @animated_layers = 3.times.map do |frame|
+        image = TexPlay.create_image $window, $window.width, $window.height#, color: :black
+
+        $window.render_to_image image do
+          (@tiles_by_type[:lava] + @tiles_by_type[:water]).each do |tile|
+            $window.clip_to tile.x / 2, tile.y / 2, 16, 16 do
+              Image["textures/#{tile.type}_#{frame}.png"].draw 0, 0, 0
+            end
+          end
+        end
+        image.refresh_cache
+        image.clear dest_select: :black
+
+        image
+      end
+      @animated_layers << @animated_layers[1]
+
+      info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
 
     def create_objects_from_data(data)
       t = Time.now
       data.each do |class_name, x, y, type|
         klass = Game.const_get class_name
-        #raise class_name unless [Item, Enemy].any? {|c| klass.is_a? c }
 
         if type
           # Type will be a string if it has been serialized.
@@ -84,7 +128,7 @@ module Game
 
         viewer = parent.player
         parent.player.illuminate viewer, @lighting_overlay
-
+#=begin
         # TODO: Should be illuminated by config (range and brightness and colour).
         # TODO: All these "static" tile's brightness should be pre-calculated!
         @tiles_by_type[:lava].each do |tile|
@@ -94,6 +138,7 @@ module Game
         parent.objects.find_all {|o| o.is_a?(Entity) && o.type == :fire_beetle }.each do |object|
           object.illuminate viewer, @lighting_overlay, range: 1
         end
+#=end
       end
     end
 
@@ -113,25 +158,24 @@ module Game
     end
     
     def draw
-      @background ||= $window.record(width, height) do
-        t = Time.now
-        @tiles.each do |row|
-          $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
-            $window.scale 2 do
-              row.each {|t| t.draw }
-            end
-          end
-        end
-        info "Recorded tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
+      $window.translate 0, 0 do
+        Image["textures/floor_0.png"].draw 0, 0, ZOrder::TILES, 2, 2
+        @static_layer.draw -16, -16, ZOrder::TILES, 2, 2
+        @animated_layers[(milliseconds / 250) % @animated_layers.size].draw -16, -16, ZOrder::TILES, 2, 2
       end
-
-      @background.draw 0, 0, ZOrder::TILES
 
       draw_lighting
     end
 
     def draw_mini
-      @background.draw 0, 0, ZOrder::TILES
+      $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
+        $window.scale 2 do
+          Image["textures/floor_0.png"].draw 0, -4, ZOrder::TILES
+          @static_layer.draw 0, 0, ZOrder::TILES
+          @animated_layers.first.draw 0, 0, ZOrder::TILES # Don't animate on the map.
+        end
+      end
+
       draw_lighting
     end
 
@@ -142,8 +186,5 @@ module Game
                               Color::WHITE, :multiply
       end
     end
-
-    # Fill with mobs and objects.
-
   end
 end

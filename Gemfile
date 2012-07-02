@@ -6,6 +6,7 @@ gem "chipmunk", "~> 5.3.4.5"
 gem "texplay", "~> 0.3" # Different version actually required depending on platform.
 #gem "fidgit", "~> 0.1.10"
 
+gem 'ruby-perlin', "~> 0.1.0pre1", require: 'perlin'
 gem 'renet', "~> 0.1.14"
 gem 'msgpack', "~> 0.4.7"
 

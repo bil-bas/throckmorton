@@ -31,7 +31,7 @@ module Game
 
       if parent.client?
         unless defined? @@image
-          @@image = TexPlay.create_image $window, WIDTH, WIDTH
+          @@image = TexPlay.create_image $window, WIDTH, WIDTH, color: alpha
           @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
           @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
           @@image.set_pixel WIDTH / 2 - 1, 3
