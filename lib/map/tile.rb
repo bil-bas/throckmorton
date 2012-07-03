@@ -1,8 +1,8 @@
 module Game
   class Tile < Chingu::GameObject
     WIDTH = 32
-    SCALE = 0.5 # Textures are 16x16, but blown up to 32x32 (compared to the non-terrain objects)
-
+    SCALE = 0.125 # Texture is small, but blown up to 32x32 (compared to the non-terrain objects)
+    SPRITE_WIDTH = WIDTH * SCALE
     include Mixins::LightSource
 
     attr_reader :map, :grid_x, :grid_y, :type
@@ -73,15 +73,15 @@ module Game
       end
 
       if @type == :rocks
-        image = TexPlay.create_image $window, 16, 16, clear: :alpha
-        20.times do
-          rock_x, rock_y, radius = rand(4..28), rand(4..28), rand(2..4)
-          #@shape = CP::Shape::Circle.new(@@body, radius,
-          #                               CP::Vec2.new(x - WIDTH / 2 + rock_x,
-          #                                            y - WIDTH / 2 + rock_y))
-          image.circle rock_x, rock_y, radius, fill: true,
-                       color: Color.rgb(rand(80..120), rand(30..50), 10)
+        image = TexPlay.create_image $window, SPRITE_WIDTH, SPRITE_WIDTH, color: :alpha
+        image.circle SPRITE_WIDTH / 2 + 0.5, SPRITE_WIDTH / 2 + 0.5, SPRITE_WIDTH / 2, fill: true do
+          if rand(100) < 40
+            Color.rgb rand(80..120), rand(30..50), 10
+          else
+            :alpha
+          end
         end
+        image.refresh_cache
       else
         self.width = self.height = WIDTH
         image = nil

@@ -16,7 +16,7 @@ module Game
     def generate
       maker = WorldMaker.new
 
-      tile_data = maker.generate_tile_data 50, 37 # Largest, at 800x600, is 50, 37
+      tile_data = maker.generate_tile_data 50, 50 # Largest, at 200x200, is 50, 50
       create_tiles_from_data tile_data
 
       object_data = maker.generate_object_data @tiles
@@ -64,7 +64,8 @@ module Game
 
         $window.render_to_image image do
           @tiles_by_type[:wall].each do |tile|
-            $window.clip_to tile.x / 2, tile.y / 2, 16, 16 do
+            $window.clip_to tile.x * Tile::SCALE, tile.y * Tile::SCALE,
+                            Tile::SPRITE_WIDTH, Tile::SPRITE_WIDTH do
               Image["textures/#{tile.type}_0.png"].draw 0, 0, 0
             end
           end
@@ -79,12 +80,13 @@ module Game
         image
       end
 
-      @animated_layers = 3.times.map do |frame|
+      animated_layers = 5.times.map do |frame|
         image = TexPlay.create_image $window, $window.width, $window.height#, color: :black
 
         $window.render_to_image image do
           (@tiles_by_type[:lava] + @tiles_by_type[:water]).each do |tile|
-            $window.clip_to tile.x / 2, tile.y / 2, 16, 16 do
+            $window.clip_to tile.x * Tile::SCALE, tile.y * Tile::SCALE,
+                            Tile::SPRITE_WIDTH, Tile::SPRITE_WIDTH do
               Image["textures/#{tile.type}_#{frame}.png"].draw 0, 0, 0
             end
           end
@@ -94,7 +96,9 @@ module Game
 
         image
       end
-      @animated_layers << @animated_layers[1]
+      @animated_layers = (1..(animated_layers.size - 2)).each.with_object [] do |frame, frames|
+        frames.unshift << animated_layers[frame]
+      end
 
       info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
@@ -158,18 +162,20 @@ module Game
     end
     
     def draw
-      $window.translate 0, 0 do
-        Image["textures/floor_0.png"].draw 0, 0, ZOrder::TILES, 2, 2
-        @static_layer.draw -16, -16, ZOrder::TILES, 2, 2
-        @animated_layers[(milliseconds / 250) % @animated_layers.size].draw -16, -16, ZOrder::TILES, 2, 2
+      $window.scale 32 * Tile::SCALE do
+        $window.translate 0, 0 do
+          Image["textures/floor_0.png"].draw 0, 0, ZOrder::TILES, 2, 2
+          @static_layer.draw -4, -4, ZOrder::TILES, 2, 2
+          @animated_layers[(milliseconds / 250) % @animated_layers.size].draw -4, -4, ZOrder::TILES, 2, 2
+        end
       end
 
       draw_lighting
     end
 
     def draw_mini
-      $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
-        $window.scale 2 do
+      $window.translate -Tile::SPRITE_WIDTH / 2, -Tile::SPRITE_WIDTH / 2 do
+        $window.scale Tile::SCALE * 64 do
           Image["textures/floor_0.png"].draw 0, -4, ZOrder::TILES
           @static_layer.draw 0, 0, ZOrder::TILES
           @animated_layers.first.draw 0, 0, ZOrder::TILES # Don't animate on the map.

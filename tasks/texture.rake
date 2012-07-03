@@ -11,8 +11,8 @@ end
 
 class TextureGen
   DIR = "media/images/textures"
-  WIDTH, HEIGHT = 800, 600
-  FRAMES = 3
+  WIDTH, HEIGHT = 200, 200
+  FRAMES = 5
 
   def initialize(type)
     require 'perlin'
@@ -83,13 +83,13 @@ class TextureGen
   def lava(image)
     lava = Perlin::Generator.new 34525, 0.4, 1
     crust = Perlin::Generator.new 123, 0.8, 4
-    crust_noise = crust.chunk 0, 0, WIDTH, HEIGHT, 0.1
+    crust_noise = crust.chunk 0, 0, WIDTH, HEIGHT, 0.2
 
     FRAMES.times do |time|
       lava_noise = lava.chunk 0, 0, time * 0.1, WIDTH, HEIGHT, 1, 0.2
       image.clear color: Gosu::Color.rgb(200, 25, 0)
       image.clear color_control: lambda {|c, x, y|
-        if crust_noise[x][y] > -0.2
+        if crust_noise[x][y] > 0.15
           height = 0.2 - crust_noise[x][y] * 0.3
           [height, height / 2, height / 4, 1]
         else
