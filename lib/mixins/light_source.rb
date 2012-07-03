@@ -44,7 +44,7 @@ module Mixins
           if distance(source_x, source_y, offset_x, offset_y) <= range
             tile = map.tile_at_grid offset_x, offset_y
             if tile && viewer.line_of_sight?(tile)
-              @visible_tile_positions << [tile.grid_x, tile.grid_y]
+              @visible_tile_positions << [offset_x, offset_y]
               tile.seen = true unless tile.seen?
             end
           end
@@ -67,7 +67,7 @@ module Mixins
                          brightness = [c[0], 1 - Math::log((1.5 * distance) / range)].max
                          [brightness, brightness, brightness, 1]
                        else
-                         c || [1, 0, 0, 1] # Give a meaningless colour when outside the image.
+                         c || :none # Give a meaningless colour when outside the image.
                        end
                      }
     end

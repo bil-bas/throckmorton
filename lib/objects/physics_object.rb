@@ -11,11 +11,8 @@ module Game
 
     class << self
       attr_accessor :next_id
-      def init
-        @next_id = 0
-      end
     end
-    init
+    self.next_id = 0
 
     attr_reader :speed, :id, :body
     attr_accessor :velocity_x, :velocity_y
