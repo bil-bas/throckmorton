@@ -2,4 +2,4 @@
 
 require_relative "../lib/main"
 
-Game.run ARGV
+Game.run ARGV unless defined? Ocra

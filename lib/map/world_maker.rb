@@ -1,11 +1,13 @@
 module Game
   class WorldMaker
+    MARGIN = 4
+
     # Generate a new map (2d array of tile types).
     def generate_tile_data(width, height)
       height.times.map do |y|
         width.times.map do |x|
 
-          if x == 0 || y == 0 || x == width - 1 || y == height - 1
+          if x < MARGIN || y < MARGIN || x >= width - MARGIN || y >= height - MARGIN
             type = :wall
           elsif distance(x, y, width / 2, height / 2) < 5
             type = ([:floor] * 10 + [:water]).sample

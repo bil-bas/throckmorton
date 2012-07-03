@@ -1,13 +1,21 @@
 module Game
  class Window < Chingu::Window
    attr_reader :potential_fps
+   BASE_WIDTH = 800
+   BASE_HEIGHT = 600
 
-    def initialize
-      super 800, 600, false
+    def initialize(fullscreen)
+      if fullscreen
+        scale = screen_height.fdiv(BASE_HEIGHT)
+        super screen_width, screen_height
+      else
+        scale = 1
+        super (BASE_WIDTH * scale).to_i, (BASE_HEIGHT * scale).to_i, false
+      end
       
       enable_undocumented_retrofication
       
-      push_game_state Play
+      push_game_state Play.new(scale * 2)
       
       init_fps
 

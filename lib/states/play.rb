@@ -6,13 +6,12 @@ module Game
     attr_reader :space
     attr_reader :map, :player, :objects
 
-    DEFAULT_WORLD_SCALE = 2
     PHYSICS_STEP = 1 / 60.0
 
     def server?; true end #@server end
     def client?; true end #!@server; end
        
-    def initialize
+    def initialize(scale)
       super
 
       init_physics
@@ -21,7 +20,7 @@ module Game
       @server = true
 
       @objects = []
-      @world_scale = DEFAULT_WORLD_SCALE
+      @world_scale = scale
 
       @map = Map.new
       if server?
@@ -34,7 +33,7 @@ module Game
 
         on_input :escape do
           pop_game_state
-          push_game_state self.class
+          push_game_state self.class.new(scale)
         end
       end
 

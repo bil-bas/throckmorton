@@ -8,6 +8,7 @@ module Game
 
         on :server, 'Create dedicated server'
         on :port=, "UDP port to use (default: #{Server::DEFAULT_PORT})", as: :int, default: Server::DEFAULT_PORT
+        on :fullscreen, "Run at full-screen resolution #{}x#{}"
 
         on :v, :version, 'Game version'
       end
@@ -19,7 +20,7 @@ module Game
         Server.new opts[:port].to_i
 
       elsif !opts.help?
-        Window.new.show
+        Window.new(opts.fullscreen?).show
       end
     end
   end

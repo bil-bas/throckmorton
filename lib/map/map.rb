@@ -1,6 +1,6 @@
 module Game
   class Map < BasicGameObject
-    MINI_SCALE = 1 / 3.0
+    MINI_SCALE = 1 / 4.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
@@ -60,7 +60,7 @@ module Game
       t = Time.now
 
       @static_layer = begin
-        image = TexPlay.create_image $window, $window.width, $window.height, color: :black
+        image = TexPlay.create_image $window, 200, 200, color: :black
 
         $window.render_to_image image do
           @tiles_by_type[:wall].each do |tile|
@@ -81,7 +81,7 @@ module Game
       end
 
       animated_layers = 5.times.map do |frame|
-        image = TexPlay.create_image $window, $window.width, $window.height#, color: :black
+        image = TexPlay.create_image $window, 200, 200, color: :black
 
         $window.render_to_image image do
           (@tiles_by_type[:lava] + @tiles_by_type[:water]).each do |tile|
