@@ -38,7 +38,6 @@ module Game
       t = Time.now
 
       @tiles_by_type = Hash.new {|h, k| h[k] = [] }
-
       @tiles = data.map.with_index do |row, y|
         row.map.with_index do |type, x|
           tile = Tile.new self, x, y, type.to_sym
@@ -132,7 +131,7 @@ module Game
 
         viewer = parent.player
         parent.player.illuminate viewer, @lighting_overlay
-#=begin
+
         # TODO: Should be illuminated by config (range and brightness and colour).
         # TODO: All these "static" tile's brightness should be pre-calculated!
         @tiles_by_type[:lava].each do |tile|
@@ -142,17 +141,17 @@ module Game
         parent.objects.find_all {|o| o.is_a?(Entity) && o.type == :fire_beetle }.each do |object|
           object.illuminate viewer, @lighting_overlay, range: 1
         end
-#=end
       end
     end
 
     def tile_at_grid(x, y)
-      return nil if x < 0 or y < 0
+      return nil if x < 0 || y < 0
       @tiles[y][x] rescue nil
     end
 
     def tile_at_coordinate(x, y)
-      tile_at_grid x / Tile::WIDTH.to_f + 0.5, y / Tile::WIDTH.to_f + 0.5
+      return nil if x < 0 || y < 0
+      @tiles[y.fdiv(Tile::WIDTH) + 0.5][x.fdiv(Tile::WIDTH) + 0.5]
     end
 
     def reveal(tile)
