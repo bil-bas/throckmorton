@@ -6,11 +6,21 @@ module Game
       opts = Slop.parse args, help: true do
         banner "ruby bin#{File::SEPARATOR}game_of_scones [options]\n"
 
-        on :server, 'Create dedicated server'
-        on :port=, "UDP port to use (default: #{Server::DEFAULT_PORT})", as: :int, default: Server::DEFAULT_PORT
-        on :fullscreen, "Run at full-screen resolution #{}x#{}"
+        on :f, :fullscreen, "Run at full-screen resolution: #{screen_width}x#{screen_height}"
 
-        on :v, :version, 'Game version'
+
+        on :a, :address=, "Server address to connect to (default: localhost)"
+        on :p, :port=,    "UDP port to use (default: #{Server::DEFAULT_PORT})", as: :int, default: Server::DEFAULT_PORT
+        on :s, :server,   "Create dedicated server"
+
+        on :d, :debug,    "Run in debug mode" # This is handled elsewhere!
+
+        on :v, :version,  "Game version"
+      end
+
+      if opts.debug?
+        puts "DEBUG MODE ENABLED!"
+        Bundler.require :debug
       end
 
       if opts.version?
