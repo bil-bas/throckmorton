@@ -58,45 +58,48 @@ module Game
     def render_tiles
       t = Time.now
 
+      width = Tile::SPRITE_WIDTH
+
       @static_layer = begin
-        image = TexPlay.create_image $window, 200, 200, color: :black
+        image = TexPlay.create_image $window, grid_width * width, grid_height * width
 
-        $window.render_to_image image do
-          @tiles_by_type[:wall].each do |tile|
-            $window.clip_to tile.x * Tile::SCALE, tile.y * Tile::SCALE,
-                            Tile::SPRITE_WIDTH, Tile::SPRITE_WIDTH do
-              Image["textures/#{tile.type}_0.png"].draw 0, 0, 0
-            end
-          end
-
-          @tiles_by_type[:rocks].each do |tile|
-            tile.draw
-          end
+        texture = Textures::CavernFloor.new
+        @tiles_by_type[:cavern_floor].each do |tile|
+          texture.render image, tile.grid_x * width, tile.grid_y * width,
+                         width, width
         end
-        image.refresh_cache
-        image.clear dest_select: :black
+
+        texture = Textures::CavernWall.new
+        @tiles_by_type[:cavern_wall].each do |tile|
+          texture.render image, tile.grid_x * width, tile.grid_y * width,
+                         width, width
+        end
+
+        @tiles_by_type[:rocks].each do |tile|
+          # TODO: maybe make these into objects?
+        end
 
         image
       end
 
-      animated_layers = 5.times.map do |frame|
-        image = TexPlay.create_image $window, 200, 200, color: :black
-
-        $window.render_to_image image do
-          (@tiles_by_type[:lava] + @tiles_by_type[:water]).each do |tile|
-            $window.clip_to tile.x * Tile::SCALE, tile.y * Tile::SCALE,
-                            Tile::SPRITE_WIDTH, Tile::SPRITE_WIDTH do
-              Image["textures/#{tile.type}_#{frame}.png"].draw 0, 0, 0
-            end
-          end
-        end
-        image.refresh_cache
-        image.clear dest_select: :black
-
-        image
+      animation = 5.times.map do
+        TexPlay.create_image $window, grid_width * width, grid_height * width, color: :alpha
       end
-      @animated_layers = (1..(animated_layers.size - 2)).each.with_object [] do |frame, frames|
-        frames.unshift << animated_layers[frame]
+
+      texture = Textures::Lava.new
+      @tiles_by_type[:lava].each do |tile|
+        texture.render_animation animation, tile.grid_x * width, tile.grid_y * width,
+                       width, width
+      end
+
+      texture = Textures::Water.new
+      @tiles_by_type[:water].each do |tile|
+        texture.render_animation animation, tile.grid_x * width, tile.grid_y * width,
+                                 width, width
+      end
+
+      @animated_layers = (1..(animation.size - 2)).each.with_object [] do |frame, frames|
+        frames.unshift << animation[frame]
       end
 
       info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
@@ -163,7 +166,6 @@ module Game
     def draw
       $window.scale 32 * Tile::SCALE do
         $window.translate 0, 0 do
-          Image["textures/floor_0.png"].draw 0, 0, ZOrder::TILES, 2, 2
           @static_layer.draw -4, -4, ZOrder::TILES, 2, 2
           @animated_layers[(milliseconds / 250) % @animated_layers.size].draw -4, -4, ZOrder::TILES, 2, 2
         end
@@ -175,7 +177,6 @@ module Game
     def draw_mini
       $window.translate -Tile::SPRITE_WIDTH / 2, -Tile::SPRITE_WIDTH / 2 do
         $window.scale Tile::SCALE * 64 do
-          Image["textures/floor_0.png"].draw 0, -4, ZOrder::TILES
           @static_layer.draw 0, 0, ZOrder::TILES
           @animated_layers.first.draw 0, 0, ZOrder::TILES # Don't animate on the map.
         end

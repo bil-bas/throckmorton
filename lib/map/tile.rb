@@ -2,7 +2,7 @@ module Game
   class Tile < Chingu::GameObject
     WIDTH = 32
     SCALE = 0.125 # Texture is small, but blown up to 32x32 (compared to the non-terrain objects)
-    SPRITE_WIDTH = WIDTH * SCALE
+    SPRITE_WIDTH = (WIDTH * SCALE).to_i
     include Mixins::LightSource
 
     attr_reader :map, :grid_x, :grid_y, :type
@@ -12,7 +12,7 @@ module Game
     def blocks_sight?; @blocks_sight end
     def blocks_attack?; @blocks_attack end
     def grid_position; [@grid_x, @grid_y] end
-    def spawn_object?; @type == :floor end
+    def spawn_object?; @type == :cavern_floor end
 
     def seen=(value)
       map.reveal self if value && !@seen
@@ -30,7 +30,7 @@ module Game
       @@body.pos = CP::Vec2.new(0, 0)
 
       case @type
-        when :wall, :lava, :water
+        when :cavern_wall, :lava, :water
           vertices = [CP::Vec2.new(-WIDTH / 2, -WIDTH / 2),
                       CP::Vec2.new(-WIDTH / 2, +WIDTH / 2),
                       CP::Vec2.new(+WIDTH / 2, +WIDTH / 2),
@@ -42,7 +42,7 @@ module Game
       end
 
       case @type
-        when :floor
+        when :cavern_floor
           @blocks_movement = false
           @blocks_sight = false
           @blocks_attack = false
@@ -59,7 +59,7 @@ module Game
           @blocks_sight = false
           @blocks_attack = false
 
-        when :wall
+        when :cavern_wall
           @blocks_movement = true
           @blocks_sight = true
           @blocks_attack = true
@@ -94,7 +94,7 @@ module Game
         @shape.object = self
 
         case @type
-          when :wall
+          when :cavern_wall
             @shape.collision_type = :wall
           when :rocks
             @shape.collision_type = :obstacle

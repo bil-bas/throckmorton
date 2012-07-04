@@ -62,6 +62,8 @@ require_relative "network/server"
 
 require_relative "states/play"
 
+require_relative "map/textures"
+
 require_relative "map/world_maker"
 require_relative "map/map"
 require_relative "map/tile"

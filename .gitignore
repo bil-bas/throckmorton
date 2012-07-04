@@ -1,4 +1,5 @@
-.idea
-.rspec
-pkg
+/.idea
+/.rspec
+/pkg
 /game.log
+/textures

@@ -8,11 +8,11 @@ module Game
         width.times.map do |x|
 
           if x < MARGIN || y < MARGIN || x >= width - MARGIN || y >= height - MARGIN
-            type = :wall
+            type = :cavern_wall
           elsif distance(x, y, width / 2, height / 2) < 5
-            type = ([:floor] * 10 + [:water]).sample
+            type = ([:cavern_floor] * 10 + [:water]).sample
           else
-            type = ([:floor] * 40 + [:water] * 2 + [:rocks] * 1 + [:lava] * 1 + [:wall] * 16).sample
+            type = ([:cavern_floor] * 40 + [:water] * 2 + [:rocks] * 1 + [:lava] * 1 + [:cavern_wall] * 16).sample
           end
 
           type
