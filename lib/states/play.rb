@@ -191,7 +191,8 @@ module Game
         player.draw_gui
 
         cursor_color = player.fire_primary? ?  Color.rgba(255, 0, 255, 150) : Color.rgba(100, 0, 100, 100)
-        pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 8, 8, cursor_color
+        pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 45, 0.5, 0.5, 16, 16, cursor_color
+        pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 3, 3, Color::BLACK
 
         super
       end

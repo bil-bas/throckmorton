@@ -26,7 +26,7 @@ module Game
 
       super x: x, y: y, scale: config[:scale],
             max_health: config[:max_health], health: options[:health],
-            zorder: ZOrder::ENEMY,
+            zorder: ZOrder::ENEMY, illumination_range: config[:illumination_range],
             collision_type: :enemy, speed: config[:speed]
 
       if parent.client?

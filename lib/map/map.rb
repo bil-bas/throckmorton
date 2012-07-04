@@ -4,7 +4,7 @@ module Game
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
-    attr_reader :grid_width, :grid_height, :width, :height
+    attr_reader :grid_width, :grid_height, :width, :height, :tiles
     attr_reader :lighting_overlay
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
@@ -138,8 +138,8 @@ module Game
           tile.illuminate viewer, @lighting_overlay, range: 2
         end
 
-        parent.objects.find_all {|o| o.is_a?(Entity) && o.type == :fire_beetle }.each do |object|
-          object.illuminate viewer, @lighting_overlay, range: 1
+        parent.objects.find_all {|o| o.illuminating? }.each do |object|
+          object.illuminate viewer, @lighting_overlay
         end
       end
     end

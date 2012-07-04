@@ -23,6 +23,8 @@
   :speed: 6
   :scale: 1.2
 
+  :illumination_range: 1
+
   :melee:
     :damage: !ruby/range 15..25
 

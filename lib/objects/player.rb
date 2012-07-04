@@ -155,7 +155,13 @@ module Game
     def draw_gui
       @font ||= Font[24]
       parent.pixel.draw 0, 0, ZOrder::GUI, $window.width, 24, Color.rgba(0, 0, 0, 150)
-      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
+
+      objects = parent.objects
+      @@num_lava ||= parent.map.tiles.flatten.count {|t| t.type == :lava }
+      num_lights = 1 + @@num_lava + objects.count {|o| o.is_a?(Enemy) && o.type == :fire_beetle } # Note: Player isn't in objects (currently)
+      num_mobs = objects.count {|o| o.is_a? Enemy}
+
+      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} -- Obj: #{objects.size} Mob: #{num_mobs} Light: #{num_lights} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
     end
   end
 end

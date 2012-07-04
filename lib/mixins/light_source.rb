@@ -3,10 +3,11 @@ module Mixins
   # A source of illumination.
   module LightSource
     attr_reader :illumination_range
+    def illuminating?; !@illumination_range.nil?; end
 
     def initialize(options = {})
       options = {
-          illumination_range: 0, # Can be overridden when illuminating.
+          illumination_range: nil, # Can be overridden when illuminating.
       }.merge! options
 
       @illumination_range = options[:illumination_range]
