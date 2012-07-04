@@ -175,7 +175,7 @@ module Game
     end
 
     def draw_mini
-      $window.translate -Tile::SPRITE_WIDTH / 2, -Tile::SPRITE_WIDTH / 2 do
+      $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
         $window.scale Tile::SCALE * 64 do
           @static_layer.draw 0, 0, ZOrder::TILES
           @animated_layers.first.draw 0, 0, ZOrder::TILES # Don't animate on the map.
