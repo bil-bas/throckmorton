@@ -59,9 +59,15 @@ module Game
       t = Time.now
 
       width = Tile::SPRITE_WIDTH
+      create_static_layer width
+      create_animated_layers width
 
+      info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
+    end
+
+    def create_static_layer(width)
       @static_layer = begin
-        image = TexPlay.create_image $window, grid_width * width, grid_height * width
+        image = TexPlay.create_image $window, grid_width * width, grid_height * width, caching: false
 
         texture = Textures::CavernFloor.new
         @tiles_by_type[:cavern_floor].each do |tile|
@@ -79,30 +85,36 @@ module Game
           # TODO: maybe make these into objects?
         end
 
+        image.force_sync [0, 0, image.width, image.height]
+
         image
       end
+    end
 
-      animation = 5.times.map do
-        TexPlay.create_image $window, grid_width * width, grid_height * width, color: :alpha
+    def create_animated_layers(width)
+      animation = Textures::Texture::ANIMATION_FRAMES.times.map do
+        TexPlay.create_image $window, grid_width * width, grid_height * width, color: :alpha, caching: false
       end
 
       texture = Textures::Lava.new
       @tiles_by_type[:lava].each do |tile|
-        texture.render_animation animation, tile.grid_x * width, tile.grid_y * width,
-                       width, width
+        texture.render animation, tile.grid_x * width, tile.grid_y * width,
+                                 width, width
       end
 
       texture = Textures::Water.new
       @tiles_by_type[:water].each do |tile|
-        texture.render_animation animation, tile.grid_x * width, tile.grid_y * width,
+        texture.render animation, tile.grid_x * width, tile.grid_y * width,
                                  width, width
       end
 
-      @animated_layers = (1..(animation.size - 2)).each.with_object [] do |frame, frames|
-        frames.unshift << animation[frame]
+      animation.each do |frame|
+        frame.force_sync [0, 0, frame.width, frame.height]
       end
 
-      info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
+      @animated_layers = (1..(animation.size - 2)).each.with_object [] do |frame, frames|
+        frames.unshift animation[frame]
+      end
     end
 
     def create_objects_from_data(data)

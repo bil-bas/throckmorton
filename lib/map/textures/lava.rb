@@ -4,8 +4,11 @@ module Game
   module Textures
 
     class Lava < Texture
-      FRAMES = 5
+      ANIMATED = true
       COLOR = [0.8, 0.1, 0] #Gosu::Color.rgb(200, 25, 0)
+
+      CRUST_STEP = 0.2
+      LAVA_STEP = 0.2
 
       protected
       def create_generators
@@ -15,8 +18,13 @@ module Game
 
       protected
       def generate_noises(x, y, steps_x, steps_y, time = 0)
-        @crust_noise = @crust.chunk x, y, steps_x, steps_y, 0.2 if time == 0
-        @lava_noise = @lava.chunk x, y, time * 0.1, steps_x, steps_y, 1, 0.2
+        if time == 0
+          @crust_noise = @crust.chunk x * CRUST_STEP, y * CRUST_STEP,
+                                      steps_x, steps_y, CRUST_STEP
+        end
+        @lava_noise = @lava.chunk x * LAVA_STEP, y * LAVA_STEP,
+                                  time * 0.1,
+                                  steps_x, steps_y, 1, 0.2
       end
 
       protected
@@ -27,7 +35,7 @@ module Game
           [height, height / 2, height / 4]
         else
           # Lava: Glow from below.
-          height = @lava_noise[x][y][0]
+          height = @lava_noise[x][y].first
           [COLOR[0] - height * 0.1, COLOR[1] - height * 0.2, COLOR[2] + height * 0.02]
         end
       end

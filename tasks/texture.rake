@@ -10,7 +10,7 @@ Game::Textures::TYPES.each do |type|
 
     mkdir_p "textures"
 
-    $window ||= Gosu::Window.new(1022, 1022, false)
+    $window ||= Gosu::Window.new 10, 10, false
 
     render_and_save type
   end
@@ -22,12 +22,15 @@ def render_and_save(type)
   print "Generating #{type} texture..."
   t = Time.now
 
-  texture::FRAMES.times.map do |time|
-    image = TexPlay.create_image $window, 200, 200
-    gen = texture.new
-    gen.render image, 0, 0, image.width, image.height
+  images = texture.new.num_frames.times.map do |time|
+    TexPlay.create_image $window, 200, 200, caching: false
+  end
 
-    image.save "textures/#{type}_#{time}.png"
+  gen = texture.new
+  gen.render images, 0, 0, images[0].width, images[0].height
+  images.each_with_index do |image, i|
+    image.force_sync [0, 0, image.width, image.height]
+    image.save "textures/#{type}_#{i}.png"
   end
 
   puts "Image created in #{Time.now - t}s"

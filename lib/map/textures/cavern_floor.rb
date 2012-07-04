@@ -3,8 +3,13 @@ require_relative "texture"
 module Game
   module Textures
     class CavernFloor < Texture
-      FRAMES = 1
+      ANIMATED = false
       COLOR = [0.2, 0.3, 0.3] # Gosu::Color.rgb(60, 80, 100)
+
+      MICRO_STEP = 0.5
+      MIDI_STEP = 0.03
+      MACRO_STEP = 0.007
+      MOSS_STEP = 0.05
 
       protected
       def create_generators
@@ -15,11 +20,19 @@ module Game
       end
 
       protected
-      def generate_noises(x, y, steps_x, steps_y)
-        @micro_noise =  @micro.chunk x, y, steps_x, steps_y, 0.5
-        @midi_noise = @midi.chunk x, y, steps_x, steps_y, 0.03
-        @macro_noise = @macro.chunk x, y, steps_x, steps_y, 0.007
-        @moss_noise = @moss.chunk x, y, steps_x, steps_y, 0.05
+      def generate_noises(x, y, steps_x, steps_y, time)
+        @micro_noise =  @micro.chunk x * 0.5, y * 0.5,
+                                     steps_x, steps_y,
+                                     0.5
+        @midi_noise = @midi.chunk x * MIDI_STEP, y * MIDI_STEP,
+                                  steps_x, steps_y,
+                                  MIDI_STEP
+        @macro_noise = @macro.chunk x * MACRO_STEP, y * MACRO_STEP,
+                                    steps_x, steps_y,
+                                    MACRO_STEP
+        @moss_noise = @moss.chunk x * MOSS_STEP, y * MOSS_STEP,
+                                  steps_x, steps_y,
+                                  MOSS_STEP
       end
 
       protected
