@@ -5,21 +5,22 @@ module Game
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
     attr_reader :grid_width, :grid_height, :width, :height, :tiles
-    attr_reader :lighting_overlay
+    attr_reader :lighting_overlay, :seed
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
      
-    def initialize
+    def initialize(seed)
+      @seed = seed
       super()
     end
 
     def generate
       maker = WorldMaker.new
 
-      tile_data = maker.generate_tile_data 50, 50 # Largest, at 200x200, is 50, 50
+      tile_data = maker.generate_tile_data 50, 50, seed # Largest, at 200x200, is 50, 50
       create_tiles_from_data tile_data
 
-      object_data = maker.generate_object_data @tiles
+      object_data = maker.generate_object_data @tiles, seed
       create_objects_from_data object_data
       # TODO: send tile data to players.
 
@@ -59,7 +60,6 @@ module Game
       t = Time.now
 
       width = Tile::SPRITE_WIDTH
-      seed = rand 50..150
       create_static_layer width, seed
       create_animated_layers width, seed
 

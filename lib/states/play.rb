@@ -22,7 +22,9 @@ module Game
       @objects = []
       @world_scale = scale
 
-      @map = Map.new
+      seed = 1000 # TODO: enter this on the command line or randomise on default.
+
+      @map = Map.new seed
       if server?
         @map.generate
         @player = Player.new @map.width / 2, @map.height / 2
@@ -110,11 +112,11 @@ module Game
       @space.on_collision(:enemy, :water) do |entity, water|
         case entity.type
           when :tick
-            true
+            true # Can't enter
           when :goblin_archer
             false # Good swimmers.
           else
-            entity.body.vel *= 0.97 # Bad swimmers.
+            entity.body.vel *= 0.98 # Bad swimmers.
             false
         end
       end
