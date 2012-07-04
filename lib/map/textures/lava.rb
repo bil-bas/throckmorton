@@ -11,9 +11,9 @@ module Game
       LAVA_STEP = 0.2
 
       protected
-      def create_generators
-        @lava = Perlin::Generator.new 34525, 0.4, 1
-        @crust = Perlin::Generator.new 123, 0.8, 4
+      def create_generators(seed)
+        @lava = Perlin::Generator.new seed, 0.4, 1
+        @crust = Perlin::Generator.new seed, 0.8, 4
       end
 
       protected

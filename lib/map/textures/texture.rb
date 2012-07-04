@@ -5,8 +5,8 @@ module Game
 
       def num_frames; self.class::ANIMATED ? ANIMATION_FRAMES : 1 end
 
-      def initialize
-        create_generators
+      def initialize(seed)
+        create_generators seed
       end
 
       def render(frames, x, y, width, height)
@@ -18,7 +18,7 @@ module Game
       end
 
       protected
-      def create_generators
+      def create_generators(seed)
         raise NotImplementedError
       end
 

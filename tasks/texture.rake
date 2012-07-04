@@ -22,11 +22,12 @@ def render_and_save(type)
   print "Generating #{type} texture..."
   t = Time.now
 
-  images = texture.new.num_frames.times.map do |time|
+  gen = texture.new rand 1..10000
+
+  images = gen.num_frames.times.map do
     TexPlay.create_image $window, 200, 200, caching: false
   end
 
-  gen = texture.new
   gen.render images, 0, 0, images[0].width, images[0].height
   images.each_with_index do |image, i|
     image.force_sync [0, 0, image.width, image.height]

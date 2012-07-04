@@ -9,8 +9,8 @@ module Game
       WATER_STEP = 0.2
 
       protected
-      def create_generators
-        @generator = Perlin::Generator.new 99, 1, 1
+      def create_generators(seed)
+        @generator = Perlin::Generator.new seed, 1, 1
       end
 
       protected

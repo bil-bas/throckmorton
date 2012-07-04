@@ -8,8 +8,8 @@ module Game
       STEP = 2
 
       protected
-      def create_generators
-        @generator = Perlin::Generator.new 12, 1, 2
+      def create_generators(seed)
+        @generator = Perlin::Generator.new seed, 1, 2
       end
 
       protected

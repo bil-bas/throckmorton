@@ -12,11 +12,11 @@ module Game
       MOSS_STEP = 0.05
 
       protected
-      def create_generators
-        @midi = Perlin::Generator.new 128, 0.5, 1
-        @macro = Perlin::Generator.new 35, 0.5, 1
-        @micro = Perlin::Generator.new 145, 0.5, 1
-        @moss = Perlin::Generator.new 123, 0.5, 1
+      def create_generators(seed)
+        @midi = Perlin::Generator.new seed, 0.5, 1
+        @macro = Perlin::Generator.new seed, 0.5, 1
+        @micro = Perlin::Generator.new seed, 0.5, 1
+        @moss = Perlin::Generator.new seed, 0.5, 1
       end
 
       protected

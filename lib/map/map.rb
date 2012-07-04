@@ -59,23 +59,24 @@ module Game
       t = Time.now
 
       width = Tile::SPRITE_WIDTH
-      create_static_layer width
-      create_animated_layers width
+      seed = rand 50..150
+      create_static_layer width, seed
+      create_animated_layers width, seed
 
       info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
 
-    def create_static_layer(width)
+    def create_static_layer(width, seed)
       @static_layer = begin
         image = TexPlay.create_image $window, grid_width * width, grid_height * width, caching: false
 
-        texture = Textures::CavernFloor.new
+        texture = Textures::CavernFloor.new seed
         @tiles_by_type[:cavern_floor].each do |tile|
           texture.render image, tile.grid_x * width, tile.grid_y * width,
                          width, width
         end
 
-        texture = Textures::CavernWall.new
+        texture = Textures::CavernWall.new seed
         @tiles_by_type[:cavern_wall].each do |tile|
           texture.render image, tile.grid_x * width, tile.grid_y * width,
                          width, width
@@ -91,18 +92,18 @@ module Game
       end
     end
 
-    def create_animated_layers(width)
+    def create_animated_layers(width, seed)
       animation = Textures::Texture::ANIMATION_FRAMES.times.map do
         TexPlay.create_image $window, grid_width * width, grid_height * width, color: :alpha, caching: false
       end
 
-      texture = Textures::Lava.new
+      texture = Textures::Lava.new seed
       @tiles_by_type[:lava].each do |tile|
         texture.render animation, tile.grid_x * width, tile.grid_y * width,
                                  width, width
       end
 
-      texture = Textures::Water.new
+      texture = Textures::Water.new seed
       @tiles_by_type[:water].each do |tile|
         texture.render animation, tile.grid_x * width, tile.grid_y * width,
                                  width, width
