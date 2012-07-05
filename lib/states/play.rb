@@ -176,7 +176,8 @@ module Game
     def draw
       if client?
         $window.scale world_scale do
-          $window.translate ($window.width / (world_scale * 2)) - @player.x.round, ($window.height / (world_scale * 2))  - @player.y.round do
+          $window.translate (($window.width / (world_scale * 2)) - @player.x).round,
+                            (($window.height / (world_scale * 2))  - @player.y).round do
             @map.draw
             @objects.each {|o| o.draw }
             @player.draw

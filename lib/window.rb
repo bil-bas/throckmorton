@@ -14,8 +14,12 @@ module Game
       end
       
       enable_undocumented_retrofication
+
+      scale = (scale * 2).floor
+
+      info { "Starting with rendering scale x#{scale}" }
       
-      push_game_state Play.new(scale * 2)
+      push_game_state Play.new(scale)
       
       init_fps
 

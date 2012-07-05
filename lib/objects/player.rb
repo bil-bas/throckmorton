@@ -45,6 +45,7 @@ module Game
         image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
         image.set_pixel WIDTH / 2 - 1, 3
         image.set_pixel WIDTH / 2 + 1, 3
+        image = Image["player16.png"].thin_outlined
         self.image = image
       end
 
@@ -145,7 +146,7 @@ module Game
     end
     
     def draw
-      @image.draw_rot x.round, y.round, zorder, angle, 0.5, 0.5
+      @image.draw_rot x.round, y.round, zorder, angle, 0.5, 0.5 #, 0.5, 0.5
     end
     
     def draw_mini
