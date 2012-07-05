@@ -50,6 +50,7 @@ module Game
       @space.on_collision(:player, :enemy) do |player, enemy|
         if server?
           player.health -= rand enemy.damage
+          Sample["player_meleed.ogg"].play 0.7
           enemy.destroy
         end
         false

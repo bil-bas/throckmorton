@@ -23,3 +23,12 @@ Controls
 * AOE burst with right mouse button - shoots in all directions at once (high energy cost)
 * Hold tab: Map (also pauses in SP).
 * Escape: Restart on new map (for testing purposes only)
+
+Sound effects
+-------------
+
+* [Chewing by dobroide](http://www.freesound.org/people/dobroide/sounds/24971/) [CC BY 3.0]
+* [Coins by Robinhood76](http://www.freesound.org/people/Robinhood76/sounds/51671/) [CC BY-NC 3.0]
+* [rip_tear by aust_paul](http://www.freesound.org/people/aust_paul/sounds/30928/) [CC0 1.0]
+* [punch by CGEffex](http://www.freesound.org/people/CGEffex/sounds/89769/) [CC BY 3.0]
+* [hurtwa by Michel88](http://www.freesound.org/people/Michel88/sounds/76965/) [CC Sampling Plus 1.0]

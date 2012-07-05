@@ -12,6 +12,7 @@ module Game
     def activated_by(player)
       unless player.energy == player.max_energy
         player.energy += HEAL_VALUE
+        Sample["chewing.ogg"].play 0.7
         self.destroy
       end
     end

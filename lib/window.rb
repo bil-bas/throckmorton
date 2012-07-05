@@ -18,6 +18,11 @@ module Game
       scale = (scale * 2).floor
 
       info { "Starting with rendering scale x#{scale}" }
+
+      # Pre-load sound effects.
+      Dir[File.expand_path("../../lib/sounds/*.ogg", __FILE__)].each do |sample|
+        Sample[sample]
+      end
       
       push_game_state Play.new(scale)
       

@@ -13,6 +13,7 @@ module Game
 
     def activated_by(player)
       player.score += @value
+      Sample["coins.ogg"].play 0.3
       self.destroy
     end
 

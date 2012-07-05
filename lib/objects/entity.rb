@@ -16,7 +16,10 @@ module Game
       return if @health == 0
       @health = [[value, 0].max, max_health].min
       Messages::Set.broadcast(self, :health, @health) if parent.server?
-      destroy if @health <= 0
+      if @health <= 0
+        Sample["enemy_killed.ogg"].play 0.8
+        destroy
+      end
       @health
     end
   end
