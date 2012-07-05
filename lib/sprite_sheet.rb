@@ -33,6 +33,7 @@ module Game
     def map(&block)
       raise unless block_given?
       copy = dup
+      copy.instance_variable_set :@sprites, @sprites.dup
       copy.map! &block
       copy
     end

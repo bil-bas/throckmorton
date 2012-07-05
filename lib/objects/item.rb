@@ -1,6 +1,16 @@
 module Game
   # Items are picked up by the player.
   class Item < PhysicsObject
+    SPRITE_WIDTH = 16
+
+    class << self
+      def sprites
+        @sprites ||= SpriteSheet["item.png", SPRITE_WIDTH, SPRITE_WIDTH, 8].map do |sprite|
+          sprite.thin_outlined
+        end
+      end
+    end
+
     def short_name; "#{self.class}#{id_string}" end
     def needs_sync?; false end
 

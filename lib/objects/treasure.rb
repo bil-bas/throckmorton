@@ -1,16 +1,18 @@
 module Game
   class Treasure < Item
     WIDTH = 20
-    SCORE_VALUE = 25
+    SCORE_VALUES = [100, 500, 1000]
 
     def initialize(x, y)
-      image = TexPlay.create_image $window, WIDTH, WIDTH, color: :yellow
+      size = [0, 1, 2].sample
+      @value = SCORE_VALUES[size]
+      image = Item.sprites[0, size]
 
       super x: x, y: y, image: image, width: WIDTH
     end
 
     def activated_by(player)
-      player.score += SCORE_VALUE
+      player.score += @value
       self.destroy
     end
 
