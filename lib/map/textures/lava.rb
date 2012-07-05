@@ -7,7 +7,7 @@ module Game
       ANIMATED = true
       COLOR = [0.8, 0.1, 0] #Gosu::Color.rgb(200, 25, 0)
 
-      CRUST_STEP = 0.2
+      CRUST_STEP = 0.3
       LAVA_STEP = 0.2
 
       protected
@@ -29,10 +29,10 @@ module Game
 
       protected
       def color(x, y)
-        if @crust_noise[x][y] > 0.15
+        if @crust_noise[x][y] > 0
           # Dark floating "crust".
-          height = 0.2 - @crust_noise[x][y] * 0.3
-          [height, height / 2, height / 4]
+          height = @crust_noise[x][y]
+          [height * 0.5, height * 0.4, height * 0.35]
         else
           # Lava: Glow from below.
           height = @lava_noise[x][y].first
