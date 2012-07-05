@@ -41,18 +41,17 @@ module Game
         # .45      ..5
         # 23.  OR  .34
         # 1..      12.
+
+        dx -= 1 if target_tile.blocks_movement? # Prevent view through diagonal "hole"
+
         # Blocked only if BOTH are blocked - return blockage from just one if both are blocked.
-        blockage1 = zig_zag_blocked_by(tile, step_x, step_y, dx - 1, true, type)
-        blockage2 = zig_zag_blocked_by(tile, step_x, step_y, dx - 1, false, type)
+        blockage1 = zig_zag_blocked_by(tile, step_x, step_y, dx, true, type)
+        blockage2 = zig_zag_blocked_by(tile, step_x, step_y, dx, false, type)
         if blockage1 && blockage2
           # Choose the blockage that is closest to us, since the other is irrelevant.
           [blockage1, blockage2].min_by do |blockage|
             manhattan_distance blockage
           end
-        elsif blockage1
-          blockage1
-        else
-          blockage2
         end
       else
         ray_trace_blocked_by tile, step_x, step_y, dx, dy, type
