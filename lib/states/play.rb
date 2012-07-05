@@ -74,7 +74,7 @@ module Game
 
       # Lava hurts you, but enemies just stand at the edge :)
       @space.on_collision(:player, :lava) do |player, lava|
-        player.body.vel *= 0.96
+        player.body.vel *= 0.97
         if server?
           player.health -= 0.2
         end
@@ -101,7 +101,7 @@ module Game
 
       # Most things can move through water happily.
       @space.on_collision(:player, :water) do |entity, water|
-        player.body.vel *= 0.96
+        player.body.vel *= 0.98
         false
       end
 
@@ -116,6 +116,9 @@ module Game
             true # Can't enter
           when :spawn
             false # Good swimmers.
+          when :lava_beetle
+            entity.body.vel *= 0.92 # Very bad swimmers.
+            false
           else
             entity.body.vel *= 0.98 # Bad swimmers.
             false

@@ -45,22 +45,31 @@ module Game
       player_position = start_position tiles
 
       # TODO: Use seed to place objects.
+      objects = []
 
-      valid_tiles = tiles.flatten.select {|t| t.spawn_object? && distance(t.x, t.y, *player_position) > 20 }
-      valid_tiles.map.with_object([]) do |tile, data|
+      valid_tiles = tiles.flatten.select {|t| distance(t.x, t.y, *player_position) > 50 }
+      valid_tiles.select {|t| t.spawn_object? }.each do |tile|
         case rand(100)
           when 0..8
             @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten
-            data << [Enemy.name[/[^:]+$/], tile.x, tile.y, @@possibilities.sample]
+            objects << [Enemy.name[/[^:]+$/], tile.x, tile.y, @@possibilities.sample]
 
-          when 15..16
-            data << [HealthPack.name[/[^:]+$/], tile.x, tile.y]
           when 18
-            data <<[EnergyPack.name[/[^:]+$/], tile.x, tile.y]
+            objects <<[EnergyPack.name[/[^:]+$/], tile.x, tile.y]
+
           when 20..24
-            data <<[Treasure.name[/[^:]+$/], tile.x, tile.y]
+            objects <<[Treasure.name[/[^:]+$/], tile.x, tile.y]
         end
       end
+
+      valid_tiles.select {|t| t.type == :water }.each do |tile|
+        case rand(100)
+          when 0..10
+            objects << [HealthPack.name[/[^:]+$/], tile.x, tile.y]
+        end
+      end
+
+      objects
     end
   end
 end
