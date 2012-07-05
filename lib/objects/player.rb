@@ -144,7 +144,8 @@ module Game
     end
     
     def draw_mini
-      parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 14, 14, Color.rgb(0, 0, 0)
+      parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 32, 32,
+                            Color.rgb(0, Math::sin(milliseconds / 100.0) * 50 + 125, 0)
     end
 
     def draw_gui
