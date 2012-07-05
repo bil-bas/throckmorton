@@ -88,7 +88,7 @@ module Game
     def draw_mini
       tile = self.tile
       if tile && tile.seen?
-        parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 10 * scale, 10 * scale, Color.rgb(255, 0, 0)
+        parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 20, 20, Color.rgb(255, 0, 0)
       end
     end
   end
