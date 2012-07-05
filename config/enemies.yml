@@ -1,11 +1,11 @@
-:goblin_archer:
+:spawn:
   :frequency: 10
   :spritesheet_position:
     :x: 3
     :y: 0
   :collision_width: 11
 
-  :max_health: 10
+  :max_health: 12
   :speed: 9
 
   :melee:
@@ -19,14 +19,14 @@
     :fire_chance: 0.01 # Per frame.
 
 
-:fire_beetle:
+:lava_beetle:
   :frequency: 5
   :spritesheet_position:
     :x: 1
     :y: 0
   :collision_width: 14
 
-  :max_health: 50
+  :max_health: 80
   :speed: 6
 
   :illumination_range: 1
@@ -35,29 +35,29 @@
     :damage: !ruby/range 15..25
 
 
-:orc:
+:warrior:
   :frequency: 20
   :spritesheet_position:
     :x: 0
     :y: 0
   :collision_width: 13
 
-  :max_health: 18
+  :max_health: 24
   :speed: 8
 
   :melee:
     :damage: !ruby/range 4..7
 
 
-:tick:
+:skitter:
   :frequency: 5
   :spritesheet_position:
     :x: 2
     :y: 0
-  :collision_width: 2
+  :collision_width: 3
 
   :max_health: 1
   :speed: 12
 
   :melee:
-    :damage: !ruby/range 1..2
+    :damage: !ruby/range 2..4

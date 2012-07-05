@@ -82,7 +82,7 @@ module Game
 
       # fire_beetle doesn't care about lava and just runs through!
       @space.on_collision(:enemy, :lava) do |entity, lava|
-        entity.type != :fire_beetle
+        entity.type != :lava_beetle
       end
 
       # No friendly fire.
@@ -111,9 +111,9 @@ module Game
       # Ticks are afraid of the water, but can pass though small places.
       @space.on_collision(:enemy, :water) do |entity, water|
         case entity.type
-          when :tick
+          when :skitter
             true # Can't enter
-          when :goblin_archer
+          when :spawn
             false # Good swimmers.
           else
             entity.body.vel *= 0.98 # Bad swimmers.
@@ -122,7 +122,7 @@ module Game
       end
 
       @space.on_collision(:enemy, :obstacle) do |entity, water|
-        entity.type != :tick
+        entity.type != :skitter
       end
 
       @space.on_collision(:player_projectile, :enemy_projectile) do |p1, p2|
