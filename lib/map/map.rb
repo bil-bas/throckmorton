@@ -113,7 +113,7 @@ module Game
         frame.force_sync [0, 0, frame.width, frame.height]
       end
 
-      @animated_layers = (1..(animation.size - 2)).each.with_object [] do |frame, frames|
+      @animated_layers = (1..(animation.size - 2)).each.with_object animation.dup do |frame, frames|
         frames.unshift animation[frame]
       end
     end
@@ -180,7 +180,7 @@ module Game
       $window.scale 32 * Tile::SCALE do
         $window.translate 0, 0 do
           @static_layer.draw -4, -4, ZOrder::TILES, 2, 2
-          @animated_layers[(milliseconds / 250) % @animated_layers.size].draw -4, -4, ZOrder::TILES, 2, 2
+          @animated_layers[(milliseconds / 125) % @animated_layers.size].draw -4, -4, ZOrder::TILES, 2, 2
         end
       end
 

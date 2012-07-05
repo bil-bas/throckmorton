@@ -4,7 +4,7 @@ module Game
   module Textures
     class CavernWall < Texture
       ANIMATED = false
-      COLOR = [0.2, 0.1, 0.05] #Gosu::Color.rgb(60, 30, 10)
+      COLOR = [0.1, 0.15, 0.15]
       STEP = 2
 
       protected

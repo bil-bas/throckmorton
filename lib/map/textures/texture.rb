@@ -1,7 +1,7 @@
 module Game
   module Textures
     class Texture
-      ANIMATION_FRAMES = 5
+      ANIMATION_FRAMES = 8
 
       def num_frames; self.class::ANIMATED ? ANIMATION_FRAMES : 1 end
 
