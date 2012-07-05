@@ -14,7 +14,7 @@ module Game
     end
     self.next_id = 0
 
-    attr_reader :speed, :id, :body
+    attr_reader :speed, :id, :body, :shape
     attr_accessor :velocity_x, :velocity_y
 
     def needs_sync?; true; end
@@ -99,6 +99,24 @@ module Game
       Messages::Destroy.broadcast(self) if parent.server?
 
       info { "Destroyed #{short_name} at #{tile.grid_position}" }
+    end
+
+    def draw_physics
+      width, height = shape.bb.r - shape.bb.l, shape.bb.t - shape.bb.b
+
+      case shape
+        when CP::Shape::Circle
+          $window.physics_circle.draw_rot x, y, ZOrder::PHYSICS, 0, 0.5, 0.5,
+                                          width / 32.0, height / 32.0
+        when CP::Shape::Poly
+          $window.physics_rect.draw_rot x, y, ZOrder::PHYSICS, 0, 0.5, 0.5,
+                                        width / 32.0, height / 32.0
+      end
+    end
+
+    def draw_name
+      Font[6].draw_rel short_name[/[^:]+$/], x, y,
+                       ZOrder::PHYSICS, 0.5, 0.5
     end
   end
 end

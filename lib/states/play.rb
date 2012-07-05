@@ -185,6 +185,8 @@ module Game
             @map.draw
             @objects.each {|o| o.draw }
             @player.draw
+
+            draw_debug if $window.debugging?
           end
         end
 
@@ -213,6 +215,15 @@ module Game
 
         super
       end
+    end
+
+    def draw_debug
+      @objects.each do |object|
+        object.draw_physics
+        object.draw_name
+      end
+
+      player.draw_physics
     end
 
     def draw_map_overlay

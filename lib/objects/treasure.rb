@@ -1,6 +1,6 @@
 module Game
   class Treasure < Item
-    WIDTH = 20
+    WIDTH = 14
     SCORE_VALUES = [100, 500, 1000]
 
     def initialize(x, y)

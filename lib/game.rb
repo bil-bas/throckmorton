@@ -30,7 +30,7 @@ module Game
         Server.new opts[:port].to_i
 
       elsif !opts.help?
-        Window.new(opts.fullscreen?).show
+        Window.new(opts.fullscreen?, opts.debug?).show
       end
     end
   end

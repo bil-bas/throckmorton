@@ -1,19 +1,30 @@
 module Game
- class Window < Chingu::Window
-   attr_reader :potential_fps
-   BASE_WIDTH = 800
-   BASE_HEIGHT = 600
+  class Window < Chingu::Window
+    attr_reader :potential_fps, :physics_circle, :physics_rect
+    BASE_WIDTH = 800
+    BASE_HEIGHT = 600
+    PHYSICS_COLOR = Color.rgba 255, 255, 0, 128 # For debug.
 
-    def initialize(fullscreen)
+    def debugging?; @debugging end
+   
+    def initialize(fullscreen, debugging)
       if fullscreen
-        scale = screen_height.fdiv(BASE_HEIGHT)
+        scale = screen_height.fdiv BASE_HEIGHT
         super screen_width, screen_height
       else
         scale = 1
         super (BASE_WIDTH * scale).to_i, (BASE_HEIGHT * scale).to_i, false
       end
-      
+
       enable_undocumented_retrofication
+
+      @debugging = debugging
+      if debugging?
+        @physics_circle = TexPlay.create_image self, 32, 32, color: :alpha
+        @physics_circle.circle 15, 15, 15.5, color: PHYSICS_COLOR
+        @physics_rect = TexPlay.create_image self, 32, 32, color: :alpha
+        @physics_rect.rect 0, 0, 31, 31, color: PHYSICS_COLOR
+      end
 
       scale = (scale * 2).floor
 
@@ -34,7 +45,7 @@ module Game
 
     def update
       start_at = Time.now
-            
+           
       super
       
       @used_time += (Time.now - start_at).to_f
@@ -68,13 +79,13 @@ module Game
       @num_frames += 1
 
       if Time.now.to_f >= @fps_next_calculated_at
-        elapsed_time = @fps_next_calculated_at - Time.now.to_f + 1
-        @fps = @num_frames / elapsed_time
-        @potential_fps = @num_frames / [@used_time, 0.0001].max
+       elapsed_time = @fps_next_calculated_at - Time.now.to_f + 1
+       @fps = @num_frames / elapsed_time
+       @potential_fps = @num_frames / [@used_time, 0.0001].max
 
-        @num_frames = 0
-        @fps_next_calculated_at = Time.now.to_f + 1
-        @used_time = 0
+       @num_frames = 0
+       @fps_next_calculated_at = Time.now.to_f + 1
+       @used_time = 0
       end
     end
   end
