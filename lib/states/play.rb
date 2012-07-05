@@ -185,10 +185,20 @@ module Game
         end
 
         if holding? :tab
-          draw_map_overlay
           @paused = true
+
+          # Draw a shaded background.
+          pixel.draw 0, 0, Float::INFINITY, $window.width, $window.height, Color.rgba(0, 0, 0, 150)
+
+          draw_map_overlay
         else
           @paused = false
+
+          $window.translate -40, 4 do
+            $window.scale 0.25 do
+              draw_map_overlay
+            end
+          end
         end
 
         player.draw_gui
@@ -203,10 +213,8 @@ module Game
 
     def draw_map_overlay
       $window.flush
-      
-      pixel.draw 0, 0, 0, $window.width, $window.height, Color.rgba(0, 0, 0, 150)
-      
-      $window.scale Map::MINI_SCALE do         
+
+      $window.scale Map::MINI_SCALE do
         $window.translate ($window.width / Map::MINI_SCALE) * 0.5 - (@map.width / 2),
                           ($window.height / Map::MINI_SCALE) * 0.5 - (@map.height / 2) do
                           

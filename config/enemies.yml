@@ -1,9 +1,12 @@
 :goblin_archer:
   :frequency: 10
+  :spritesheet_position:
+    :x: 3
+    :y: 0
+  :collision_width: 11
 
   :max_health: 10
   :speed: 9
-  :scale: 0.6
 
   :melee:
     :damage: !ruby/range 1..2
@@ -18,10 +21,13 @@
 
 :fire_beetle:
   :frequency: 5
+  :spritesheet_position:
+    :x: 1
+    :y: 0
+  :collision_width: 14
 
   :max_health: 50
   :speed: 6
-  :scale: 1.2
 
   :illumination_range: 1
 
@@ -31,10 +37,13 @@
 
 :orc:
   :frequency: 20
+  :spritesheet_position:
+    :x: 0
+    :y: 0
+  :collision_width: 13
 
   :max_health: 18
   :speed: 8
-  :scale: 0.9
 
   :melee:
     :damage: !ruby/range 4..7
@@ -42,10 +51,13 @@
 
 :tick:
   :frequency: 5
+  :spritesheet_position:
+    :x: 2
+    :y: 0
+  :collision_width: 2
 
   :max_health: 1
   :speed: 12
-  :scale: 0.2
 
   :melee:
     :damage: !ruby/range 1..2

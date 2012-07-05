@@ -1,6 +1,6 @@
 module Game
   class Enemy < Entity
-    WIDTH = 17
+    SPRITE_WIDTH = 16
     SHOOT_OFFSET = 14
 
     attr_reader :damage, :type
@@ -9,6 +9,11 @@ module Game
     class << self
       def config
         @config ||= YAML.load_file(File.expand_path("../../../config/enemies.yml", __FILE__))
+      end
+      def sprites
+        @sprites ||= SpriteSheet["enemy.png", SPRITE_WIDTH, SPRITE_WIDTH, 8].map do |sprite|
+          sprite.thin_outlined
+        end
       end
     end
 
@@ -22,22 +27,15 @@ module Game
       @damage = config[:melee][:damage] || raise
       @facing_x, @facing_y = 1, 0
 
-      self.width, self.height = WIDTH, WIDTH
-
-      super x: x, y: y, scale: config[:scale],
+      super x: x, y: y,
+            width: config[:collision_width], height: config[:collision_width],
             max_health: config[:max_health], health: options[:health],
             zorder: ZOrder::ENEMY, illumination_range: config[:illumination_range],
             collision_type: :enemy, speed: config[:speed]
 
       if parent.client?
-        unless defined? @@image
-          @@image = TexPlay.create_image $window, WIDTH, WIDTH, color: alpha
-          @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :red, fill: true
-          @@image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
-          @@image.set_pixel WIDTH / 2 - 1, 3
-          @@image.set_pixel WIDTH / 2 + 1, 3
-        end
-        self.image = @@image
+        position = config[:spritesheet_position]
+        self.image = self.class.sprites[position[:x], position[:y]]
       end
 
       Messages::CreateEnemy.broadcast(self) if parent.server?
@@ -84,7 +82,7 @@ module Game
     def draw
       tile = self.tile
       if tile && tile.seen? && parent.player.can_see?(tile)
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5, scale, scale
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
       end
     end
 

@@ -6,7 +6,7 @@ module Game
     def initialize(x, y)
       image = TexPlay.create_image $window, WIDTH, WIDTH, color: :yellow
 
-      super x: x, y: y, image: image
+      super x: x, y: y, image: image, width: WIDTH
     end
 
     def activated_by(player)

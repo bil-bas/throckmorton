@@ -52,7 +52,10 @@ module Game
       #            CP::Vec2.new(width / 2 + MARGIN, -height / 2 - MARGIN)]
       #@shape = CP::Shape::Poly.new(@body, vertices, CP::Vec2.new(0, 0))
 
-      @shape = CP::Shape::Circle.new(@body, scale * self.class::WIDTH * 0.5 + MARGIN, CP::Vec2.new(0, 0))
+      @shape = CP::Shape::Circle.new(@body,
+                                     scale * options[:width] + MARGIN,
+                                     CP::Vec2.new(0, 0))
+
       @shape.collision_type = options[:collision_type]
       @shape.group = options[:group] if options.has_key? :group
       @shape.object = self

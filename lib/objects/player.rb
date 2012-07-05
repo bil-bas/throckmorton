@@ -3,7 +3,7 @@ require 'set'
 module Game
   class Player < Entity
     DIAGONAL = 0.785
-    WIDTH = 17
+    WIDTH = 12
     SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
     trait :timer
@@ -36,17 +36,11 @@ module Game
       self.width, self.height = WIDTH, WIDTH
 
       super x: x, y: y, max_health: 100, speed: 18,
-            zorder: ZOrder::PLAYER,
+            zorder: ZOrder::PLAYER, width: WIDTH,
             collision_type: :player, illumination_range: 5
 
       if parent.client?
-        image = TexPlay.create_image $window, WIDTH, WIDTH, color: alpha
-        image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: Color.rgb(20, 160, 100), fill: true
-        image.circle WIDTH / 2, WIDTH / 2, WIDTH / 2, color: :black
-        image.set_pixel WIDTH / 2 - 1, 3
-        image.set_pixel WIDTH / 2 + 1, 3
-        image = Image["player16.png"].thin_outlined
-        self.image = image
+        self.image = Image["player16.png"].thin_outlined
       end
 
       info { "Created #{short_name} at #{tile.grid_position}" }

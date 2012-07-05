@@ -15,6 +15,7 @@ module Game
         zorder: ZOrder::PROJECTILES,
         color: Color::CYAN,
         damage: 1,
+        width: WIDTH,
       }.merge! options
 
       @type = type
