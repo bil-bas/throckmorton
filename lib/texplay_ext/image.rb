@@ -12,6 +12,12 @@ module Gosu
       prepare_image(obj, args.first, options)
     end
 
+    alias_method :original_force_sync, :force_sync
+    def force_sync(rect = nil)
+      rect ||=  [0, 0, width - 1, height - 1]
+      original_force_sync rect
+    end
+
     # A white silhouette of the image.
     def silhouette
       unless defined? @silhouette
@@ -39,7 +45,7 @@ module Gosu
     end
     
     def self.create(width, height, options = {})
-      TexPlay.create_image($window, width, height, options)
+      TexPlay.create_image $window, width, height, options
     end
 
     def transparent_pixel?(x, y)

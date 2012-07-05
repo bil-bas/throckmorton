@@ -24,7 +24,7 @@ module Game
       @duration = options[:duration]
       @rotation_speed = options[:rotation_speed]
 
-      image = TexPlay.create_image $window, 3, 12, color: options[:color]
+      image = Image.create 3, 12, color: options[:color]
 
       super options.merge(x: x, y: y, image: image, angle: direction)
 

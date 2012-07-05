@@ -43,7 +43,7 @@ module Game
         self.image = Image["player16.png"].thin_outlined
       end
 
-      info { "Created #{short_name} at #{tile.grid_position}" }
+      debug { "Created #{short_name} at #{tile.grid_position}" }
 
       if parent.client?
         on_input :left_mouse_button do

@@ -30,8 +30,8 @@ module Game
     end
 
     def create_lighting
-      @revealed_overlay = TexPlay.create_image $window, grid_width, grid_height, color: Color.rgba(0, 0, 0, 255)
-      @lighting_overlay = TexPlay.create_image $window, grid_width * LIGHTING_SCALE, grid_height * LIGHTING_SCALE
+      @revealed_overlay = Image.create grid_width, grid_height, color: Color.rgba(0, 0, 0, 255)
+      @lighting_overlay = Image.create grid_width * LIGHTING_SCALE, grid_height * LIGHTING_SCALE
     end
 
     # Create tiles from tile data (2d array of types - strings or )
@@ -68,7 +68,7 @@ module Game
 
     def create_static_layer(width, seed)
       @static_layer = begin
-        image = TexPlay.create_image $window, grid_width * width, grid_height * width, caching: false
+        image = Image.create grid_width * width, grid_height * width, caching: false
 
         texture = Textures::CavernFloor.new seed
         @tiles_by_type[:cavern_floor].each do |tile|
@@ -94,7 +94,7 @@ module Game
 
     def create_animated_layers(width, seed)
       animation = Textures::Texture::ANIMATION_FRAMES.times.map do
-        TexPlay.create_image $window, grid_width * width, grid_height * width, color: :alpha, caching: false
+        Image.create grid_width * width, grid_height * width, color: :alpha, caching: false
       end
 
       texture = Textures::Lava.new seed
@@ -157,6 +157,8 @@ module Game
         parent.objects.find_all {|o| o.illuminating? }.each do |object|
           object.illuminate viewer, @lighting_overlay
         end
+
+        @lighting_overlay.force_sync
       end
     end
 

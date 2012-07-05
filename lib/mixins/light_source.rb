@@ -60,7 +60,7 @@ module Mixins
       scale_f = scale_i.to_f
 
       overlay.circle source_x * scale_i, source_y * scale_i,
-                     range * scale_i, fill: true,
+                     range * scale_i, fill: true, sync_mode: :no_sync,
                      color_control: lambda {|c, x, y|
                        if @visible_tile_positions.include? [x / scale_i, y / scale_i]
                          # Makes the tile lighter. Multiple light sources choose the lightest (don't combine).

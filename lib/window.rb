@@ -20,9 +20,9 @@ module Game
 
       @debugging = debugging
       if debugging?
-        @physics_circle = TexPlay.create_image self, 32, 32, color: :alpha
+        @physics_circle = Image.create 32, 32, color: :alpha
         @physics_circle.circle 15, 15, 15.5, color: PHYSICS_COLOR
-        @physics_rect = TexPlay.create_image self, 32, 32, color: :alpha
+        @physics_rect = Image.create 32, 32, color: :alpha
         @physics_rect.rect 0, 0, 31, 31, color: PHYSICS_COLOR
       end
 

@@ -40,7 +40,7 @@ module Game
 
       Messages::CreateEnemy.broadcast(self) if parent.server?
 
-      info { "Created #{short_name} at #{tile.grid_position}" }
+      debug { "Created #{short_name} at #{tile.grid_position}" }
     end
 
     def update

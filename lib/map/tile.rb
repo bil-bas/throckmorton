@@ -73,7 +73,7 @@ module Game
       end
 
       if @type == :rocks
-        image = TexPlay.create_image $window, SPRITE_WIDTH, SPRITE_WIDTH, color: :alpha
+        image = Image.create SPRITE_WIDTH, SPRITE_WIDTH, color: :alpha
         image.circle SPRITE_WIDTH / 2 + 0.5, SPRITE_WIDTH / 2 + 0.5, SPRITE_WIDTH / 2, fill: true do
           if rand(100) < 40
             Color.rgb rand(80..120), rand(30..50), 10

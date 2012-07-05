@@ -31,7 +31,7 @@ module Game
       end
 
       if client?
-        @pixel = TexPlay.create_image $window, 1, 1, color: :white
+        @pixel = Image.create 1, 1, color: :white
 
         on_input :escape do
           pop_game_state

@@ -98,7 +98,7 @@ module Game
 
       Messages::Destroy.broadcast(self) if parent.server?
 
-      info { "Destroyed #{short_name} at #{tile.grid_position}" }
+      debug { "Destroyed #{short_name} at #{tile.grid_position}" }
     end
 
     def draw_physics
