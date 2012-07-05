@@ -3,7 +3,7 @@
   :spritesheet_position:
     :x: 3
     :y: 0
-  :collision_width: 11
+  :collision_width: 12
 
   :max_health: 12
   :speed: 9
@@ -40,7 +40,7 @@
   :spritesheet_position:
     :x: 0
     :y: 0
-  :collision_width: 13
+  :collision_width: 14
 
   :max_health: 24
   :speed: 8
@@ -54,10 +54,10 @@
   :spritesheet_position:
     :x: 2
     :y: 0
-  :collision_width: 3
+  :collision_width: 5
 
   :max_health: 1
-  :speed: 12
+  :speed: 15
 
   :melee:
     :damage: !ruby/range 2..4
