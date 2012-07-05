@@ -58,8 +58,6 @@ module Game
 
       self.angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
 
-
-
       super
     end
 
@@ -73,6 +71,7 @@ module Game
                                 speed: @ranged[:speed],
                                 collision_type: :enemy_projectile,
                                 group: :enemy_projectiles,
+                                damage: @ranged[:damage],
                                 duration: @ranged[:duration],
                                 color: Color::BLACK
         parent.add_object bullet

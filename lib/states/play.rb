@@ -49,7 +49,9 @@ module Game
 
       @space.on_collision(:player, :enemy) do |player, enemy|
         if server?
-          player.health -= rand enemy.damage
+          damage = rand enemy.damage
+          debug { "Player took #{damage} damage from meleeing with #{enemy.short_name}" }
+          player.health -= damage
           Sample["player_meleed.ogg"].play 0.7
           enemy.destroy
         end
@@ -58,7 +60,9 @@ module Game
 
       @space.on_collision(:player, :enemy_projectile) do |player, projectile|
         if server?
-          player.health -= rand projectile.damage
+          damage = rand projectile.damage
+          debug { "Player took #{damage} damage from a projectile" }
+          player.health -= damage
           projectile.destroy
         end
         false
