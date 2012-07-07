@@ -32,3 +32,10 @@ Sound effects
 * [rip_tear by aust_paul](http://www.freesound.org/people/aust_paul/sounds/30928/) [CC0 1.0]
 * [punch by CGEffex](http://www.freesound.org/people/CGEffex/sounds/89769/) [CC BY 3.0]
 * [hurtwa by Michel88](http://www.freesound.org/people/Michel88/sounds/76965/) [CC Sampling Plus 1.0]
+
+Testers
+-------
+
+These wonderful people wasted their valuable time testing the game as well as providing useful feedback and suggestions:
+
+jlnr, Kyrylo
