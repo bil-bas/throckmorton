@@ -7,8 +7,8 @@ gem "texplay", "~> 0.3" # Different version actually required depending on platf
 #gem "fidgit", "~> 0.1.10"
 
 gem 'perlin', "~> 0.1.0pre1"
-gem 'renet', "~> 0.1.14"
-gem 'msgpack', "~> 0.4.7"
+#gem 'renet', "~> 0.1.14"
+#gem 'msgpack', "~> 0.4.7"
 
 gem "slop", "< 3", ">= 2.4.4" # Compatibility with what pry needs :(
 gem 'log4r', '~> 1.1.10'
