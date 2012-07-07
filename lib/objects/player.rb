@@ -157,7 +157,7 @@ module Game
       num_lights = 1 + @@num_lava + objects.count {|o| o.is_a?(Enemy) && o.type == :lava_beetle } # Note: Player isn't in objects (currently)
       num_mobs = objects.count {|o| o.is_a? Enemy}
 
-      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} -- Obj: #{objects.size} Mob: #{num_mobs} Light: #{num_lights} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
+      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} -- Obj: #{objects.size - num_mobs} Mob: #{num_mobs} Light: #{num_lights} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
     end
   end
 end
