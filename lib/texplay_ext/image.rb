@@ -60,6 +60,7 @@ module Gosu
         clear(dest_select: :transparent)   
         
         @outline = Image.create(width + 2, height + 2)
+        @outline.refresh_cache
          
         # Find the top and bottom edges.
         height.times do |y|
@@ -120,6 +121,7 @@ module Gosu
         @thin_outlined = zoomed_image.outline
         @thin_outlined.clear dest_ignore: :alpha, color: OUTLINE_COLOR
         @thin_outlined.splice zoomed_image, 1, 1, alpha_blend: true
+        @thin_outlined.refresh_cache
       end
 
       @thin_outlined

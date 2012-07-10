@@ -68,7 +68,7 @@ module Game
 
     def create_static_layer(width, seed)
       @static_layer = begin
-        image = Image.create grid_width * width, grid_height * width, caching: false
+        image = Image.create grid_width * width, grid_height * width
 
         texture = Textures::CavernFloor.new seed
         @tiles_by_type[:cavern_floor].each do |tile|
@@ -94,7 +94,7 @@ module Game
 
     def create_animated_layers(width, seed)
       animation = Textures::Texture::ANIMATION_FRAMES.times.map do
-        Image.create grid_width * width, grid_height * width, color: :alpha, caching: false
+        Image.create grid_width * width, grid_height * width, color: :alpha
       end
 
       texture = Textures::Lava.new seed
