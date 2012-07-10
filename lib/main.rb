@@ -44,6 +44,20 @@ end
 
 t = Time.now
 
+if RUBY_VERSION < "1.9.3"
+  module Kernel
+    alias_method :old_rand, :rand
+
+    def rand(*args)
+      if args[0].is_a? Range
+        args[0].min + old_rand(args[0].max - args[0].min)
+      else
+        old_rand *args
+      end
+    end
+  end
+end
+
 
 
 require_relative "standard_ext/class"
