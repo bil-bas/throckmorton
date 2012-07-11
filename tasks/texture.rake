@@ -25,7 +25,7 @@ def render_and_save(type)
   gen = texture.new rand 1..10000
 
   images = gen.num_frames.times.map do
-    Image.create 200, 200
+    TexPlay.create_image $window, 200, 200
   end
 
   gen.render images, 0, 0, images[0].width, images[0].height
