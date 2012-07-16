@@ -21,7 +21,7 @@ FileUtils.mkdir_p USER_DATA_PATH
 
 t = Time.now
 
-require 'bundler/setup'
+require 'bundler'
 Bundler.require :default
 
 require_relative 'standard_ext/object' # Set up logging

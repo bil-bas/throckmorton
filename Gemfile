@@ -1,6 +1,6 @@
 source :rubygems
 
-gem "gosu", "~> 0.7.43"
+gem "gosu", "~> 0.7.44"
 gem "chingu", "~> 0.9rc8"
 gem "chipmunk", "~> 5.3.4.5"
 gem "texplay", "~> 0.3" # Different version actually required depending on platform.
@@ -10,7 +10,7 @@ gem 'perlin', "~> 0.1.0pre1"
 #gem 'renet', "~> 0.1.14"
 #gem 'msgpack', "~> 0.4.7"
 
-gem "slop", "< 3", ">= 2.4.4" # Compatibility with what pry needs :(
+gem "slop", ">= 2.4.4", "< 3" # Compatibility with what pry needs :(
 gem 'log4r', '~> 1.1.10'
 
 #gem 'opengl', "~> 0.8.0pre1"
