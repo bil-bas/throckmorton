@@ -37,6 +37,11 @@ module Game
           pop_game_state
           push_game_state self.class.new(scale)
         end
+
+        @outline_shader ||= Ashton::Shader.new fragment: :outline, uniforms: {
+            outline_color: Gosu::Color::BLACK,
+            outline_width: 0.25,
+        }
       end
 
       Messages::Message.parent = self
@@ -187,8 +192,11 @@ module Game
           $window.translate (($window.width / (world_scale * 2)) - @player.x).round,
                             (($window.height / (world_scale * 2))  - @player.y).round do
             @map.draw
-            @objects.each {|o| o.draw }
-            @player.draw
+
+            @outline_shader.use do
+              @objects.each {|o| o.draw }
+              @player.draw
+            end
 
             draw_debug if $window.debugging?
           end

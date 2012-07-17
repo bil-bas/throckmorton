@@ -40,7 +40,7 @@ module Game
             collision_type: :player, illumination_range: 5
 
       if parent.client?
-        self.image = Image["player16.png"].thin_outlined
+        self.image = Image["player16.png"]
       end
 
       debug { "Created #{short_name} at #{tile.grid_position}" }
@@ -140,7 +140,7 @@ module Game
     end
     
     def draw
-      @image.draw_rot x.round, y.round, zorder, angle, 0.5, 0.5 #, 0.5, 0.5
+      @image.draw_rot x.round, y.round, zorder, angle, 0.5, 0.5, 2, 2
     end
     
     def draw_mini

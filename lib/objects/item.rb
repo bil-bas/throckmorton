@@ -5,9 +5,7 @@ module Game
 
     class << self
       def sprites
-        @sprites ||= SpriteSheet["item.png", SPRITE_WIDTH, SPRITE_WIDTH, 8].map do |sprite|
-          sprite.thin_outlined
-        end
+        @sprites ||= SpriteSheet["item.png", SPRITE_WIDTH, SPRITE_WIDTH, 8]
       end
     end
 
@@ -32,7 +30,7 @@ module Game
     def draw
       tile = self.tile
       if tile && tile.seen?
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5, 2, 2#
       end
     end
   end

@@ -11,9 +11,7 @@ module Game
         @config ||= YAML.load_file(File.expand_path("../../../config/enemies.yml", __FILE__))
       end
       def sprites
-        @sprites ||= SpriteSheet["enemy.png", SPRITE_WIDTH, SPRITE_WIDTH, 8].map do |sprite|
-          sprite.thin_outlined
-        end
+        @sprites ||= SpriteSheet["enemy.png", SPRITE_WIDTH, SPRITE_WIDTH, 8]
       end
     end
 
@@ -81,7 +79,7 @@ module Game
     def draw
       tile = self.tile
       if tile && tile.seen? && parent.player.can_see?(tile)
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5, 2, 2
       end
     end
 

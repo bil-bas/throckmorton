@@ -11,6 +11,10 @@ module Game
       MACRO_STEP = 0.007
       MOSS_STEP = 0.05
 
+      class << self
+        def color; Gosu::Color.rgb(60, 80, 100) end
+      end
+
       protected
       def create_generators(seed)
         @midi = Perlin::Generator.new seed, 0.5, 1

@@ -7,6 +7,10 @@ module Game
       COLOR = [0.1, 0.2, 0.2]
       STEP = 2
 
+      class << self
+        def color; Gosu::Color.rgb(30, 60, 60) end
+      end
+
       protected
       def create_generators(seed)
         @generator = Perlin::Generator.new seed, 1, 2

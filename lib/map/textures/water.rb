@@ -9,6 +9,10 @@ module Game
       WATER_STEP = 0.2
       ROCK_STEP = 0.6
 
+      class << self
+        def color; Gosu::Color.rgb(40, 110, 140) end
+      end
+
       protected
       def create_generators(seed)
         @ripples = Perlin::Generator.new seed, 0.5, 1

@@ -10,6 +10,10 @@ module Game
       CRUST_STEP = 0.3
       LAVA_STEP = 0.2
 
+      class << self
+        def color; Gosu::Color.rgb(200, 25, 0) end
+      end
+
       protected
       def create_generators(seed)
         @lava = Perlin::Generator.new seed, 0.4, 1

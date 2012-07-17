@@ -7,8 +7,9 @@ module Game
     attr_reader :grid_width, :grid_height, :width, :height, :tiles
     attr_reader :lighting_overlay, :seed
 
-    LIGHTING_UPDATE_INTERVAL = 1 / 10.0
-     
+    LIGHTING_UPDATE_INTERVAL = 1 / 5.0
+    PIXELS_PER_TILE = 8
+
     def initialize(seed)
       @seed = seed
       super()
@@ -59,66 +60,49 @@ module Game
     def render_tiles
       t = Time.now
 
-      width = Tile::SPRITE_WIDTH
-      create_static_layer width, seed
-      create_animated_layers width, seed
+      create_map_pixel_texture
 
       info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
 
-    def create_static_layer(width, seed)
-      @static_layer = begin
-        image = Image.create grid_width * width, grid_height * width
-        image.refresh_cache
+    def create_map_pixel_texture
+      #tmp = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
+      @map_pixel_buffer = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
+      @shader ||= Ashton::Shader.new fragment: File.expand_path("../../shaders/smooth.frag", __FILE__)
 
-        texture = Textures::CavernFloor.new seed
-        @tiles_by_type[:cavern_floor].each do |tile|
-          texture.render image, tile.grid_x * width, tile.grid_y * width,
-                         width, width
+      @map_pixel_buffer.render do
+        $window.scale PIXELS_PER_TILE do
+          $window.pixel.draw 0, 0, 0, grid_width, grid_height, Textures::CavernFloor.color
+
+          @tiles_by_type[:cavern_wall].each do |tile|
+            $window.pixel.draw tile.grid_x, tile.grid_y, 0, 1, 1, Textures::CavernWall.color
+          end
+
+          @tiles_by_type[:rocks].each do |tile|
+            # TODO: maybe make these into objects?
+          end
+
+          @tiles_by_type[:lava].each do |tile|
+            $window.pixel.draw tile.grid_x, tile.grid_y, 0, 1, 1, Textures::Lava.color
+          end
+
+          @tiles_by_type[:water].each do |tile|
+            $window.pixel.draw tile.grid_x, tile.grid_y, 0, 1, 1, Textures::Water.color
+          end
         end
-
-        texture = Textures::CavernWall.new seed
-        @tiles_by_type[:cavern_wall].each do |tile|
-          texture.render image, tile.grid_x * width, tile.grid_y * width,
-                         width, width
-        end
-
-        @tiles_by_type[:rocks].each do |tile|
-          # TODO: maybe make these into objects?
-        end
-
-        image.force_sync [0, 0, image.width, image.height]
-
-        image
-      end
-    end
-
-    def create_animated_layers(width, seed)
-      animation = Textures::Texture::ANIMATION_FRAMES.times.map do
-        anim = Image.create grid_width * width, grid_height * width, color: :alpha
-        anim.refresh_cache
-        anim
       end
 
-      texture = Textures::Lava.new seed
-      @tiles_by_type[:lava].each do |tile|
-        texture.render animation, tile.grid_x * width, tile.grid_y * width,
-                                 width, width
-      end
+      # TODO: why doesn't this do what we want it to?
+      #tmp.render do
+      #  @map_pixel_buffer.draw 0, 0, 0, shader: @shader
+      #end
+      #
+      #@map_pixel_buffer.render do |buffer|
+      #  #buffer.clear
+      #  tmp.draw 0, 0, 0, shader: @shader
+      #end
 
-      texture = Textures::Water.new seed
-      @tiles_by_type[:water].each do |tile|
-        texture.render animation, tile.grid_x * width, tile.grid_y * width,
-                                 width, width
-      end
-
-      animation.each do |frame|
-        frame.force_sync [0, 0, frame.width, frame.height]
-      end
-
-      @animated_layers = (1..(animation.size - 2)).each.with_object animation.dup do |frame, frames|
-        frames.unshift animation[frame]
-      end
+      info { "Created map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height}"}
     end
 
     def create_objects_from_data(data)
@@ -182,22 +166,16 @@ module Game
     end
     
     def draw
-      $window.scale 32 * Tile::SCALE do
-        $window.translate 0, 0 do
-          @static_layer.draw -4, -4, ZOrder::TILES, 2, 2
-          @animated_layers[(milliseconds / 125) % @animated_layers.size].draw -4, -4, ZOrder::TILES, 2, 2
-        end
+      $window.scale Tile::WIDTH / PIXELS_PER_TILE do
+        @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES, shader: @shader
       end
 
       draw_lighting
     end
 
     def draw_mini
-      $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
-        $window.scale Tile::SCALE * 64 do
-          @static_layer.draw 0, 0, ZOrder::TILES
-          @animated_layers.first.draw 0, 0, ZOrder::TILES # Don't animate on the map.
-        end
+      $window.scale Tile::WIDTH / PIXELS_PER_TILE do
+        @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES
       end
 
       draw_lighting
