@@ -97,10 +97,6 @@ void main()
             color.rgb += vec3(lava_noise * 0.1, lava_noise * 0.2, lava_noise * 0.02);
         }
     }
-    else
-    {
-        color = vec4(0.0, 0.0, 0.0, 1.0);
-    }
 
     gl_FragColor = color;
 }

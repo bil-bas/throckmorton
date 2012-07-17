@@ -1,5 +1,7 @@
 module Game
   class Map < BasicGameObject
+    include Mixins::Shaders
+
     MINI_SCALE = 1 / 4.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
@@ -51,7 +53,7 @@ module Game
       @grid_width, @grid_height = @tiles[0].size, @tiles.size
       @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
 
-      info "Creating map #{grid_width}x#{grid_height} (#{width}x#{height} pixels)"
+      info "Creating map with #{grid_width}x#{grid_height} tiles"
       info "Tiles created in #{((Time.now - t).to_f * 1000).to_i}ms"
 
       render_tiles
@@ -68,7 +70,7 @@ module Game
     def create_map_pixel_texture
       @map_pixel_buffer = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
 
-      @terrain_shader = Ashton::Shader.new fragment: File.expand_path("../../shaders/terrain.frag", __FILE__), uniforms: {
+      @terrain_shader = Ashton::Shader.new fragment: fragment_shader("terrain"), uniforms: {
           cavern_floor: Textures::CavernFloor.color,
           cavern_wall: Textures::CavernWall.color,
           water: Textures::Water.color,
@@ -108,7 +110,7 @@ module Game
     def smooth_map
       tmp = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
 
-      smooth_shader = Ashton::Shader.new fragment: File.expand_path("../../shaders/smooth.frag", __FILE__)
+      smooth_shader = Ashton::Shader.new fragment: fragment_shader("smooth")
 
       tmp.render do
         @map_pixel_buffer.draw 0, 0, 0, shader: smooth_shader
