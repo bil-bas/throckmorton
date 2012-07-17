@@ -7,7 +7,7 @@ module Game
     attr_reader :grid_width, :grid_height, :width, :height, :tiles
     attr_reader :lighting_overlay, :seed
 
-    LIGHTING_UPDATE_INTERVAL = 1 / 5.0
+    LIGHTING_UPDATE_INTERVAL = 1 / 10.0
     PIXELS_PER_TILE = 8
 
     def initialize(seed)
@@ -66,9 +66,15 @@ module Game
     end
 
     def create_map_pixel_texture
-      #tmp = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
       @map_pixel_buffer = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
-      @shader ||= Ashton::Shader.new fragment: File.expand_path("../../shaders/smooth.frag", __FILE__)
+
+      @terrain_shader = Ashton::Shader.new fragment: File.expand_path("../../shaders/terrain.frag", __FILE__), uniforms: {
+          cavern_floor: Textures::CavernFloor.color,
+          cavern_wall: Textures::CavernWall.color,
+          water: Textures::Water.color,
+          lava: Textures::Lava.color,
+          seed: seed,
+      }
 
       @map_pixel_buffer.render do
         $window.scale PIXELS_PER_TILE do
@@ -92,17 +98,25 @@ module Game
         end
       end
 
-      # TODO: why doesn't this do what we want it to?
-      #tmp.render do
-      #  @map_pixel_buffer.draw 0, 0, 0, shader: @shader
-      #end
-      #
-      #@map_pixel_buffer.render do |buffer|
-      #  #buffer.clear
-      #  tmp.draw 0, 0, 0, shader: @shader
-      #end
+      smooth_map
 
       info { "Created map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height}"}
+    end
+
+    # TODO: why doesn't this do what we want it to?
+    # Smooth out the square edges of the map by applying a shader as we draw it onto itself a couple of times.
+    def smooth_map
+      tmp = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
+
+      smooth_shader = Ashton::Shader.new fragment: File.expand_path("../../shaders/smooth.frag", __FILE__)
+
+      tmp.render do
+        @map_pixel_buffer.draw 0, 0, 0, shader: smooth_shader
+      end
+
+      @map_pixel_buffer.render do
+        tmp.draw 0, 0, 0, shader: smooth_shader
+      end
     end
 
     def create_objects_from_data(data)
@@ -167,7 +181,8 @@ module Game
     
     def draw
       $window.scale Tile::WIDTH / PIXELS_PER_TILE do
-        @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES, shader: @shader
+        @terrain_shader.time = milliseconds.fdiv 1000
+        @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES, shader: @terrain_shader
       end
 
       draw_lighting
