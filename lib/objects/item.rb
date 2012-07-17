@@ -1,7 +1,7 @@
 module Game
   # Items are picked up by the player.
   class Item < PhysicsObject
-    SPRITE_WIDTH = 16
+    SPRITE_WIDTH = 32
 
     class << self
       def sprites
@@ -30,7 +30,7 @@ module Game
     def draw
       tile = self.tile
       if tile && tile.seen?
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5, 2, 2#
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
       end
     end
   end

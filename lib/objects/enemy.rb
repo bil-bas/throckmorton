@@ -1,6 +1,6 @@
 module Game
   class Enemy < Entity
-    SPRITE_WIDTH = 16
+    SPRITE_WIDTH = 32
     SHOOT_OFFSET = 14
 
     attr_reader :damage, :type
@@ -79,7 +79,7 @@ module Game
     def draw
       tile = self.tile
       if tile && tile.seen? && parent.player.can_see?(tile)
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5, 2, 2
+        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
       end
     end
 

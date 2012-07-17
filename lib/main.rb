@@ -39,7 +39,7 @@ Song.autoload_dirs.unshift File.join(media_dir, 'music')
 Font.autoload_dirs.unshift File.join(media_dir, 'fonts')
 
 module ZOrder
-  TILES, PROJECTILES, ITEM, ENEMY, PLAYER, LIGHT, PHYSICS, GUI, CURSOR = *(0..100)
+  TILES, ITEM, PROJECTILES, ENEMY, PLAYER, LIGHT, PHYSICS, GUI, CURSOR = *(0..100)
 end
 
 t = Time.now

@@ -40,7 +40,7 @@ module Game
 
         @outline_shader ||= Ashton::Shader.new fragment: :outline, uniforms: {
             outline_color: Gosu::Color::BLACK,
-            outline_width: 0.25,
+            outline_width: 0.5,
         }
       end
 
