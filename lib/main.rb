@@ -60,7 +60,6 @@ end
 
 
 
-require_relative "standard_ext/class"
 require_relative "chipmunk_ext/space"
 require_relative "chingu_ext/game_object"
 require_relative "texplay_ext/color"
