@@ -7,14 +7,21 @@ module Game
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
     attr_reader :grid_width, :grid_height, :width, :height, :tiles
-    attr_reader :lighting_overlay, :seed
+    attr_reader :lighting, :seed
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
     PIXELS_PER_TILE = 8
 
     def initialize(seed)
       @seed = seed
+
       super()
+
+      if parent.client?
+        @lighting = Ashton::Lighting::Manager.new width: $window.width.fdiv(parent.world_scale).ceil,
+                                                  height: $window.height.fdiv(parent.world_scale).ceil,
+                                                  z: ZOrder::LIGHT
+      end
     end
 
     def generate
@@ -27,14 +34,7 @@ module Game
       create_objects_from_data object_data
       # TODO: send tile data to players.
 
-      create_lighting if parent.client?
-
       Messages::CreateMap.broadcast tile_data, object_data
-    end
-
-    def create_lighting
-      @revealed_overlay = Image.create grid_width, grid_height, color: Color.rgba(0, 0, 0, 255)
-      @lighting_overlay = Image.create grid_width * LIGHTING_SCALE, grid_height * LIGHTING_SCALE
     end
 
     # Create tiles from tile data (2d array of types - strings or )
@@ -102,6 +102,11 @@ module Game
 
       smooth_map
 
+      # Just want the walls, as they are the only things that cast shadows.
+      @shadow_casters = @map_pixel_buffer.to_image
+      @shadow_casters.clear dest_ignore: Textures::CavernWall.color.to_opengl, tolerance: 0.02
+      @shadow_casters.refresh_cache
+
       info { "Created map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height}"}
     end
 
@@ -136,32 +141,9 @@ module Game
       info "Objects created in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
 
-    def update
-      update_lighting if parent.client?
-    end
-
-    def update_lighting
-      @duration_until_lighting_update ||= LIGHTING_UPDATE_INTERVAL
-      @duration_until_lighting_update -= parent.frame_time
-      if @duration_until_lighting_update <= 0
-        @duration_until_lighting_update += LIGHTING_UPDATE_INTERVAL
-
-        @lighting_overlay.clear color: NO_LIGHT_COLOR
-
-        viewer = parent.player
-        parent.player.illuminate viewer, @lighting_overlay
-
-        # TODO: Should be illuminated by config (range and brightness and colour).
-        # TODO: All these "static" tile's brightness should be pre-calculated!
-        @tiles_by_type[:lava].each do |tile|
-          tile.illuminate viewer, @lighting_overlay, range: 2
-        end
-
-        parent.objects.find_all {|o| o.illuminating? }.each do |object|
-          object.illuminate viewer, @lighting_overlay
-        end
-
-        @lighting_overlay.force_sync
+    def draw_shadow_casters
+      $window.scale Tile::WIDTH / PIXELS_PER_TILE do
+        @shadow_casters.draw 0, 0, 0
       end
     end
 
@@ -174,35 +156,17 @@ module Game
       return nil if x < 0 || y < 0
       @tiles[y.fdiv(Tile::WIDTH) + 0.5][x.fdiv(Tile::WIDTH) + 0.5]
     end
-
-    def reveal(tile)
-      if parent.client?
-        @revealed_overlay.set_pixel tile.grid_x, tile.grid_y, color: :alpha
-      end
-    end
     
     def draw
       $window.scale Tile::WIDTH / PIXELS_PER_TILE do
         @terrain_shader.time = milliseconds.fdiv 1000
         @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES, shader: @terrain_shader
       end
-
-      draw_lighting
     end
 
     def draw_mini
       $window.scale Tile::WIDTH / PIXELS_PER_TILE do
         @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES
-      end
-
-      draw_lighting
-    end
-
-    def draw_lighting
-      $window.translate -Tile::WIDTH / 2, -Tile::WIDTH / 2 do
-        @revealed_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH, Tile::WIDTH
-        lighting_overlay.draw 0, 0, ZOrder::LIGHT, Tile::WIDTH / LIGHTING_SCALE, Tile::WIDTH / LIGHTING_SCALE,
-                              Color::WHITE, :multiply
       end
     end
   end

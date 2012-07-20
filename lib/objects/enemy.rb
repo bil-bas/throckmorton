@@ -3,6 +3,8 @@ module Game
     SPRITE_WIDTH = 32
     SHOOT_OFFSET = 14
 
+    include Mixins::LightSource
+
     attr_reader :damage, :type
     def short_name; "#{type}#{id_string}" end
 
@@ -77,17 +79,11 @@ module Game
     end
 
     def draw
-      tile = self.tile
-      if tile && tile.seen? && parent.player.can_see?(tile)
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
-      end
+      @image.draw_rot x, y, zorder, angle, 0.5, 0.5
     end
 
     def draw_mini
-      tile = self.tile
-      if tile && tile.seen?
-        parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 20, 20, Color.rgb(255, 0, 0)
-      end
+      parent.pixel.draw_rot x.round, y.round, zorder, 0, 0.5, 0.5, 20, 20, Color.rgb(255, 0, 0)
     end
   end
 end

@@ -20,7 +20,7 @@ module Game
       @server = true
 
       @objects = []
-      @world_scale = scale
+      @world_scale = scale.to_f
 
       seed = 1000 # TODO: enter this on the command line or randomise on default.
 
@@ -42,6 +42,8 @@ module Game
             outline_color: Gosu::Color::BLACK,
             outline_width: 0.5,
         }
+
+        @camera_x, @camera_y = 0, 0
       end
 
       Messages::Message.parent = self
@@ -160,20 +162,55 @@ module Game
       @frame_time = [Time.now.to_f - @time, 0.1].min
       @time = Time.now.to_f
 
+
       unless @paused
         @physics_time += frame_time
         num_steps = (@physics_time / PHYSICS_STEP).round
         @physics_time -= num_steps * PHYSICS_STEP
         num_steps.times { @space.step PHYSICS_STEP }
 
-        @map.update # Clear lighting.
         @player.update
         @objects.each {|o| o.update }
+
+        # Offset to the center of the screen.
+        @camera_x = (@player.x - ($window.width / (world_scale * 2))).round
+        @camera_y = (@player.y - ($window.height / (world_scale * 2))).round
+
+        if client?
+          @map.lighting.camera_x, @map.lighting.camera_y = @camera_x / world_scale, @camera_y / world_scale
+          @map.lighting.update_shadow_casters do
+            @map.draw_shadow_casters
+          end
+
+          #@map.lighting.each do |light|
+          #  light.send :save_buffers
+          #  exit
+          #end
+        end
 
         super
 
         if server?
           Messages::Sync.broadcast [@player] + @objects.reject {|o| o.needs_sync? }
+        end
+
+
+        @gc ||= 0
+        @gc += 1
+        if @gc % 10 == 0
+          t = Time.now
+
+          puts "\nGARBAGE COLLECTION"
+          # Not even close to exact, but gives a rough idea of what's being collected
+          old_objects = ObjectSpace.count_objects.dup
+          ObjectSpace.garbage_collect
+          new_objects = ObjectSpace.count_objects
+
+          old_objects.each do |k,v|
+            diff = v - new_objects[k]
+            puts "#{k} #{diff} diff" if diff != 0
+          end
+          p Time.now - t
         end
       end
     end
@@ -189,13 +226,23 @@ module Game
     def draw
       if client?
         $window.scale world_scale do
-          $window.translate (($window.width / (world_scale * 2)) - @player.x).round,
-                            (($window.height / (world_scale * 2))  - @player.y).round do
+          $window.translate -@camera_x, -@camera_y do
             @map.draw
 
+            player_x, player_y = player.x, player.y
             @outline_shader.use do
-              @objects.each {|o| o.draw }
+              @objects.each do |o|
+                o.draw if Gosu::distance(player_x, player_y, o.x, o.y) < 250
+              end
               @player.draw
+            end
+
+            @map.lighting.each do |light|
+              pixel.draw light.x * world_scale, light.y * world_scale, ZOrder::LIGHT, 2, 2, Gosu::Color::WHITE, :add
+            end
+
+            $window.translate @camera_x / 2.0, @camera_y / 2.0 do
+              #@map.lighting.draw
             end
 
             draw_debug if $window.debugging?
@@ -250,6 +297,10 @@ module Game
           @map.draw_mini 
           @objects.each {|o| o.draw_mini }
           @player.draw_mini
+
+          $window.translate @camera_x / 2, @camera_y / 2 do
+            @map.lighting.draw
+          end
         end
       end
     end

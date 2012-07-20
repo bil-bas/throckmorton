@@ -37,7 +37,7 @@ module Game
 
       super x: x, y: y, max_health: 100, speed: 18,
             zorder: ZOrder::PLAYER, width: WIDTH,
-            collision_type: :player, illumination_range: 5
+            collision_type: :player
 
       if parent.client?
         self.image = Image["player.png"]
@@ -46,6 +46,11 @@ module Game
       debug { "Created #{short_name} at #{tile.grid_position}" }
 
       if parent.client?
+        scale = parent.world_scale
+        radius = 5.0 * Tile::WIDTH # See for N full tiles around.
+        @light = parent.map.lighting.create_light x / scale, y / scale, zorder, radius, color: Color::WHITE
+        debug { "Player 'light' created at #{[@light.x, @light.y]}" }
+
         on_input :left_mouse_button do
           if fire_primary?
             self.energy -= @fire_primary_cost
@@ -86,7 +91,9 @@ module Game
 
     def update
       if parent.client?
-        self.angle = Gosu::angle($window.width / 2, $window.height / 2, $window.mouse_x, $window.mouse_y)
+        scale = parent.world_scale
+        self.angle = Gosu::angle($window.width / scale, $window.height / scale, $window.mouse_x, $window.mouse_y)
+        @light.x, @light.y = x / scale, y / scale
       end
 
       if parent.server?
@@ -153,9 +160,8 @@ module Game
       parent.pixel.draw 0, 0, ZOrder::GUI, $window.width, 24, Color.rgba(0, 0, 0, 150)
 
       objects = parent.objects
-      @@num_lava ||= parent.map.tiles.flatten.count {|t| t.type == :lava }
-      num_lights = 1 + @@num_lava + objects.count {|o| o.is_a?(Enemy) && o.type == :lava_beetle } # Note: Player isn't in objects (currently)
-      num_mobs = objects.count {|o| o.is_a? Enemy}
+      num_lights = @parent.map.lighting.size
+      num_mobs = objects.count {|o| o.is_a? Enemy }
 
       @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} -- Obj: #{objects.size - num_mobs} Mob: #{num_mobs} Light: #{num_lights} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
     end

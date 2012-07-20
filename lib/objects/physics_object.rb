@@ -2,8 +2,6 @@ module Game
   class PhysicsObject < Chingu::GameObject
     extend Forwardable
 
-    include Mixins::LightSource
-
     def_delegators :"@body.pos", :x, :y, :x=, :y=
     def_delegators :"@body", :reset_forces
 
@@ -69,10 +67,7 @@ module Game
     end
 
     def draw
-      tile = self.tile
-      if tile && tile.seen? and parent.player.can_see? tile
-        @image.draw_rot x, y, zorder, angle, 0.5, 0.5
-      end
+      @image.draw_rot x, y, zorder, angle, 0.5, 0.5
     end
 
     # Push towards a particular position (negative force to pull).
