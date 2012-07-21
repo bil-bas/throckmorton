@@ -193,25 +193,6 @@ module Game
         if server?
           Messages::Sync.broadcast [@player] + @objects.reject {|o| o.needs_sync? }
         end
-
-
-        @gc ||= 0
-        @gc += 1
-        if @gc % 10 == 0
-          t = Time.now
-
-          puts "\nGARBAGE COLLECTION"
-          # Not even close to exact, but gives a rough idea of what's being collected
-          old_objects = ObjectSpace.count_objects.dup
-          ObjectSpace.garbage_collect
-          new_objects = ObjectSpace.count_objects
-
-          old_objects.each do |k,v|
-            diff = v - new_objects[k]
-            puts "#{k} #{diff} diff" if diff != 0
-          end
-          p Time.now - t
-        end
       end
     end
     

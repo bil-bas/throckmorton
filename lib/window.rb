@@ -44,6 +44,8 @@ module Game
     
 
     def update
+      $gosu_blocks.clear # Workaround for Gosu bug.
+
       start_at = Time.now
            
       super
