@@ -73,7 +73,6 @@ module Game
       @terrain_shader = Ashton::Shader.new fragment: fragment_shader("terrain"), uniforms: {
           cavern_floor: Textures::CavernFloor.color,
           cavern_wall: Textures::CavernWall.color,
-          water: Textures::Water.color,
           lava: Textures::Lava.color,
           seed: seed,
       }

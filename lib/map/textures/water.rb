@@ -6,7 +6,7 @@ module Game
       ANIMATED = true
 
       class << self
-        def color; Gosu::Color.rgb(40, 110, 140) end
+        def color; Gosu::Color.rgb(0, 0, 200) end
       end
     end
   end

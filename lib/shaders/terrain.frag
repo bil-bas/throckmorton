@@ -26,7 +26,6 @@ const float W_ROCKS_STEP = 0.35 * TextureSize.x;
 uniform sampler2D in_Texture; // Original texture.
 uniform vec4 in_CavernFloor;
 uniform vec4 in_CavernWall;
-uniform vec4 in_Water;
 uniform vec4 in_Lava;
 uniform int in_Seed;
 uniform float in_Time;
@@ -68,13 +67,15 @@ void main()
 
         color.rgb += (macro_noise * 0.1) - (micro_noise * 0.15);
     }
-    else if(color == in_Water)
+    else if(color.r == 0.0 && color.g == 0.0 && color.b > 0.0)
     {
         // WATER
         float ripple_noise = snoise(vec4(TexCoord * W_WATER_STEP, in_Time * 0.2, in_Seed));
         float rock_noise = snoise(vec4(TexCoord * W_ROCKS_STEP, 0, in_Seed));
 
-        color.rgb -= ripple_noise * 0.1;
+        color.b -= ripple_noise * 0.1;
+        color.r = color.b * 0.15;
+        color.g = color.b * 0.6;
 
         color.g += rock_noise * 0.05;
         color.b += rock_noise * 0.05;
