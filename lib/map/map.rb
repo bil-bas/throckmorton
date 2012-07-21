@@ -10,7 +10,7 @@ module Game
     attr_reader :lighting, :seed
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
-    PIXELS_PER_TILE = 8
+    PIXELS_PER_TILE = 16
 
     def initialize(seed)
       @seed = seed
@@ -111,18 +111,22 @@ module Game
     end
 
     # TODO: why doesn't this do what we want it to?
-    # Smooth out the square edges of the map by applying a shader as we draw it onto itself a couple of times.
+    # Smooth out the square corners (inner and outer) of the map by applying a shader as we draw it onto itself a couple of times.
     def smooth_map
-      tmp = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
+      tmp = Ashton::Framebuffer.new @map_pixel_buffer.width, @map_pixel_buffer.height
 
       smooth_shader = Ashton::Shader.new fragment: fragment_shader("smooth")
 
-      tmp.render do
-        @map_pixel_buffer.draw 0, 0, 0, shader: smooth_shader
+      smooth_shader.use do
+        smooth_shader.texture_size = [@map_pixel_buffer.width.to_f, @map_pixel_buffer.height.to_f]
+
+        tmp.render do
+          @map_pixel_buffer.draw 0, 0, 0
+        end
       end
 
       @map_pixel_buffer.render do
-        tmp.draw 0, 0, 0, shader: smooth_shader
+        tmp.draw 0, 0, 0
       end
     end
 
