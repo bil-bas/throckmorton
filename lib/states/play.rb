@@ -47,6 +47,8 @@ module Game
       end
 
       Messages::Message.parent = self
+
+      update # Ensure that everything is in the right place before the first draw.
     end
 
     def init_physics
