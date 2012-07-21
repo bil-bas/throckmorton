@@ -16,6 +16,7 @@ module Game
       options = {
           zorder: ZOrder::ITEM,
           collision_type: :item,
+          angle: rand(4) * 90,
       }.merge! options
 
       super options
