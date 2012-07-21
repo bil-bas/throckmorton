@@ -1,4 +1,4 @@
-require_relative "../lib/map/textures"
+require_relative "../lib/main"
 
 desc "Generate all textures"
 task texture: Game::Textures::TYPES.map {|t| :"texture:#{t}" }
@@ -10,29 +10,39 @@ Game::Textures::TYPES.each do |type|
 
     mkdir_p "textures"
 
-    $window ||= Gosu::Window.new 10, 10, false
+    $window ||= Gosu::Window.new 800, 800, false
 
     render_and_save type
   end
 end
 
 def render_and_save(type)
+  include Game::Mixins::Shaders
   texture = Game::Textures::const_get type.to_s.split("_").map(&:capitalize).join
 
   print "Generating #{type} texture..."
   t = Time.now
 
-  gen = texture.new rand 1..10000
+  terrain_shader = Ashton::Shader.new fragment: fragment_shader("terrain"), uniforms: {
+      cavern_floor: Game::Textures::CavernFloor.color,
+      cavern_wall: Game::Textures::CavernWall.color,
+      water: Game::Textures::Water.color,
+      lava: Game::Textures::Lava.color,
+      seed: 1000,
+  }
 
-  images = gen.num_frames.times.map do
-    TexPlay.create_image $window, 200, 200
+  buffer_base = Ashton::Framebuffer.new 800, 800
+  buffer_out = Ashton::Framebuffer.new 800, 800
+
+  buffer_base.clear color: texture.color
+
+  terrain_shader.use do
+    buffer_out.render do
+      buffer_base.draw 0, 0, 0
+    end
   end
 
-  gen.render images, 0, 0, images[0].width, images[0].height
-  images.each_with_index do |image, i|
-    image.force_sync [0, 0, image.width, image.height]
-    image.save "textures/#{type}_#{i}.png"
-  end
+  buffer_out.to_image.save "textures/#{type}.png"
 
   puts "Image created in #{Time.now - t}s"
 end

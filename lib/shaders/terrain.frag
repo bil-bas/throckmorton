@@ -9,7 +9,7 @@ const vec2 PixelSize = 1.0 / TextureSize;
 
 const float CF_MICRO_STEP = 0.5 * TextureSize.x;
 const float CF_MIDI_STEP = 0.1 * TextureSize.x;
-const float CF_MACRO_STEP = 0.0007 * TextureSize.x;
+const float CF_MACRO_STEP = 0.0028 * TextureSize.x;
 const float CF_MOSS_STEP = 0.005 * TextureSize.x;
 
 const float CW_MICRO_STEP = 0.3 * TextureSize.x;
@@ -19,8 +19,8 @@ const float L_CRUST_MACRO_STEP = 0.09 * TextureSize.x;
 const float L_CRUST_MICRO_STEP = 0.5 * TextureSize.x;
 const float L_LAVA_STEP = 0.1 * TextureSize.x;
 
-const float W_WATER_STEP = 0.04 * TextureSize.x;
-const float W_ROCKS_STEP = 0.2 * TextureSize.x;
+const float W_WATER_STEP = 0.014 * TextureSize.x;
+const float W_ROCKS_STEP = 0.35 * TextureSize.x;
 
 // Automatically set by Ray (actually passed from the vertex shader).
 uniform sampler2D in_Texture; // Original texture.
@@ -52,7 +52,7 @@ void main()
 
         color.rgb += micro_noise * 0.015 +
                      midi_noise * -macro_noise * 0.08 +
-                     macro_noise * -0.2;
+                     macro_noise * -0.1;
 
         if(moss_noise > macro_noise + 0.4)
         {
@@ -77,7 +77,7 @@ void main()
         color.rgb -= ripple_noise * 0.1;
 
         color.g += rock_noise * 0.05;
-        color.b += rock_noise * 0.1;
+        color.b += rock_noise * 0.05;
     }
     else if(color == in_Lava)
     {
