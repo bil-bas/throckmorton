@@ -35,7 +35,7 @@ module Game
       @id = PhysicsObject.next_id
       PhysicsObject.next_id += 1
 
-      @body = CP::StaticBody.new
+      @body = CP::Body.new Float::INFINITY, Float::INFINITY
 
       super options
 
