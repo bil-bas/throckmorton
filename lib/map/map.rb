@@ -76,16 +76,13 @@ module Game
 
     def create_objects_from_data(data)
       t = Time.now
-      data.each do |class_name, x, y, type|
+      data.each do |class_name, type, (x, y)|
         klass = Game.const_get class_name
 
-        if type
-          # Type will be a string if it has been serialized.
-          parent.add_object klass.new(type.to_sym, x, y)
-        else
-          parent.add_object klass.new(x, y)
-        end
+        # Type will be a string if it has been serialized.
+        parent.add_object klass.new(type.to_sym, x, y)
       end
+
       info "Objects created in #{((Time.now - t).to_f * 1000).to_i}ms"
     end
 

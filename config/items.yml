@@ -1,0 +1,64 @@
+:health_medium:
+  :frequency: 15
+  :modify:
+    :health: 25
+  :spritesheet_position:
+    :x: 1
+    :y: 0
+  :collision_width: 12
+  :sound:
+    :file: chewing.ogg
+    :volume: 0.7
+  :minimap_color: [0, 200, 200]
+
+:energy_medium:
+  :frequency: 20
+  :modify:
+    :energy: 25
+  :spritesheet_position:
+    :x: 2
+    :y: 0
+  :collision_width: 12
+  :sound:
+    :file: chewing.ogg
+    :volume: 0.7
+  :minimap_color: [0, 255, 0]
+
+:treasure_small:
+  :frequency: 20
+  :modify:
+    :score: 100
+  :spritesheet_position:
+    :x: 0
+    :y: 0
+  :collision_width: 10
+  :sound:
+    :file: coins.ogg
+    :volume: 0.2
+  :minimap_color: [200, 200, 0]
+
+:treasure_medium:
+  :frequency: 10
+  :modify:
+     :score: 500
+  :spritesheet_position:
+    :x: 0
+    :y: 1
+  :collision_width: 12
+  :sound:
+    :file: coins.ogg
+    :volume: 0.3
+  :minimap_color: [200, 200, 0]
+
+:treasure_large:
+  :frequency: 5
+  :modify:
+     :score: 1000
+  :spritesheet_position:
+    :x: 0
+    :y: 2
+  :collision_width: 14
+  :sound:
+    :file: coins.ogg
+    :volume: 0.4
+  :minimap_color: [200, 200, 0]

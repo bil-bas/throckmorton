@@ -89,11 +89,8 @@ require_relative "objects/item"
 
 require_relative "objects/entity"
 require_relative "objects/player"
-require_relative "objects/health_pack"
-require_relative "objects/energy_pack"
 require_relative "objects/enemy"
 require_relative "objects/projectile"
-require_relative "objects/treasure"
 
 require_relative "messages"
 
