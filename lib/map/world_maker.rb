@@ -6,10 +6,11 @@ module Game
     NAVIGATION_SPACING = 16
     NAVIGATION_MARGIN = NAVIGATION_SPACING / 2
 
-    def initialize(map_texture)
+    def initialize(map_texture, seed)
       @map_texture = map_texture
+      @rng = Random.new seed
       generate_navigation_nodes
-      generate_spawn_nodes
+
     end
 
     def draw
@@ -49,16 +50,17 @@ module Game
       end
 
       select_valid_positions @spawn_nodes, SPAWN_MARGIN
-      @spawn_nodes.shuffle!
+      @spawn_nodes.shuffle! random: @rng
     end
 
-    def generate_object_data(seed)
+    def generate_object_data
+      generate_spawn_nodes
+
       positions = @spawn_nodes.dup
 
       objects = []
 
-
-      enemy_types = Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle
+      enemy_types = Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle random: @rng
 
       enemy_types.size.times do
         objects << [Enemy.name[/[^:]+$/], *positions.pop, enemy_types.pop]
