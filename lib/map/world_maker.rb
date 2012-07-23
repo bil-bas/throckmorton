@@ -4,7 +4,7 @@ module Game
     SPAWN_MARGIN = SPAWN_SPACING / 2 # Space around spawn required to be clear.
 
     NAVIGATION_SPACING = 16
-    NAVIGATION_MARGIN = NAVIGATION_SPACING / 2
+    NAVIGATION_MARGIN = NAVIGATION_SPACING
 
     def initialize(map_texture, seed)
       @map_texture = map_texture

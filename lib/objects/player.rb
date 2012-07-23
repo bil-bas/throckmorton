@@ -93,12 +93,6 @@ module Game
     end
 
     def update
-      if parent.client?
-        scale = parent.world_scale
-        self.angle = Gosu::angle($window.width / scale, $window.height / scale, $window.mouse_x, $window.mouse_y)
-        @light.x, @light.y = x / scale, y / scale
-      end
-
       if parent.server?
         @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
         self.health += @health_per_second * parent.frame_time
@@ -133,12 +127,18 @@ module Game
       if move_angle
         move offset_x(move_angle, 1), offset_y(move_angle, 1)
       end
+
+      if parent.client?
+        scale = parent.world_scale
+        self.angle = Gosu::angle($window.width / scale, $window.height / scale, $window.mouse_x, $window.mouse_y)
+        @light.x, @light.y = x / scale, y / scale
+      end
       
       super
     end
     
     def draw
-      @image.draw_rot x.round, y.round, zorder, angle, 0.5, 0.5
+      @image.draw_rot x, y, zorder, angle, 0.5, 0.5
     end
     
     def draw_mini

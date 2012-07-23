@@ -6,7 +6,7 @@ module Game
     attr_reader :space
     attr_reader :map, :player, :objects
 
-    PHYSICS_STEP = 1 / 60.0
+    PHYSICS_STEP = 0.00001 # Just to force collisions.
     MAP_MARGIN = 32
 
     def server?; true end #@server end
@@ -157,27 +157,21 @@ module Game
         end
         false
       end
-
-      @physics_time = 0.0 # The amount of time we have backlogged for physics.
     end
        
     def update      
       @frame_time = [Time.now.to_f - @time, 0.1].min
       @time = Time.now.to_f
 
-
       unless @paused
-        @physics_time += frame_time
-        num_steps = (@physics_time / PHYSICS_STEP).round
-        @physics_time -= num_steps * PHYSICS_STEP
-        num_steps.times { @space.step PHYSICS_STEP }
+        @space.step PHYSICS_STEP
 
         @player.update
         @objects.each {|o| o.update }
 
         # Offset to the center of the screen.
-        @camera_x = (@player.x - ($window.width / (world_scale * 2))).round
-        @camera_y = (@player.y - ($window.height / (world_scale * 2))).round
+        @camera_x = (@player.x - ($window.width / (world_scale * 2.0)))
+        @camera_y = (@player.y - ($window.height / (world_scale * 2.0)))
 
         if client?
           @map.lighting.camera_x, @map.lighting.camera_y = @camera_x / world_scale, @camera_y / world_scale
@@ -216,7 +210,7 @@ module Game
             player_x, player_y = player.x, player.y
             @outline_shader.use do
               @objects.each do |o|
-                o.draw if Gosu::distance(player_x, player_y, o.x, o.y) < 250
+                o.draw if Gosu::distance(player_x, player_y, o.x, o.y) < 350
               end
               @player.draw
             end
