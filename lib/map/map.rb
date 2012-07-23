@@ -2,7 +2,7 @@ module Game
   class Map < BasicGameObject
     include Mixins::Shaders
 
-    MINI_SCALE = 1 / 4.0
+    MINI_SCALE = 1 / 2.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 

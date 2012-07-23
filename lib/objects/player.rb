@@ -6,6 +6,9 @@ module Game
     WIDTH = 12
     SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
+    INFO_BAR_HEIGHT = 24
+    STAT_BAR_HEIGHT = 16
+
     trait :timer
 
     attr_accessor :max_energy, :score
@@ -144,14 +147,24 @@ module Game
     end
 
     def draw_gui
-      @font ||= Font[24]
-      parent.pixel.draw 0, 0, ZOrder::GUI, $window.width, 24, Color.rgba(0, 0, 0, 150)
+      $window.translate 0, $window.height - INFO_BAR_HEIGHT / 2 do
+        parent.pixel.draw_rot 0, 0, ZOrder::GUI, 0, 0, 0.5,
+                          $window.width, INFO_BAR_HEIGHT, Color.rgba(0, 0, 0, 100)
 
-      objects = parent.objects
-      num_lights = @parent.map.lighting.size
-      num_mobs = objects.count {|o| o.is_a? Enemy }
+        Font[20].draw_rel score.to_s, $window.width / 2, 0, ZOrder::GUI,
+                          0.5, 0.5
 
-      @font.draw "Health: #{health.floor}  Energy: #{energy.floor}  Score: #{score} -- Obj: #{objects.size - num_mobs} Mob: #{num_mobs} Light: #{num_lights} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]", 0, 0, ZOrder::GUI
+        bar_length = $window.width * 0.4
+        parent.pixel.draw_rot 0, 0, ZOrder::GUI, 0, 0.0, 0.5,
+                              bar_length, STAT_BAR_HEIGHT, Color::BLACK
+        parent.pixel.draw_rot 0, 0, ZOrder::GUI, 0, 0.0, 0.5,
+                              health.fdiv(max_health) * bar_length, STAT_BAR_HEIGHT, Color::RED
+
+        parent.pixel.draw_rot $window.width, 0, ZOrder::GUI, 0, 1.0, 0.5,
+                              bar_length, STAT_BAR_HEIGHT, Color::BLACK
+        parent.pixel.draw_rot $window.width, 0, ZOrder::GUI, 0, 1.0, 0.5,
+                              energy.fdiv(max_energy) * bar_length, STAT_BAR_HEIGHT, Color::CYAN
+      end
     end
   end
 end
