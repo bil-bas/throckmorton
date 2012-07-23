@@ -20,6 +20,8 @@ module Game
       @time = Time.now.to_f
       @server = true
 
+      PhysicsObject.reset_ids
+
       @objects = []
       @world_scale = scale.to_f
 

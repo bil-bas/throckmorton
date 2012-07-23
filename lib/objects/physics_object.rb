@@ -9,8 +9,8 @@ module Game
 
     class << self
       attr_accessor :next_id
+      def reset_ids; @next_id = 0 end
     end
-    self.next_id = 0
 
     attr_reader :speed, :id, :body, :shape
     attr_accessor :velocity_x, :velocity_y
