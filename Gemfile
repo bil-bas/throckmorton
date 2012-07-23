@@ -3,7 +3,7 @@ source :rubygems
 gem "gosu", "~> 0.7.43"
 gem "chingu", "~> 0.9rc8"
 gem "chipmunk", "~> 5.3.4.5"
-gem "texplay", "~> 0.3" # Different version actually required depending on platform.
+gem "texplay", "~> 0.4.3"
 #gem "fidgit", "~> 0.1.10"
 #gem "ashton", "~> 0.0.1alpha"
 gem "ashton", path: "../ashton"
