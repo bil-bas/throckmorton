@@ -1,17 +1,17 @@
 require_relative "../lib/version.rb"
 
 Releasy::Project.new do
-  name "Game of Scones"
+  name "Throckmorton"
   version Game::VERSION
-  executable "bin/game_of_scones"
+  executable "bin/throckmorton"
   files `git ls-files`.split("\n")
   files.exclude ".gitignore", "Rakefile"
   exposed_files %w[README.md]
-  #add_link "http://spooner.github.com/games/game_of_scones", "GameOfScones website"
+  #add_link "http://spooner.github.com/games/throckmorton", "Throckmorton website"
   exclude_encoding
 
   add_build :osx_app do
-    url "com.github.spooner.games.game_of_scones"
+    url "com.github.spooner.games.throckmorton"
     wrapper "../releasy/wrappers/gosu-mac-wrapper-0.7.41.tar.gz"
     add_package :tar_gz
   end
@@ -36,6 +36,6 @@ Releasy::Project.new do
   add_deploy :github
 
   add_deploy :local do
-    path "C:/Users/Spooner/Dropbox/Public/games/game_of_scones"
+    path "C:/Users/Spooner/Dropbox/Public/games/throckmorton"
   end
 end

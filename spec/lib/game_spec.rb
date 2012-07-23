@@ -4,7 +4,7 @@ describe "Game" do
   describe "run" do
     it "should display help text" do
       TEXT =<<END
-ruby bin#{File::SEPARATOR}game_of_scones [options]
+ruby bin#{File::SEPARATOR}throckmorton [options]
 
         --server       Create dedicated server
         --port         UDP port to use (default: 7500)

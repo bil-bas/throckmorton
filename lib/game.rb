@@ -4,7 +4,7 @@ module Game
     # Entrypoint from the CLI. Starts up a client or server for you.
     def run(args)
       opts = Slop.parse args, help: true do
-        banner "ruby bin#{File::SEPARATOR}game_of_scones [options]\n"
+        banner "ruby bin#{File::SEPARATOR}throckmorton [options]\n"
 
         on :f, :fullscreen, "Run at full-screen resolution: #{screen_width}x#{screen_height}"
 

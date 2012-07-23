@@ -1,5 +1,5 @@
-Game of Scones (working title)
-------------------------------
+Throckmorton
+------------
 
 Description
 -----------
@@ -11,8 +11,8 @@ primitive, underground, froggish people).
 
 
 * Author: [Spooner (Bil Bas)](https://spooner.github.com) bil dot bagpuss @ gmail dot com
-* [Github Project](https://github.com/Spooner/game_of_scones)
-* [Wiki](https://github.com/Spooner/game_of_scones/wiki) (Includes description of what is currently implemented as well as a todo list)
+* [Github Project](https://github.com/Spooner/throckmorton)
+* [Wiki](https://github.com/Spooner/throckmorton/wiki) (Includes description of what is currently implemented as well as a todo list)
 
 Controls
 --------

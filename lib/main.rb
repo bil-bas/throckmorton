@@ -1,14 +1,14 @@
 Config = RbConfig if defined? RbConfig unless defined? RSpec # Hack for deprecation warning.
 
 if $0 == __FILE__
-  puts "Run the game using: ruby bin/game_of_scones"
+  puts "Run the game using: ruby bin/throckmorton"
   exit 1
 end
 
 require 'forwardable'
 require 'fileutils'
 
-APP_NAME = "Game_of_Scones"
+APP_NAME = "Throckmorton"
 
 USER_DATA_PATH = if ENV['APPDATA']
                    pretty_name = APP_NAME.split("_").map(&:capitalize).join(" ").gsub(/ (?:And|Or|Of) /, &:downcase)

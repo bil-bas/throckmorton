@@ -39,7 +39,7 @@ module Game
       
       init_fps
 
-      self.caption = "Game of Scones (by Spooner) --- WASD or Arrows to move; Mouse to aim and fire; Hold TAB to view map; ESC to restart"
+      self.caption = "Throckmorton (by Spooner) --- WASD or Arrows to move; Mouse to aim and fire; Hold TAB to view map; ESC to restart"
     end  
     
 
