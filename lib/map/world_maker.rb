@@ -1,75 +1,100 @@
 module Game
   class WorldMaker
-    MARGIN = 4
+    SPAWN_SPACING = 32
+    SPAWN_MARGIN = SPAWN_SPACING / 2 # Space around spawn required to be clear.
 
-    # Generate a new map (2d array of tile types).
-    def generate_tile_data(width, height, seed)
-      gen = Perlin::Generator.new seed, 1, 1
-      noise = gen.chunk 0, 0, width, height, 0.4
+    NAVIGATION_SPACING = 16
+    NAVIGATION_MARGIN = NAVIGATION_SPACING / 2
 
-      # Start off with an empty map.
-      tiles = Array.new(width) { Array.new(height) }
+    def initialize(map_texture)
+      @map_texture = map_texture
+      generate_navigation_nodes
+      generate_spawn_nodes
+    end
 
-      height.times do |y|
-        width.times do |x|
-          tile = if x < MARGIN || y < MARGIN ||
-              x >= width - MARGIN || y >= height - MARGIN
-            :cavern_wall
-          else
-            n = noise[y][x]
-            close_to_player = distance(x, y, width / 2, height / 2) < 5
+    def draw
+      @recording ||= $window.record 1, 1 do
+        @spawn_nodes.each do |x, y|
+          $window.pixel.draw_rot x, y, 0, 0, 0.5, 0.5, 3, 3, Color::RED
+        end
 
-            if n < -0.5
-              :water
-            elsif n > 0.85 && !close_to_player
-               :lava
-            elsif n > -0.2 && n < 0.2 && !close_to_player
-              :cavern_wall
-            else
-              :cavern_floor
+        @navigation_nodes.each_with_index do |row, y|
+          row.each_with_index do |navigable, x|
+            if navigable
+              $window.pixel.draw_rot x * NAVIGATION_SPACING, y * NAVIGATION_SPACING,
+                                     0, 0, 0.5, 0.5, 1, 1, Color::YELLOW
             end
           end
-
-          tiles[y][x] = tile if tile
         end
       end
 
-      tiles
+      @recording.draw 0, 0, 0
     end
 
-    def start_position(tiles)
-      [tiles.size / 2, tiles[0].size / 2]
+    def generate_navigation_nodes
+      @navigation_nodes = Array.new(@map_texture.height / NAVIGATION_SPACING) do |y|
+        Array.new(@map_texture.width / NAVIGATION_SPACING)  do |x|
+          valid_position? x * NAVIGATION_SPACING, y * NAVIGATION_SPACING, NAVIGATION_MARGIN
+        end
+      end
     end
 
-    def generate_object_data(tiles, seed)
-      player_position = start_position tiles
+    def generate_spawn_nodes
+      @spawn_nodes = []
 
-      # TODO: Use seed to place objects.
+      (0...@map_texture.width).step(SPAWN_SPACING) do |x|
+        (0...@map_texture.height).step(SPAWN_SPACING) do |y|
+          @spawn_nodes << [x, y]
+        end
+      end
+
+      select_valid_positions @spawn_nodes, SPAWN_MARGIN
+      @spawn_nodes.shuffle!
+    end
+
+    def generate_object_data(seed)
+      positions = @spawn_nodes.dup
+
       objects = []
 
-      valid_tiles = tiles.flatten.select {|t| distance(t.x, t.y, *player_position) > 50 }
-      valid_tiles.select {|t| t.spawn_object? }.each do |tile|
-        case rand(100)
-          when 0..8
-            @@possibilities ||= Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten
-            objects << [Enemy.name[/[^:]+$/], tile.x, tile.y, @@possibilities.sample]
 
-          when 18
-            objects <<[EnergyPack.name[/[^:]+$/], tile.x, tile.y]
+      enemy_types = Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle
 
-          when 20..24
-            objects <<[Treasure.name[/[^:]+$/], tile.x, tile.y]
-        end
+      enemy_types.size.times do
+        objects << [Enemy.name[/[^:]+$/], *positions.pop, enemy_types.pop]
       end
 
-      valid_tiles.select {|t| t.type == :water }.each do |tile|
-        case rand(100)
-          when 0..10
-            objects << [HealthPack.name[/[^:]+$/], tile.x, tile.y]
-        end
+      20.times do
+        objects << [EnergyPack.name[/[^:]+$/], *positions.pop]
+      end
+
+      15.times do
+        objects << [HealthPack.name[/[^:]+$/], *positions.pop]
+      end
+
+      30.times do
+        objects << [Treasure.name[/[^:]+$/], *positions.pop]
       end
 
       objects
+    end
+
+    def select_valid_positions(positions, margin)
+      positions.select! do |x, y|
+        valid_position? x, y, margin
+      end
+    end
+
+    def valid_position?(x, y, margin)
+      colors = [
+          @map_texture[x, y],
+          @map_texture[x + margin, y],
+          @map_texture[x - margin, y],
+          @map_texture[x, y + margin],
+          @map_texture[x, y - margin],
+      ]
+
+      colors.none? { |c| c == Textures::CavernWall.color }
     end
   end
 end

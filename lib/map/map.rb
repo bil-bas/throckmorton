@@ -6,16 +6,17 @@ module Game
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
-    attr_reader :grid_width, :grid_height, :width, :height, :tiles
+    attr_reader :width, :height
     attr_reader :lighting, :seed
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
-    PIXELS_PER_TILE = 16
 
     def initialize(seed)
       @seed = seed
 
       super()
+
+      @width, @height = 1022, 1022
 
       if parent.client?
         @lighting = Ashton::Lighting::Manager.new width: $window.width.fdiv(parent.world_scale).ceil,
@@ -25,51 +26,29 @@ module Game
     end
 
     def generate
-      maker = WorldMaker.new
-
-      tile_data = maker.generate_tile_data 50, 50, seed # Largest, at 200x200, is 50, 50
-      create_tiles_from_data tile_data
-
-      object_data = maker.generate_object_data @tiles, seed
-      create_objects_from_data object_data
-      # TODO: send tile data to players.
-
-      Messages::CreateMap.broadcast tile_data, object_data
-    end
-
-    # Create tiles from tile data (2d array of types - strings or )
-    def create_tiles_from_data(data)
-      t = Time.now
-
-      @tiles_by_type = Hash.new {|h, k| h[k] = [] }
-      @tiles = data.map.with_index do |row, y|
-        row.map.with_index do |type, x|
-          tile = Tile.new self, x, y, type.to_sym
-          @tiles_by_type[type] << tile
-          tile
-        end
-      end
-
-      @grid_width, @grid_height = @tiles[0].size, @tiles.size
-      @width, @height = grid_width * Tile::WIDTH, grid_height * Tile::WIDTH
-
-      info "Creating map with #{grid_width}x#{grid_height} tiles"
-      info "Tiles created in #{((Time.now - t).to_f * 1000).to_i}ms"
-
-      render_tiles
-    end
-
-    def render_tiles
-      t = Time.now
-
       create_map_pixel_texture
 
-      info "Rendered tile map in #{((Time.now - t).to_f * 1000).to_i}ms"
+      @world_maker = WorldMaker.new @map_pixel_buffer
+
+      object_data = @world_maker.generate_object_data seed
+      create_objects_from_data object_data
+
+      #Messages::CreateMap.broadcast object_data
     end
 
     def create_map_pixel_texture
-      @map_pixel_buffer = Ashton::Framebuffer.new grid_width * PIXELS_PER_TILE, grid_height * PIXELS_PER_TILE
+      t = Time.now
 
+      @map_pixel_buffer = Ashton::Framebuffer.new width, height
+
+      map_shader = Ashton::Shader.new fragment: fragment_shader("map"), uniforms: {
+          cavern_floor: Game::Textures::CavernFloor.color,
+          cavern_wall: Game::Textures::CavernWall.color,
+          #lava: Game::Textures::Lava.color,
+          seed: seed,
+          texture_size: [width.to_f, height.to_f],
+          margin: 32,
+      }
       @terrain_shader = Ashton::Shader.new fragment: fragment_shader("terrain"), uniforms: {
           cavern_floor: Textures::CavernFloor.color,
           cavern_wall: Textures::CavernWall.color,
@@ -77,56 +56,22 @@ module Game
           seed: seed,
       }
 
-      @map_pixel_buffer.render do
-        $window.scale PIXELS_PER_TILE do
-          $window.pixel.draw 0, 0, 0, grid_width, grid_height, Textures::CavernFloor.color
-
-          @tiles_by_type[:cavern_wall].each do |tile|
-            $window.pixel.draw tile.grid_x, tile.grid_y, 0, 1, 1, Textures::CavernWall.color
-          end
-
-          @tiles_by_type[:rocks].each do |tile|
-            # TODO: maybe make these into objects?
-          end
-
-          @tiles_by_type[:lava].each do |tile|
-            $window.pixel.draw tile.grid_x, tile.grid_y, 0, 1, 1, Textures::Lava.color
-          end
-
-          @tiles_by_type[:water].each do |tile|
-            $window.pixel.draw tile.grid_x, tile.grid_y, 0, 1, 1, Textures::Water.color
-          end
-        end
-      end
-
-      smooth_map
-
-      # Just want the walls, as they are the only things that cast shadows.
-      @shadow_casters = @map_pixel_buffer.to_image
-      @shadow_casters.clear dest_ignore: Textures::CavernWall.color.to_opengl, tolerance: 0.02
-      @shadow_casters.refresh_cache
-
-      info { "Created map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height}"}
-    end
-
-    # TODO: why doesn't this do what we want it to?
-    # Smooth out the square corners (inner and outer) of the map by applying a shader as we draw it onto itself a couple of times.
-    def smooth_map
-      tmp = Ashton::Framebuffer.new @map_pixel_buffer.width, @map_pixel_buffer.height
-
-      smooth_shader = Ashton::Shader.new fragment: fragment_shader("smooth")
-
-      smooth_shader.use do
-        smooth_shader.texture_size = [@map_pixel_buffer.width.to_f, @map_pixel_buffer.height.to_f]
-
-        tmp.render do
+      map_shader.use do
+        @map_pixel_buffer.render do
           @map_pixel_buffer.draw 0, 0, 0
         end
       end
 
-      @map_pixel_buffer.render do
-        tmp.draw 0, 0, 0
+      # Just want the walls, as they are the only things that cast shadows.
+      walls = @map_pixel_buffer.to_image
+      walls.clear dest_ignore: Textures::CavernWall.color.to_opengl, tolerance: 0.02
+      walls.refresh_cache
+      @shadow_casters = Ashton::Framebuffer.new width, height
+      @shadow_casters.render do
+        walls.draw 0, 0, 0
       end
+
+      info { "Rendered map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height} in #{((Time.now - t).to_f * 1000).to_i}ms"}
     end
 
     def create_objects_from_data(data)
@@ -145,32 +90,31 @@ module Game
     end
 
     def draw_shadow_casters
-      $window.scale Tile::WIDTH / PIXELS_PER_TILE do
-        @shadow_casters.draw 0, 0, 0
-      end
+      @shadow_casters.draw 0, 0, 0
     end
 
-    def tile_at_grid(x, y)
-      return nil if x < 0 || y < 0
-      @tiles[y][x] rescue nil
+    def clear_at?(x, y)
+      @shadow_casters.transparent? x, y
     end
 
-    def tile_at_coordinate(x, y)
-      return nil if x < 0 || y < 0
-      @tiles[y.fdiv(Tile::WIDTH) + 0.5][x.fdiv(Tile::WIDTH) + 0.5]
+    def blocked_at?(x, y)
+      !@shadow_casters.transparent?(x, y)
+    end
+
+    def terrain_at_coordinate(x, y)
+      color = @map_pixel_buffer[x, y]
+      # TODO: convert to class?/name?
+      color
     end
     
     def draw
-      $window.scale Tile::WIDTH / PIXELS_PER_TILE do
-        @terrain_shader.time = milliseconds.fdiv 1000
-        @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES, shader: @terrain_shader
-      end
+      @terrain_shader.time = milliseconds.fdiv 1000
+      @map_pixel_buffer.draw 0, 0, ZOrder::TILES, shader: @terrain_shader
+      @world_maker.draw if $window.debugging?
     end
 
     def draw_mini
-      $window.scale Tile::WIDTH / PIXELS_PER_TILE do
-        @map_pixel_buffer.draw -PIXELS_PER_TILE / 2, -PIXELS_PER_TILE / 2, ZOrder::TILES
-      end
+      @map_pixel_buffer.draw 0, 0, ZOrder::TILES
     end
   end
 end

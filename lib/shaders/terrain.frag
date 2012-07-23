@@ -2,8 +2,6 @@
 
 #include <noise4D>
 
-// Smooth the square edges of the tiles.
-
 const vec2 TextureSize = vec2(1024.0, 1024.0); // Gosu-specific!
 const vec2 PixelSize = 1.0 / TextureSize;
 

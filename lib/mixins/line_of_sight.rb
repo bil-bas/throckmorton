@@ -1,9 +1,5 @@
 module Game
   module LineOfSight
-    def manhattan_distance(tile)
-      (tile.grid_x - self.tile.grid_x).abs + (tile.grid_y - self.tile.grid_y).abs
-    end
-
     def line_of_sight?(target_tile)
       line_blocked_by(target_tile, :blocks_sight?).nil?
     end
@@ -25,6 +21,7 @@ module Game
     # @return [Tile, Wall, nil]
     protected
     def line_blocked_by(target_tile, type)
+      return false
 
       raise unless target_tile.is_a? Tile
 
@@ -60,6 +57,8 @@ module Game
 
     protected
     def zig_zag_blocked_by(from, step_x, step_y, length, x_first, type)
+      return nil
+
       current = from
       x, y = from.grid_x, from.grid_y
       map = parent.map
@@ -89,6 +88,8 @@ module Game
 
     protected
     def ray_trace_blocked_by(from, step_x, step_y, dx, dy, type)
+      return nil
+
       map = parent.map
       x, y = from.grid_x, from.grid_y
 

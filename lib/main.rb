@@ -83,7 +83,6 @@ require_relative "map/textures"
 
 require_relative "map/world_maker"
 require_relative "map/map"
-require_relative "map/tile"
 
 require_relative "objects/physics_object"
 require_relative "objects/item"

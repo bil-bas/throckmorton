@@ -7,6 +7,7 @@ module Game
     attr_reader :map, :player, :objects
 
     PHYSICS_STEP = 1 / 60.0
+    MAP_MARGIN = 32
 
     def server?; true end #@server end
     def client?; true end #!@server; end
@@ -275,7 +276,7 @@ module Game
         $window.translate ($window.width / Map::MINI_SCALE) * 0.5 - (@map.width / 2),
                           ($window.height / Map::MINI_SCALE) * 0.5 - (@map.height / 2) do
                           
-          pixel.draw -Tile::WIDTH, -Tile::WIDTH, 0, @map.width + Tile::WIDTH, @map.height + Tile::WIDTH, Color.rgb(150, 150, 150)
+          pixel.draw -MAP_MARGIN, -MAP_MARGIN, 0, @map.width + MAP_MARGIN * 2, @map.height + MAP_MARGIN * 2, Color.rgb(150, 150, 150)
           
           @map.draw_mini 
           @objects.each {|o| o.draw_mini }

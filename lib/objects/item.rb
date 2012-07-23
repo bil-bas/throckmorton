@@ -17,15 +17,14 @@ module Game
           zorder: ZOrder::ITEM,
           collision_type: :item,
           angle: rand(4) * 90,
+          speed: 0,
       }.merge! options
 
       super options
 
-      @shape.sensor = true
-
       Messages::CreateItem.broadcast(self) if parent.server?
 
-      debug { "Created #{short_name} at #{tile.grid_position}" }
+      debug { "Created #{short_name} at #{position}" }
     end
 
     def draw

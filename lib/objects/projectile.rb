@@ -10,7 +10,7 @@ module Game
     def initialize(type, x, y, direction, options = {})
       options = {
         rotation_speed: 0.0,
-        speed: 100,
+        speed: 1000,
         rotation_center: :center_center,
         zorder: ZOrder::PROJECTILES,
         color: Color::CYAN,
@@ -28,22 +28,24 @@ module Game
 
       super options.merge(x: x, y: y, image: image, angle: direction)
 
-      if tile.blocks_attack?
-        destroy # Prevent
+      if parent.map.blocked_at? x, y
+        destroy # Prevent creation inside a blockage.
       else
-        info { "Created #{short_name} at #{tile.grid_position}" }
+        info { "Created #{short_name} at #{position}" }
       end
 
       @created_at = time
 
-      move offset_x(direction, 1), offset_y(direction, 1)
+      @velocity_x = offset_x direction, 1
+      @velocity_y = offset_y direction, 1
     end
     
     def update
-      if time - @created_at > @duration
+      if time - @created_at > @duration || parent.map.blocked_at?(x, y)
         destroy
       else
         self.angle += @rotation_speed
+        move @velocity_x, @velocity_y
       end
     end
 

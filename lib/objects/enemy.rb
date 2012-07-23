@@ -34,13 +34,13 @@ module Game
             collision_type: :enemy, speed: config[:speed]
 
       if parent.client?
-        position = config[:spritesheet_position]
-        self.image = self.class.sprites[position[:x], position[:y]]
+        sheet_position = config[:spritesheet_position]
+        self.image = self.class.sprites[sheet_position[:x], sheet_position[:y]]
       end
 
       Messages::CreateEnemy.broadcast(self) if parent.server?
 
-      debug { "Created #{short_name} at #{tile.grid_position}" }
+      debug { "Created #{short_name} at #{position}" }
     end
 
     def update
@@ -51,9 +51,9 @@ module Game
       if @ranged and @ranged[:skirmish].include? range
         fire_ranged
       elsif @ranged and range < @ranged[:skirmish].min
-        push -parent.player.x, -parent.player.y, speed
+        move_away_from parent.player
       else
-        push parent.player.x, parent.player.y, speed
+        move_towards parent.player
       end
 
       self.angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
@@ -62,7 +62,7 @@ module Game
     end
 
     def fire_ranged
-      if rand() <= @ranged[:fire_chance] && line_of_attack?(parent.player.tile)
+      if rand() <= @ranged[:fire_chance] && line_of_attack?(parent.player)
         angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
         bullet = Projectile.new :arrow,
                                 x + offset_x(angle, SHOOT_OFFSET),

@@ -20,7 +20,7 @@ module Game
     def frame_time; parent.frame_time; end
     def exists?; !destroyed? end
     def destroyed?; !@shape.object end
-    def tile; parent.map.tile_at_coordinate x, y end
+    def position; "#{x.to_i}, #{y.to_i}" end
     def id_string; id ? "##{id}" : "" end
 
     def initialize(options = {})
@@ -30,12 +30,12 @@ module Game
 
       @velocity_x, @velocity_y = 0, 0 # TODO: Use these!
 
-      @speed = options[:speed]
+      @speed = options[:speed] / 10.0
 
       @id = PhysicsObject.next_id
       PhysicsObject.next_id += 1
 
-      @body = CP::Body.new(1000, Float::INFINITY)
+      @body = CP::StaticBody.new
 
       super options
 
@@ -57,28 +57,27 @@ module Game
       @shape.collision_type = options[:collision_type]
       @shape.group = options[:group] if options.has_key? :group
       @shape.object = self
+      @shape.sensor = true # No collisions, just detection.
 
       parent.space.add_body @body
       parent.space.add_shape @shape
     end
 
     def move(right, down)
-      push(x + right, y + down, speed)
+      self.x += right * speed * frame_time
+      self.y += down * speed * frame_time
+    end
+
+    def move_towards(other)
+
+    end
+
+    def move_away_from(other)
+
     end
 
     def draw
       @image.draw_rot x, y, zorder, angle, 0.5, 0.5
-    end
-
-    # Push towards a particular position (negative force to pull).
-    def push(x, y, push_force)
-      angle = Gosu::angle(self.x, self.y, x, y)
-      distance = distance(self.x, self.y, x, y)
-      x_offset = offset_x(angle, distance)
-      y_offset = offset_y(angle, distance)
-
-      @body.apply_force(CP::Vec2.new((x_offset / distance) * push_force * 20000, (y_offset / distance) * push_force * 20000),
-                              CP::Vec2.new(0, 0))
     end
 
     def destroy
@@ -93,7 +92,7 @@ module Game
 
       Messages::Destroy.broadcast(self) if parent.server?
 
-      debug { "Destroyed #{short_name} at #{tile.grid_position}" }
+      debug { "Destroyed #{short_name} at #{position}" }
     end
 
     def draw_physics

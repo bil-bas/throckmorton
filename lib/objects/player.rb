@@ -13,7 +13,6 @@ module Game
 
     def fire_primary?; energy >= @fire_primary_cost end
     def fire_secondary?; energy >= @fire_secondary_cost end
-    def can_see?(tile); @visible_tile_positions.include? [tile.grid_x, tile.grid_y] end
     def short_name; "player"; end
 
     def energy=(value)
@@ -35,7 +34,7 @@ module Game
 
       self.width, self.height = WIDTH, WIDTH
 
-      super x: x, y: y, max_health: 100, speed: 18,
+      super x: x, y: y, max_health: 100, speed: 800,
             zorder: ZOrder::PLAYER, width: WIDTH,
             collision_type: :player
 
@@ -43,11 +42,11 @@ module Game
         self.image = Image["player.png"]
       end
 
-      debug { "Created #{short_name} at #{tile.grid_position}" }
+      debug { "Created #{short_name} at #{position}" }
 
       if parent.client?
         scale = parent.world_scale
-        radius = 5.0 * Tile::WIDTH # See for N full tiles around.
+        radius = 150.0 # See for N pixels radius full tiles around.
         @light = parent.map.lighting.create_light x / scale, y / scale, zorder, radius, color: Color::WHITE
         debug { "Player 'light' created at #{[@light.x, @light.y]}" }
 
@@ -58,6 +57,7 @@ module Game
                                     self.x + offset_x(angle, SHOOT_OFFSET),
                                     self.y + offset_y(angle, SHOOT_OFFSET),
                                     angle,
+                                    speed: 1500,
                                     rotation_speed: 30,
                                     collision_type: :player_projectile,
                                     group: :player_projectiles,
@@ -75,7 +75,7 @@ module Game
                                       self.x + offset_x(angle, SHOOT_OFFSET),
                                       self.y + offset_y(angle, SHOOT_OFFSET),
                                       angle,
-                                      speed: 40,
+                                      speed: 900,
                                       rotation_speed: 5,
                                       collision_type: :player_projectile,
                                       group: :player_projectiles,
@@ -100,8 +100,6 @@ module Game
         @energy = [@energy + @energy_per_second * parent.frame_time, @max_energy].min
         self.health += @health_per_second * parent.frame_time
       end
-
-      reset_forces
 
       move_angle =  if holding_any? :up, :w
                       if holding_any? :left, :a
@@ -131,19 +129,9 @@ module Game
 
       if move_angle
         move offset_x(move_angle, 1), offset_y(move_angle, 1)
-      else
-        # Slow down quickly.
-        @body.vel.x *= 0.9
-        @body.vel.y *= 0.9
       end
       
       super
-    end
-
-    def tile_blocked?(x, y)
-      tile = parent.map.tile_at_coordinate self.x + x, self.y + y
-
-      tile.nil? || tile.blocks_movement?
     end
     
     def draw
