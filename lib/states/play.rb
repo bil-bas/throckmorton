@@ -177,9 +177,9 @@ module Game
 
         if client?
           @map.lighting.camera_x, @map.lighting.camera_y = @camera_x / world_scale, @camera_y / world_scale
-          @map.lighting.update_shadow_casters do
-            #@map.draw_shadow_casters
-          end
+          #@map.lighting.update_shadow_casters do
+          #  @map.draw_shadow_casters
+          #end
 
           #@map.lighting.each do |light|
           #  light.send :save_buffers
