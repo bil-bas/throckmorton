@@ -1,6 +1,6 @@
 module Game
   class Enemy < Entity
-    SPRITE_WIDTH = 32
+    SPRITE_WIDTH = 48
     SHOOT_OFFSET = 14
 
     include Mixins::LightSource
