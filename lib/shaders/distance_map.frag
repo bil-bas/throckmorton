@@ -57,5 +57,5 @@ void main()
         }
     }
 
-    gl_FragColor =  vec4(vec3(float(distance) / 255.0), 255);
+    gl_FragColor =  vec4(vec3(float(distance) / 255.0), 1.0);
 }
