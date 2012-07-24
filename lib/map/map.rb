@@ -28,7 +28,7 @@ module Game
     def generate
       create_map_pixel_texture
 
-      @world_maker = WorldMaker.new @map_pixel_buffer, seed
+      @world_maker = WorldMaker.new @map_pixel_buffer, @shadow_casters, seed
 
       object_data = @world_maker.generate_object_data
       create_objects_from_data object_data

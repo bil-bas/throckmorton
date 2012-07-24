@@ -3,7 +3,7 @@
   :spritesheet_position:
     :x: 3
     :y: 0
-  :collision_width: 12
+  :collision_width: 10
 
   :max_health: 12
   :speed: 9
@@ -24,7 +24,7 @@
   :spritesheet_position:
     :x: 1
     :y: 0
-  :collision_width: 14
+  :collision_width: 20
 
   :max_health: 80
   :speed: 6
