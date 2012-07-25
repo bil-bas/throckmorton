@@ -4,7 +4,6 @@ module Game
   class Player < Entity
     DIAGONAL = 0.785
     WIDTH = 12
-    SHOOT_OFFSET = 14 # Pixels from center to create the projectile.
 
     INFO_BAR_HEIGHT = 24
     STAT_BAR_HEIGHT = 16
@@ -14,8 +13,6 @@ module Game
     attr_accessor :max_energy, :score
     attr_reader :energy
 
-    def fire_primary?; energy >= @fire_primary_cost end
-    def fire_secondary?; energy >= @fire_secondary_cost end
     def short_name; "player"; end
 
     def energy=(value)
@@ -32,8 +29,8 @@ module Game
       @max_energy = 100
       @energy = @max_energy
       @energy_per_second = 4
-      @fire_primary_cost = 4
-      @fire_secondary_cost = 25
+      @primary_weapon = Equipment.new :zap, self
+      @secondary_weapon = Equipment.new :blast, self
 
       self.width, self.height = WIDTH, WIDTH
 
@@ -54,40 +51,11 @@ module Game
         debug { "Player 'light' created at #{[@light.x, @light.y]}" }
 
         on_input :left_mouse_button do
-          if fire_primary?
-            self.energy -= @fire_primary_cost
-            bullet = Projectile.new :zap,
-                                    self.x + offset_x(angle, SHOOT_OFFSET),
-                                    self.y + offset_y(angle, SHOOT_OFFSET),
-                                    angle,
-                                    speed: 1500,
-                                    rotation_speed: 30,
-                                    collision_type: :player_projectile,
-                                    group: :player_projectiles,
-                                    duration: 0.5,
-                                    damage: 5..15
-            parent.add_object bullet
-          end
+          @primary_weapon.fire if @primary_weapon.can_fire?
         end
 
         on_input :right_mouse_button do
-          if fire_secondary?
-            self.energy -= @fire_secondary_cost
-            (0...360).step(30) do |angle|
-              bullet = Projectile.new :burst,
-                                      self.x + offset_x(angle, SHOOT_OFFSET),
-                                      self.y + offset_y(angle, SHOOT_OFFSET),
-                                      angle,
-                                      speed: 900,
-                                      rotation_speed: 5,
-                                      collision_type: :player_projectile,
-                                      group: :player_projectiles,
-                                      duration: 0.4,
-                                      damage: 25..40
-
-              parent.add_object bullet
-            end
-          end
+          @secondary_weapon.fire if @secondary_weapon.can_fire?
         end
       end
     end

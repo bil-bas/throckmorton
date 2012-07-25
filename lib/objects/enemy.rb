@@ -1,11 +1,10 @@
 module Game
   class Enemy < Entity
     SPRITE_WIDTH = 48
-    SHOOT_OFFSET = 14
 
     include Mixins::LightSource
 
-    attr_reader :damage, :type
+    attr_reader :melee_damage, :type
     def short_name; "#{type}#{id_string}" end
 
     class << self
@@ -17,14 +16,23 @@ module Game
       end
     end
 
+    def can_fire?; !!@ranged_weapon end
 
     def initialize(type, x, y, options = {})
       @type = type
       config = self.class.config[type]
       raise [@type, config].inspect unless config
 
-      @ranged = config[:ranged]
-      @damage = config[:melee][:damage] || raise
+      @ranged_weapon, @fire_chance = if config.has_key? :ranged_weapon
+        [
+            Equipment.new(config[:ranged_weapon][:type], self),
+            config[:ranged_weapon][:fire_chance],
+        ]
+      else
+        [nil, nil]
+      end
+
+      @melee_damage = config[:melee][:damage] || raise
       @facing_x, @facing_y = 1, 0
 
       super x: x, y: y,
@@ -46,36 +54,21 @@ module Game
     def update
       reset_forces
 
+      self.angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
+
       # Skirmish or advance
       range = distance(x, y, parent.player.x, parent.player.y)
-      if @ranged and @ranged[:skirmish].include? range
-        fire_ranged
-      elsif @ranged and range < @ranged[:skirmish].min
+      if can_fire? and @ranged_weapon.skirmish_range.include? range
+        if rand() <= @fire_chance && line_of_attack?(parent.player)
+          @ranged_weapon.fire
+        end
+      elsif @ranged and range < @ranged_weapon.skirmish_range.min
         move_away_from parent.player
       else
         move_towards parent.player
       end
 
-      self.angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
-
       super
-    end
-
-    def fire_ranged
-      if rand() <= @ranged[:fire_chance] && line_of_attack?(parent.player)
-        angle = Gosu::angle(x, y, parent.player.x, parent.player.y)
-        bullet = Projectile.new :arrow,
-                                x + offset_x(angle, SHOOT_OFFSET),
-                                y + offset_y(angle, SHOOT_OFFSET),
-                                angle,
-                                speed: @ranged[:speed],
-                                collision_type: :enemy_projectile,
-                                group: :enemy_projectiles,
-                                damage: @ranged[:damage],
-                                duration: @ranged[:duration],
-                                color: Color::BLACK
-        parent.add_object bullet
-      end
     end
 
     def draw

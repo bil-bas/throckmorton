@@ -64,8 +64,13 @@ module Game
     end
 
     def move(right, down)
-      self.x += right * speed * frame_time
-      self.y += down * speed * frame_time
+      new_x = x + right * speed * frame_time
+      new_y = y + down * speed * frame_time
+
+      if parent.map.position_clear? new_x, new_y, width / 2
+        self.x = new_x
+        self.y = new_y
+      end
     end
 
     def move_towards(other)

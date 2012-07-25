@@ -2,10 +2,12 @@ module Game
   module LineOfSight
     def line_of_sight?(target_tile)
       line_blocked_by(target_tile, :blocks_sight?).nil?
+      true
     end
 
     def line_of_attack?(target_tile)
       line_blocked_by(target_tile, :blocks_attack?).nil?
+      true
     end
 
     def line_of_sight_blocked_by(target_tile)

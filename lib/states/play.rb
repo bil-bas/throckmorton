@@ -30,7 +30,7 @@ module Game
       @map = Map.new seed
       if server?
         @map.generate
-        @player = Player.new @map.width / 2, @map.height / 2
+        @player = Player.new @map.width / 2, @map.height / 2 + 10
       end
 
       if client?
@@ -61,7 +61,7 @@ module Game
 
       @space.on_collision(:player, :enemy) do |player, enemy|
         if server?
-          damage = rand enemy.damage
+          damage = rand enemy.melee_damage
           debug { "Player took #{damage} damage from meleeing with #{enemy.short_name}" }
           player.health -= damage
           Sample["player_meleed.ogg"].play 0.7
@@ -251,7 +251,7 @@ module Game
         info =  "Objects: #{objects.size - num_mobs} Mobs: #{num_mobs} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]  "
         Font[24].draw_rel info, $window.width, 0, 0, 1, 0
 
-        cursor_color = player.fire_primary? ?  Color.rgba(255, 0, 255, 150) : Color.rgba(100, 0, 100, 100)
+        cursor_color = Color.rgba(255, 0, 255, 150)
         pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 45, 0.5, 0.5, 16, 16, cursor_color
         pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 3, 3, Color::BLACK
 

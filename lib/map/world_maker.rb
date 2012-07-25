@@ -26,6 +26,11 @@ module Game
       @recording.draw 0, 0, 0
     end
 
+    def position_clear?(x, y, radius)
+      # Could be checking any of red/blue/green.
+      @distance_map.red(x, y) >= radius
+    end
+
     # Nodes indicate the distance from themselves to a blockage. 0 if the node is in scenery.
     def generate_navigation_nodes(shadow_casters)
       t = Time.now
@@ -52,10 +57,7 @@ module Game
 
       (0...@map_texture.width).step(SPAWN_SPACING) do |x|
         (0...@map_texture.height).step(SPAWN_SPACING) do |y|
-          distance_to_blockage = @distance_map.red(x, y)
-          if distance_to_blockage >= SPAWN_MARGIN
-            @spawn_nodes << [x, y]
-          end
+          @spawn_nodes << [x, y] if position_clear? x, y, SPAWN_MARGIN
         end
       end
 

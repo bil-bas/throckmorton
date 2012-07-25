@@ -11,13 +11,9 @@
   :melee:
     :damage: !ruby/range 6..8
 
-  :ranged:
-    :damage: !ruby/range 2..4
-    :speed: 35
-    :duration: 0.7
-    :skirmish: !ruby/range 60..80
-    :fire_chance: 0.01 # Per frame.
-
+  :ranged_weapon:
+     :type: :arrow
+     :fire_chance: 0.01 # Per frame.
 
 :lava_beetle:
   :frequency: 5

@@ -74,6 +74,10 @@ module Game
       info { "Rendered map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height} in #{((Time.now - t).to_f * 1000).to_i}ms"}
     end
 
+    def position_clear?(x, y, radius)
+      @world_maker.position_clear? x, y, radius
+    end
+
     def create_objects_from_data(data)
       t = Time.now
       data.each do |class_name, type, (x, y)|
