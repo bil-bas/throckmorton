@@ -48,7 +48,7 @@ void main()
         {
             if(clear_at_distance(x, y, float(i) * pixel_size))
             {
-                distance += 1;
+                distance = i;
             }
             else
             {
