@@ -82,6 +82,10 @@ module Game
       @world_maker.clear_distance x, y
     end
 
+    def line_of_sight_blocked_at(x1, y1, x2, y2)
+      @world_maker.line_of_sight_blocked_at x1, y1, x2, y2
+    end
+
     def create_objects_from_data(data)
       t = Time.now
       data.each do |class_name, type, (x, y)|

@@ -6,7 +6,7 @@
   :collision_width: 10
 
   :max_health: 12
-  :speed: 9
+  :speed: 900
 
   :melee:
     :damage: !ruby/range 6..8
@@ -23,7 +23,7 @@
   :collision_width: 20
 
   :max_health: 80
-  :speed: 6
+  :speed: 600
 
   :illumination_range: 1
 
@@ -39,7 +39,7 @@
   :collision_width: 14
 
   :max_health: 24
-  :speed: 8
+  :speed: 800
 
   :melee:
     :damage: !ruby/range 8..14
@@ -53,7 +53,7 @@
   :collision_width: 5
 
   :max_health: 1
-  :speed: 15
+  :speed: 1500
 
   :melee:
     :damage: !ruby/range 3..5

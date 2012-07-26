@@ -1,15 +1,15 @@
 module Game
   class Entity < PhysicsObject
-
-    include LineOfSight
-
     attr_reader :health, :max_health
 
     def initialize(options = {})
       @max_health = options[:max_health]
       @health = options[:health] || options[:max_health] || raise
       super(options)
+    end
 
+    def line_of_sight_blocked_at(other)
+      parent.map.line_of_sight_blocked_at x, y, other.x, other.y
     end
 
     def health=(value)

@@ -67,14 +67,14 @@ module Game
       # Do nothing.
     end
 
-    def move(right, down)
-      move_x = right * speed * frame_time
-      move_y = down * speed * frame_time
+    def move(angle)
+      move_x = offset_x angle, speed * frame_time
+      move_y = offset_y angle, speed * frame_time
 
       dest_x = x + move_x
       dest_y = y + move_y
 
-      radius = width / 2
+      radius = @shape.radius
 
       clear_at_destination = parent.map.clear_distance dest_x, dest_y
       if clear_at_destination >= radius
@@ -102,12 +102,16 @@ module Game
       end
     end
 
-    def move_towards(other)
+    def distance_to(other)
+      distance(x, y, other.x, other.y)
+    end
 
+    def move_towards(other)
+      move Gosu::angle(x, y, other.x, other.y)
     end
 
     def move_away_from(other)
-
+      move Gosu::angle(other.x, other.y, x, y)
     end
 
     def draw

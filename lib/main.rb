@@ -66,7 +66,6 @@ require_relative "texplay_ext/color"
 require_relative "texplay_ext/image"
 
 require_relative "mixins/shaders"
-require_relative "mixins/line_of_sight"
 require_relative "mixins/light_source"
 
 require_relative "sprite_sheet"

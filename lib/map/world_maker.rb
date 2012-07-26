@@ -35,6 +35,10 @@ module Game
       @signed_distance_field.clear_distance x, y
     end
 
+    def line_of_sight_blocked_at(x1, y1, x2, y2)
+      @signed_distance_field.line_of_sight_blocked_at x1, y1, x2, y2
+    end
+
     # Nodes indicate the distance from themselves to a blockage. 0 if the node is in scenery.
     def generate_navigation_nodes(shadow_casters)
       t = Time.now

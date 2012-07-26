@@ -93,7 +93,7 @@ module Game
 
 
       if move_angle
-        move offset_x(move_angle, 1), offset_y(move_angle, 1)
+        move move_angle
       end
 
       if parent.client?

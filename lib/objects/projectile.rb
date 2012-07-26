@@ -26,6 +26,7 @@ module Game
 
       image = Image.create 3, 12, color: options[:color]
 
+      @direction = direction
       super options.merge(x: x, y: y, image: image, angle: direction)
 
       if parent.map.blocked_at? x, y
@@ -35,9 +36,6 @@ module Game
       end
 
       @created_at = time
-
-      @velocity_x = offset_x direction, 1
-      @velocity_y = offset_y direction, 1
     end
 
     def on_collision_with_wall
@@ -49,7 +47,7 @@ module Game
         destroy
       else
         self.angle += @rotation_speed
-        move @velocity_x, @velocity_y
+        move @direction
       end
     end
 
