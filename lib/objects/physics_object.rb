@@ -64,13 +64,37 @@ module Game
     end
 
     def move(right, down)
-      new_x = x + right * speed * frame_time
-      new_y = y + down * speed * frame_time
+      move_x = right * speed * frame_time
+      move_y = down * speed * frame_time
 
-      if parent.map.position_clear? new_x, new_y, width / 2
-        self.x = new_x
-        self.y = new_y
+      dest_x = x + move_x
+      dest_y = y + move_y
+
+      radius = width / 2
+
+      clear_at_destination = parent.map.clear_distance dest_x, dest_y
+      if clear_at_destination >= radius
+        # Plenty of room to move.
+        self.x = dest_x
+        self.y = dest_y
+      else
+        # Can't move the full distance, so move a partial distance.
+        clear_at_start = parent.map.clear_distance x, y
+        clear_at_dest_x = parent.map.clear_distance dest_x, y
+        clear_at_dest_y = parent.map.clear_distance x, dest_y
+        distance_to_move = (clear_at_start - radius).to_f
+
+        if clear_at_start > clear_at_dest_x
+          lerp_x = distance_to_move / (clear_at_start - clear_at_dest_x)
+          self.x = x + move_x * lerp_x
+        end
+
+        if clear_at_start > clear_at_dest_y
+          lerp_y = distance_to_move / (clear_at_start - clear_at_dest_y)
+          self.y = y + move_y * lerp_y
+        end
       end
+
     end
 
     def move_towards(other)

@@ -78,6 +78,10 @@ module Game
       @world_maker.position_clear? x, y, radius
     end
 
+    def clear_distance(x, y)
+      @world_maker.clear_distance x, y
+    end
+
     def create_objects_from_data(data)
       t = Time.now
       data.each do |class_name, type, (x, y)|
