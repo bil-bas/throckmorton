@@ -7,6 +7,7 @@ module Game
 
     NAVIGATION_SPACING = 1
     MAX_NAVIGATION_DISTANCE = SPAWN_SPACING
+    DISTANCE_MAP_SCALE = 1.0
 
     def initialize(map_texture, shadow_casters, seed)
       @map_texture = map_texture
@@ -22,13 +23,15 @@ module Game
         end
       end
 
-      @distance_map.draw 0, 0, 0, blend: :add
+      $window.scale DISTANCE_MAP_SCALE do
+        @distance_map.draw 0, 0, 0, blend: :add
+      end
       @recording.draw 0, 0, 0
     end
 
     def position_clear?(x, y, radius)
       # Could be checking any of red/blue/green.
-      @distance_map.red(x, y) >= radius
+      @distance_map.red(x / DISTANCE_MAP_SCALE, y / DISTANCE_MAP_SCALE) >= radius
     end
 
     # Nodes indicate the distance from themselves to a blockage. 0 if the node is in scenery.
@@ -44,7 +47,9 @@ module Game
       @distance_map = Ashton::Framebuffer.new shadow_casters.width, shadow_casters.height
       shader.use do
         @distance_map.render do
-          shadow_casters.draw 0, 0, 0
+          $window.scale 1.0 / DISTANCE_MAP_SCALE do
+            shadow_casters.draw 0, 0, 0
+          end
         end
       end
 
