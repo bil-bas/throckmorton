@@ -31,8 +31,8 @@ module Game
       @signed_distance_field.position_clear? x, y, radius
     end
 
-    def clear_distance(x, y)
-      @signed_distance_field.clear_distance x, y
+    def sample_distance(x, y)
+      @signed_distance_field.sample_distance x, y
     end
 
     def line_of_sight_blocked_at(x1, y1, x2, y2)
@@ -54,7 +54,7 @@ module Game
 
       (0...@map_texture.width).step(SPAWN_SPACING) do |x|
         (0...@map_texture.height).step(SPAWN_SPACING) do |y|
-          @spawn_nodes << [x, y] if @signed_distance_field.position_clear? x, y, SPAWN_MARGIN
+          @spawn_nodes << [x, y] if position_clear? x, y, SPAWN_MARGIN
         end
       end
 

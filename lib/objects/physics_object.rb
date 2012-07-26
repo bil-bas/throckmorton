@@ -76,16 +76,16 @@ module Game
 
       radius = @shape.radius
 
-      clear_at_destination = parent.map.clear_distance dest_x, dest_y
+      clear_at_destination = parent.map.sample_distance dest_x, dest_y
       if clear_at_destination >= radius
         # Plenty of room to move.
         self.x = dest_x
         self.y = dest_y
       else
         # Can't move the full distance, so move a partial distance.
-        clear_at_start = parent.map.clear_distance x, y
-        clear_at_dest_x = parent.map.clear_distance dest_x, y
-        clear_at_dest_y = parent.map.clear_distance x, dest_y
+        clear_at_start = parent.map.sample_distance x, y
+        clear_at_dest_x = parent.map.sample_distance dest_x, y
+        clear_at_dest_y = parent.map.sample_distance x, dest_y
         distance_to_move = (clear_at_start - radius).to_f
 
         if clear_at_start > clear_at_dest_x

@@ -78,8 +78,8 @@ module Game
       @world_maker.position_clear? x, y, radius
     end
 
-    def clear_distance(x, y)
-      @world_maker.clear_distance x, y
+    def sample_distance(x, y)
+      @world_maker.sample_distance x, y
     end
 
     def line_of_sight_blocked_at(x1, y1, x2, y2)
