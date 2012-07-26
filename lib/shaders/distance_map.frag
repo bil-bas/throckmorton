@@ -18,6 +18,8 @@ const int ANGULAR_STEP = 360 / NUM_SPOKES;
 // Returns true if all of them are fully transparent.
 bool clear_at_distance(in float x, in float y, in vec2 distance)
 {
+    bool clear = true;
+
     for(int i = 0; i < 360; i += ANGULAR_STEP)
     {
         float angle = float(i);
@@ -26,11 +28,12 @@ bool clear_at_distance(in float x, in float y, in vec2 distance)
 
         if(texture2D(in_Texture, position).a > 0.0)
         {
-           return false;
+           clear = false;
+           i = 360;
         }
     }
 
-    return true;
+    return clear;
 }
 
 void main()
