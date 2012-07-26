@@ -39,9 +39,13 @@ module Game
       @velocity_x = offset_x direction, 1
       @velocity_y = offset_y direction, 1
     end
+
+    def on_collision_with_wall
+      destroy
+    end
     
     def update
-      if time - @created_at > @duration || parent.map.blocked_at?(x, y)
+      if time - @created_at > @duration
         destroy
       else
         self.angle += @rotation_speed

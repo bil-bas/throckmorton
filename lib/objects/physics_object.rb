@@ -63,6 +63,10 @@ module Game
       parent.space.add_shape @shape
     end
 
+    def on_collision_with_wall
+      # Do nothing.
+    end
+
     def move(right, down)
       move_x = right * speed * frame_time
       move_y = down * speed * frame_time
@@ -93,8 +97,9 @@ module Game
           lerp_y = distance_to_move / (clear_at_start - clear_at_dest_y)
           self.y = y + move_y * lerp_y
         end
-      end
 
+        on_collision_with_wall
+      end
     end
 
     def move_towards(other)
