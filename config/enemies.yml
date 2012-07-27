@@ -6,7 +6,7 @@
   :collision_width: 10
 
   :max_health: 12
-  :speed: 900
+  :speed: 750
 
   :melee:
     :damage: !ruby/range 6..8
