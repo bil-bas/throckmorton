@@ -6,7 +6,7 @@
   :speed: 1500
   :rotation_speed: 30
   :duration: 0.5
-  :color: [0, 200, 200, 255]
+  :color: [0, 200, 200]
 
 # Standard player secondary weapon.
 :blast:
@@ -17,7 +17,7 @@
   :rotation_speed: 5
   :duration: 0.4
   :num_projectiles: 12
-  :color: [0, 200, 200, 255]
+  :color: [0, 200, 200]
 
 # Froglodyte spawn primary weapon.
 :arrow:
@@ -26,4 +26,4 @@
   :speed: 800
   :duration: 0.7
   :skirmish_range: !ruby/range 60..80
-  :color: [50, 50, 50, 255]
+  :color: [50, 50, 50]

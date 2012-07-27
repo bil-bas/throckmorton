@@ -9,7 +9,11 @@ module Game
           config = YAML.load_file CONFIG_PATH
           # Convert to more friendly color objects.
           config.each_value do |c|
-            c[:color] = Color.rgba *c[:color]
+            c[:color] = case c[:color].size
+              when 4 then Color.rgba *c[:color]
+              when 3 then Color.rgb *c[:color]
+              else raise
+            end
           end
 
           config
