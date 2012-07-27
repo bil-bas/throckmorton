@@ -17,7 +17,7 @@ const float L_CRUST_MACRO_STEP = 0.09 * TextureSize.x;
 const float L_CRUST_MICRO_STEP = 0.5 * TextureSize.x;
 const float L_LAVA_STEP = 0.1 * TextureSize.x;
 
-const float W_WATER_STEP = 0.014 * TextureSize.x;
+const float W_WATER_STEP = 0.15 * TextureSize.x;
 const float W_ROCKS_STEP = 0.35 * TextureSize.x;
 
 // Automatically set by Ray (actually passed from the vertex shader).
@@ -68,10 +68,10 @@ void main()
     else if(color.r == 0.0 && color.g == 0.0 && color.b > 0.0)
     {
         // WATER
-        float ripple_noise = snoise(vec4(TexCoord * W_WATER_STEP, in_Time * 0.2, in_Seed));
+        float ripple_noise = snoise(vec4(TexCoord * W_WATER_STEP, in_Time * 0.8, in_Seed));
         float rock_noise = snoise(vec4(TexCoord * W_ROCKS_STEP, 0, in_Seed));
 
-        color.b -= ripple_noise * 0.1;
+        color.b -= ripple_noise * 0.05;
         color.r = color.b * 0.15;
         color.g = color.b * 0.6;
 
