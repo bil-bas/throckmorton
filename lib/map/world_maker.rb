@@ -19,7 +19,7 @@ module Game
     def draw
       @recording ||= $window.record 1, 1 do
         @spawn_nodes.each do |x, y|
-          $window.pixel.draw_rot x, y, 0, 0, 0.5, 0.5, 3, 3, Color::RED
+          $window.pixel.draw_rot x, y, 0, 0, 0.5, 0.5, 1, 1, Color::RED
         end
       end
 
