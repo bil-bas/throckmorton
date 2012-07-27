@@ -39,7 +39,7 @@ module Game
     def create_map_pixel_texture
       t = Time.now
 
-      @map_pixel_buffer = Ashton::Framebuffer.new width, height
+      @map_pixel_buffer = Ashton::Texture.new width, height
 
       map_shader = Ashton::Shader.new fragment: fragment_shader("map"), uniforms: {
           cavern_floor: Game::Textures::CavernFloor.color,
@@ -66,7 +66,7 @@ module Game
       walls = @map_pixel_buffer.to_image
       walls.clear dest_ignore: Textures::CavernWall.color.to_opengl, tolerance: 0.02
       walls.refresh_cache
-      @shadow_casters = Ashton::Framebuffer.new width, height
+      @shadow_casters = Ashton::Texture.new width, height
       @shadow_casters.render do
         walls.draw 0, 0, 0
       end
@@ -80,6 +80,10 @@ module Game
 
     def sample_distance(x, y)
       @world_maker.sample_distance x, y
+    end
+
+    def sample_normal(x, y)
+      @world_maker.sample_normal x, y
     end
 
     def line_of_sight_blocked_at(x1, y1, x2, y2)

@@ -35,6 +35,10 @@ module Game
       @signed_distance_field.sample_distance x, y
     end
 
+    def sample_normal(x, y)
+      @signed_distance_field.sample_normal x, y
+    end
+
     def line_of_sight_blocked_at(x1, y1, x2, y2)
       @signed_distance_field.line_of_sight_blocked_at x1, y1, x2, y2
     end
@@ -43,7 +47,9 @@ module Game
     def generate_navigation_nodes(shadow_casters)
       t = Time.now
 
-      @signed_distance_field = Ashton::SignedDistanceField.new shadow_casters, MAX_NAVIGATION_DISTANCE
+      @signed_distance_field = Ashton::SignedDistanceField.new shadow_casters.width, shadow_casters.height, MAX_NAVIGATION_DISTANCE do
+        shadow_casters.draw 0, 0, 0
+      end
 
       info "Navigation nodes plotted out in #{((Time.now - t).to_f * 1000).to_i}ms"
     end

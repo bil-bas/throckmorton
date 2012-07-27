@@ -71,34 +71,37 @@ module Game
       move_x = offset_x angle, speed * frame_time
       move_y = offset_y angle, speed * frame_time
 
-      dest_x = x + move_x
-      dest_y = y + move_y
+      dest_x, dest_y = x + move_x, y + move_y
 
       radius = @shape.radius
 
       clear_at_destination = parent.map.sample_distance dest_x, dest_y
       if clear_at_destination >= radius
         # Plenty of room to move.
-        self.x = dest_x
-        self.y = dest_y
+        self.x, self.y = dest_x, dest_y
       else
-        # Can't move the full distance, so move a partial distance.
+        # Can't move the full distance, so move as far as we can.
         clear_at_start = parent.map.sample_distance x, y
-        clear_at_dest_x = parent.map.sample_distance dest_x, y
-        clear_at_dest_y = parent.map.sample_distance x, dest_y
         distance_to_move = (clear_at_start - radius).to_f
 
-        if clear_at_start > clear_at_dest_x
-          lerp_x = distance_to_move / (clear_at_start - clear_at_dest_x)
-          self.x = x + move_x * lerp_x
-        end
-
-        if clear_at_start > clear_at_dest_y
-          lerp_y = distance_to_move / (clear_at_start - clear_at_dest_y)
-          self.y = y + move_y * lerp_y
-        end
+        #lerp = distance_to_move / (clear_at_start - clear_at_destination)
+        lerp = 0.0
+        #self.x = x + move_x * lerp
+        #self.y = y + move_y * lerp
 
         on_collision_with_wall
+
+        # Now do a bit of a slide along the surface we've collided with.
+        normal_x, normal_y = parent.map.sample_normal x, y
+        plane_x, plane_y = -normal_y, normal_x
+        dot_product = move_x * plane_x + move_y * plane_y
+
+        dest_x = x + dot_product * plane_x * (1.0 - lerp)
+        dest_y = y + dot_product * plane_y * (1.0 - lerp)
+
+        if parent.map.sample_distance(dest_x, dest_y) >= radius
+          self.x, self.y = dest_x, dest_y
+        end
       end
     end
 

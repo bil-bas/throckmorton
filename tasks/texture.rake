@@ -29,8 +29,8 @@ def render_and_save(type)
       seed: 1000,
   }
 
-  buffer_base = Ashton::Framebuffer.new 800, 800
-  buffer_out = Ashton::Framebuffer.new 800, 800
+  buffer_base = Ashton::Texture.new 800, 800
+  buffer_out = Ashton::Texture.new 800, 800
 
   buffer_base.clear color: texture.color
 
@@ -70,8 +70,8 @@ task :map do
       seed: seed,
   }
 
-  buffer_base = Ashton::Framebuffer.new *size
-  buffer_out = Ashton::Framebuffer.new *size
+  buffer_base = Ashton::Texture.new *size
+  buffer_out = Ashton::Texture.new *size
 
   map_shader.use do
     buffer_out.render do
