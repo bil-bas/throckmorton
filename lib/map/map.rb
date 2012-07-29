@@ -54,6 +54,7 @@ module Game
           margin: 32,
       }
       @terrain_shader = Ashton::Shader.new fragment: fragment_shader("terrain"), uniforms: {
+          texture_size: [@texture_width, @texture_height].map(&:to_f),
           cavern_floor: Textures::CavernFloor.color,
           cavern_wall: Textures::CavernWall.color,
           lava: Textures::Lava.color,
