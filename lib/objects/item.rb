@@ -50,10 +50,6 @@ module Game
       debug { "Created #{short_name} at #{position}" }
     end
 
-    def draw
-      @image.draw_rot x, y, zorder, angle, 0.5, 0.5
-    end
-
     def activated_by(player)
       picked_up = false
 

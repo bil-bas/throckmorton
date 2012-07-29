@@ -118,7 +118,7 @@ module Game
     end
 
     def draw
-      @image.draw_rot x, y, zorder, angle, 0.5, 0.5
+      image.draw_rot x, y, zorder, angle, 0.5, 0.5
     end
 
     def destroy

@@ -77,10 +77,6 @@ module Game
       super
     end
 
-    def draw
-      @image.draw_rot x, y, zorder, angle, 0.5, 0.5
-    end
-
     def draw_physics
       super
 
