@@ -2,12 +2,12 @@ module Game
   class Map < BasicGameObject
     include Mixins::Shaders
 
-    MINI_SCALE = 1 / 2.0
+    MINI_SCALE = 1 / 4.0
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
     attr_reader :width, :height
-    attr_reader :lighting, :seed
+    attr_reader :lighting, :seed, :scale
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
 
@@ -16,7 +16,11 @@ module Game
 
       super()
 
-      @width, @height = 1022, 1022
+      @scale = 2.0
+
+      @texture_width, @texture_height = 1022, 1022
+
+      @width, @height = @texture_width * @scale, @texture_height * @scale
 
       if parent.client?
         @lighting = Ashton::Lighting::Manager.new width: $window.width.fdiv(parent.world_scale).ceil,
@@ -28,7 +32,7 @@ module Game
     def generate
       create_map_pixel_texture
 
-      @world_maker = WorldMaker.new @map_pixel_buffer, @shadow_casters, seed
+      @world_maker = WorldMaker.new @map_pixel_buffer, @shadow_casters, seed, @scale
 
       object_data = @world_maker.generate_object_data
       create_objects_from_data object_data
@@ -39,14 +43,14 @@ module Game
     def create_map_pixel_texture
       t = Time.now
 
-      @map_pixel_buffer = Ashton::Texture.new width, height
+      @map_pixel_buffer = Ashton::Texture.new @texture_width, @texture_height
 
       map_shader = Ashton::Shader.new fragment: fragment_shader("map"), uniforms: {
           cavern_floor: Game::Textures::CavernFloor.color,
           cavern_wall: Game::Textures::CavernWall.color,
           #lava: Game::Textures::Lava.color,
           seed: seed,
-          texture_size: [width.to_f, height.to_f],
+          texture_size: [@map_pixel_buffer.width.to_f, @map_pixel_buffer.height.to_f],
           margin: 32,
       }
       @terrain_shader = Ashton::Shader.new fragment: fragment_shader("terrain"), uniforms: {
@@ -66,12 +70,12 @@ module Game
       walls = @map_pixel_buffer.to_image
       walls.clear dest_ignore: Textures::CavernWall.color.to_opengl, tolerance: 0.02
       walls.refresh_cache
-      @shadow_casters = Ashton::Texture.new width, height
+      @shadow_casters = Ashton::Texture.new @texture_width, @texture_height
       @shadow_casters.render do
         walls.draw 0, 0, 0
       end
 
-      info { "Rendered map pixel texture at #{@map_pixel_buffer.width}x#{@map_pixel_buffer.height} in #{((Time.now - t).to_f * 1000).to_i}ms"}
+      info { "Rendered map pixel texture at #{@texture_width}x#{@texture_height} in #{((Time.now - t).to_f * 1000).to_i}ms"}
     end
 
     def position_clear?(x, y, radius)
@@ -106,28 +110,24 @@ module Game
       @shadow_casters.draw 0, 0, 0
     end
 
-    def clear_at?(x, y)
-      @shadow_casters.transparent? x, y
-    end
-
-    def blocked_at?(x, y)
-      !@shadow_casters.transparent?(x, y)
-    end
-
     def terrain_at_coordinate(x, y)
-      color = @map_pixel_buffer[x, y]
+      color = @map_pixel_buffer[x / @scale, y / @scale]
       # TODO: convert to class?/name?
       color
     end
     
     def draw
       @terrain_shader.time = milliseconds.fdiv 1000
-      @map_pixel_buffer.draw 0, 0, ZOrder::TILES, shader: @terrain_shader
-      @world_maker.draw if $window.debugging?
+      $window.scale @scale do
+        @map_pixel_buffer.draw 0, 0, ZOrder::TILES, shader: @terrain_shader
+        @world_maker.draw if $window.debugging?
+      end
     end
 
     def draw_mini
-      @map_pixel_buffer.draw 0, 0, ZOrder::TILES
+      $window.scale @scale do
+        @map_pixel_buffer.draw 0, 0, ZOrder::TILES
+      end
     end
   end
 end

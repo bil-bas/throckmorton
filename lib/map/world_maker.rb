@@ -9,8 +9,8 @@ module Game
     MAX_NAVIGATION_DISTANCE = SPAWN_SPACING
     DISTANCE_FIELD_SCALE = 1.0
 
-    def initialize(map_texture, shadow_casters, seed)
-      @map_texture = map_texture
+    def initialize(map_texture, shadow_casters, seed, scale)
+      @map_texture, @scale = map_texture, scale
       @rng = Random.new seed
 
       generate_navigation_nodes shadow_casters
@@ -24,30 +24,39 @@ module Game
       end
 
       @signed_distance_field.draw 0, 0, 0
-      @recording.draw 0, 0, 0
+      @recording.draw 0, 0, 0, 0.5, 0.5
     end
 
     def position_clear?(x, y, radius)
-      @signed_distance_field.position_clear? x, y, radius
+      @signed_distance_field.position_clear? x / @scale, y / @scale, radius / @scale
     end
 
     def sample_distance(x, y)
-      @signed_distance_field.sample_distance x, y
+      distance = @signed_distance_field.sample_distance x / @scale, y / @scale
+      distance * @scale
     end
 
     def sample_normal(x, y)
-      @signed_distance_field.sample_normal x, y
+      @signed_distance_field.sample_normal x / @scale, y / @scale
     end
 
     def line_of_sight_blocked_at(x1, y1, x2, y2)
-      @signed_distance_field.line_of_sight_blocked_at x1, y1, x2, y2
+      pos = @signed_distance_field.line_of_sight_blocked_at x1 / @scale, y1 / @scale, x2 / @scale, y2 / @scale
+      if pos
+        [pos[0] * @scale, pos[1] * @scale]
+      else
+        nil
+      end
     end
 
     # Nodes indicate the distance from themselves to a blockage. 0 if the node is in scenery.
     def generate_navigation_nodes(shadow_casters)
       t = Time.now
 
-      @signed_distance_field = Ashton::SignedDistanceField.new shadow_casters.width, shadow_casters.height, MAX_NAVIGATION_DISTANCE do
+      @signed_distance_field = Ashton::SignedDistanceField.new shadow_casters.width,
+                                                               shadow_casters.height,
+                                                               MAX_NAVIGATION_DISTANCE,
+                                                               scale: DISTANCE_FIELD_SCALE do
         shadow_casters.draw 0, 0, 0
       end
 
@@ -58,8 +67,8 @@ module Game
     def generate_spawn_nodes
       @spawn_nodes = []
 
-      (0...@map_texture.width).step(SPAWN_SPACING) do |x|
-        (0...@map_texture.height).step(SPAWN_SPACING) do |y|
+      (0...(@map_texture.width * @scale)).step(SPAWN_SPACING) do |x|
+        (0...(@map_texture.height * @scale)).step(SPAWN_SPACING) do |y|
           @spawn_nodes << [x, y] if position_clear? x, y, SPAWN_MARGIN
         end
       end
@@ -75,6 +84,7 @@ module Game
       objects = []
 
       enemy_types = Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle random: @rng
+      enemy_types *= 2
 
       enemy_types.size.times do
         objects << ["Enemy", enemy_types.pop, positions.pop]

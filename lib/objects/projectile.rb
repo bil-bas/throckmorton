@@ -29,10 +29,10 @@ module Game
       @direction = direction
       super options.merge(x: x, y: y, image: image, angle: direction)
 
-      if parent.map.blocked_at? x, y
-        destroy # Prevent creation inside a blockage.
-      else
+      if parent.map.position_clear? x, y, @shape.radius
         info { "Created #{short_name} at #{position}" }
+      else
+        destroy # Prevent creation inside a blockage.
       end
 
       @created_at = time

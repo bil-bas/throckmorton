@@ -30,7 +30,7 @@ module Game
       @map = Map.new seed
       if server?
         @map.generate
-        @player = Player.new @map.width / 2, @map.height / 2 + 10
+        @player = Player.new @map.width / 2 + 150, @map.height / 2
       end
 
       if client?
@@ -276,13 +276,27 @@ module Game
                           ($window.height / Map::MINI_SCALE) * 0.5 - (@map.height / 2) do
                           
           pixel.draw -MAP_MARGIN, -MAP_MARGIN, 0, @map.width + MAP_MARGIN * 2, @map.height + MAP_MARGIN * 2, Color.rgb(150, 150, 150)
-          
-          @map.draw_mini 
+
+          @map.draw_mini
           @objects.each {|o| o.draw_mini }
           @player.draw_mini
 
+          screen_outline_color = Color.rgba 200, 200, 0, 100
+
+          [
+              [@camera_x, @camera_y],
+              [@camera_x + $window.width / @map.scale, @camera_y],
+              [@camera_x + $window.width / @map.scale, @camera_y + $window.height / @map.scale],
+              [@camera_x, @camera_y + $window.height / @map.scale],
+              [@camera_x, @camera_y],
+          ].each_cons(2) do |(x1, y1), (x2, y2)|
+            $window.draw_line x1, y1, screen_outline_color,
+                              x2, y2, screen_outline_color,
+                              0
+          end
+
           $window.translate @camera_x / 2, @camera_y / 2 do
-            @map.lighting.draw
+            #@map.lighting.draw
           end
         end
       end
