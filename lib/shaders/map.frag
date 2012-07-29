@@ -36,7 +36,7 @@ void main()
     {
         gl_FragColor = in_CavernWall;
     }
-    else if(wall_noise > -0.05 && wall_noise < water_noise)
+    else if(wall_noise > -0.15 && wall_noise < water_noise)
     {
         gl_FragColor = in_CavernFloor;
     }
