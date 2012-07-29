@@ -5,7 +5,7 @@
   :damage: !ruby/range 5..15
   :speed: 1500
   :rotation_speed: 30
-  :duration: 0.5
+  :duration: 0.8
   :color: [0, 200, 200]
 
 # Standard player secondary weapon.
@@ -24,6 +24,6 @@
   :cost: {}
   :damage: !ruby/range 2..4
   :speed: 800
-  :duration: 0.7
-  :skirmish_range: !ruby/range 60..80
+  :duration: 0.9
+  :skirmish_range: !ruby/range 60..90
   :color: [20, 20, 20]
