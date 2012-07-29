@@ -2,8 +2,8 @@
 
 #include <noise4D>
 
-const float CF_MICRO_STEP = 0.5;
-const float CF_MIDI_STEP = 0.1;
+const float CF_MICRO_STEP = 0.2;
+const float CF_MIDI_STEP = 0.05;
 const float CF_MACRO_STEP = 0.0028;
 const float CF_MOSS_STEP = 0.005;
 
@@ -14,7 +14,7 @@ const float L_CRUST_MACRO_STEP = 0.09;
 const float L_CRUST_MICRO_STEP = 0.5;
 const float L_LAVA_STEP = 0.1;
 
-const float W_WATER_STEP = 0.15;
+const float W_WATER_STEP = 0.1;
 const float W_ROCKS_STEP = 0.25;
 
 // Automatically set by Ray (actually passed from the vertex shader).
@@ -44,7 +44,7 @@ void main()
         float macro_noise = snoise(vec4(coord * CF_MACRO_STEP * in_TextureSize, 0, in_Seed));
         float moss_noise = snoise(vec4(coord * CF_MOSS_STEP * in_TextureSize, 0, in_Seed));
 
-        color.rgb += micro_noise * 0.015 +
+        color.rgb += micro_noise * 0.02 +
                      midi_noise * -macro_noise * 0.08 +
                      macro_noise * -0.1;
 
@@ -68,7 +68,7 @@ void main()
         float ripple_noise = snoise(vec4(coord * W_WATER_STEP * in_TextureSize, in_Time * 0.8, in_Seed));
         float rock_noise = snoise(vec4(coord * W_ROCKS_STEP * in_TextureSize, 0, in_Seed));
 
-        color.b -= ripple_noise * 0.05;
+        color.b -= ripple_noise * 0.035;
         color.r = color.b * 0.15;
         color.g = color.b * 0.6;
 

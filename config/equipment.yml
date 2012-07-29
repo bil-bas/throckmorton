@@ -26,4 +26,4 @@
   :speed: 800
   :duration: 0.7
   :skirmish_range: !ruby/range 60..80
-  :color: [50, 50, 50]
+  :color: [20, 20, 20]

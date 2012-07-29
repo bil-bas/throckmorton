@@ -42,7 +42,7 @@ void main()
     }
     else if(wall_noise > water_noise)
     {
-        gl_FragColor = vec4(0.0, 0.0, (1.0 - (wall_noise * 0.5)), 1.0);
+        gl_FragColor = vec4(0.0, 0.0, (0.8 - (wall_noise * 0.25)), 1.0);
     }
     else
     {
