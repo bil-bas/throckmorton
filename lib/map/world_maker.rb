@@ -84,13 +84,15 @@ module Game
       objects = []
 
       enemy_types = Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle random: @rng
-      enemy_types *= 2
+      enemy_types *= 4
 
       enemy_types.size.times do
         objects << ["Enemy", enemy_types.pop, positions.pop]
       end
 
       item_types = Item.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle random: @rng
+      item_types *= 2
+
       item_types.size.times do
         objects << ["Item", item_types.pop, positions.pop]
       end
