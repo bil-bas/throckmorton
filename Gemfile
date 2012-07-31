@@ -1,6 +1,6 @@
 source :rubygems
 
-gem "gosu", "~> 0.7.43"
+gem "gosu", "~> 0.7.45"
 gem "chingu", "~> 0.9rc8"
 gem "chipmunk", "~> 5.3.4.5"
 gem "texplay", "~> 0.4.3"
