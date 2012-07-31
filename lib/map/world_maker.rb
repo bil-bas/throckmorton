@@ -83,21 +83,22 @@ module Game
 
       objects = []
 
-      enemy_types = Enemy.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle random: @rng
-      enemy_types *= 4
-
-      enemy_types.size.times do
-        objects << ["Enemy", enemy_types.pop, positions.pop]
-      end
-
-      item_types = Item.config.map {|k, v| [k] * v[:frequency] }.flatten.shuffle random: @rng
-      item_types *= 2
-
-      item_types.size.times do
-        objects << ["Item", item_types.pop, positions.pop]
-      end
+      objects.push *generate_objects("Enemy", Enemy.config, positions.pop(150))
+      objects.push *generate_objects("Item", Item.config, positions.pop(150))
 
       objects
+    end
+
+    def generate_objects(klass_name, types, positions)
+      # Work out the total frequencies to pick from.
+      total_frequencies = types.each_value.inject(0) {|m, t| m + t[:frequency] }
+
+      positions.each.with_object [] do |position, objects|
+        # Target marks which type to choose.
+        target = @rng.rand total_frequencies
+        type = types.find {|t| target -= t[1][:frequency]; target < 0 }
+        objects << [klass_name, type[0], position]
+      end
     end
   end
 end
