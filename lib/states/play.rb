@@ -4,13 +4,14 @@ module Game
     attr_reader :pixel
     attr_reader :world_scale
     attr_reader :space
-    attr_reader :map, :player, :objects
+    attr_reader :map
 
     PHYSICS_STEP = 0.00001 # Just to force collisions.
     MAP_MARGIN = 32
 
     def server?; true end #@server end
-    def client?; true end #!@server; end
+    def client?; true end #!@server end
+    def player; @map.player end
        
     def initialize(scale)
       super
@@ -22,16 +23,12 @@ module Game
 
       PhysicsObject.reset_ids
 
-      @objects = []
       @world_scale = scale.to_f
 
       seed = 1000 # TODO: enter this on the command line or randomise on default.
 
       @map = Map.new seed
-      if server?
-        @map.generate
-        @player = Player.new @map.width / 2 + 150, @map.height / 2
-      end
+      @map.generate if server?
 
       if client?
         @pixel = Image.create 1, 1, color: :white
@@ -40,11 +37,6 @@ module Game
           pop_game_state
           push_game_state self.class.new(scale)
         end
-
-        @outline_shader ||= Ashton::Shader.new fragment: :outline, uniforms: {
-            outline_color: Gosu::Color::BLACK,
-            outline_width: 0.5,
-        }
 
         @camera_x, @camera_y = 0, 0
       end
@@ -168,12 +160,11 @@ module Game
       unless @paused
         @space.step PHYSICS_STEP
 
-        @player.update
-        @objects.each {|o| o.update }
+        @map.update # Will move the player.
 
         # Offset to the center of the screen.
-        @camera_x = (@player.x - ($window.width / (world_scale * 2.0)))
-        @camera_y = (@player.y - ($window.height / (world_scale * 2.0)))
+        @camera_x = (@map.player.x - ($window.width / (world_scale * 2.0)))
+        @camera_y = (@map.player.y - ($window.height / (world_scale * 2.0)))
 
         if client?
           @map.lighting.camera_x, @map.lighting.camera_y = @camera_x / world_scale, @camera_y / world_scale
@@ -188,44 +179,14 @@ module Game
         end
 
         super
-
-        if server?
-          Messages::Sync.broadcast [@player] + @objects.reject {|o| o.needs_sync? }
-        end
       end
     end
-    
-    def add_object(object)
-      @objects << object
-    end
-    
-    def remove_object(object)
-      @objects.delete object
-    end   
 
     def draw
       if client?
         $window.scale world_scale do
           $window.translate -@camera_x, -@camera_y do
             @map.draw
-
-            player_x, player_y = player.x, player.y
-            @outline_shader.use do
-              @objects.each do |o|
-                o.draw if Gosu::distance(player_x, player_y, o.x, o.y) < 350
-              end
-              @player.draw
-            end
-
-            @map.lighting.each do |light|
-              pixel.draw light.x * world_scale, light.y * world_scale, ZOrder::LIGHT, 2, 2, Gosu::Color::WHITE, :add
-            end
-
-            $window.translate @camera_x / 2.0, @camera_y / 2.0 do
-              #@map.lighting.draw
-            end
-
-            draw_debug if $window.debugging?
           end
         end
 
@@ -247,25 +208,17 @@ module Game
         player.draw_gui
 
         # Debug info.
+        objects = map.objects
         num_mobs = objects.count {|o| o.is_a? Enemy }
         info =  "Objects: #{objects.size - num_mobs} Mobs: #{num_mobs} -- FPS: #{$window.fps.round} [#{$window.potential_fps.round}]  "
         Font[24].draw_rel info, $window.width, 0, 0, 1, 0
 
-        cursor_color = Color.rgba(255, 0, 255, 150)
+        cursor_color = Color.rgba 255, 0, 255, 150
         pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 45, 0.5, 0.5, 16, 16, cursor_color
         pixel.draw_rot $window.mouse_x, $window.mouse_y, ZOrder::CURSOR, 0, 0.5, 0.5, 3, 3, Color::BLACK
 
         super
       end
-    end
-
-    def draw_debug
-      @objects.each do |object|
-        object.draw_physics
-        object.draw_name
-      end
-
-      player.draw_physics
     end
 
     def draw_map_overlay
@@ -278,8 +231,6 @@ module Game
           pixel.draw -MAP_MARGIN, -MAP_MARGIN, 0, @map.width + MAP_MARGIN * 2, @map.height + MAP_MARGIN * 2, Color.rgb(150, 150, 150)
 
           @map.draw_mini
-          @objects.each {|o| o.draw_mini }
-          @player.draw_mini
 
           screen_outline_color = Color.rgba 200, 200, 0, 100
 

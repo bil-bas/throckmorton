@@ -6,7 +6,7 @@ module Game
     LIGHTING_SCALE = 1 # Number of lighting cells in a tile.
     NO_LIGHT_COLOR = Color.rgba(90, 90, 90, 255) # Colour outside range of lighting.
 
-    attr_reader :width, :height
+    attr_reader :width, :height, :player, :objects
     attr_reader :lighting, :seed, :scale
 
     LIGHTING_UPDATE_INTERVAL = 1 / 10.0
@@ -22,10 +22,18 @@ module Game
 
       @width, @height = @texture_width * @scale, @texture_height * @scale
 
+      @objects = []
+      @player = nil
+
       if parent.client?
         @lighting = Ashton::Lighting::Manager.new width: $window.width.fdiv(parent.world_scale).ceil,
                                                   height: $window.height.fdiv(parent.world_scale).ceil,
                                                   z: ZOrder::LIGHT
+
+        @outline_shader ||= Ashton::Shader.new fragment: :outline, uniforms: {
+            outline_color: Gosu::Color::BLACK,
+            outline_width: 0.5,
+        }
       end
     end
 
@@ -36,6 +44,8 @@ module Game
 
       object_data = @world_maker.generate_object_data
       create_objects_from_data object_data
+
+      @player = Player.new width / 2 + 150, height / 2
 
       #Messages::CreateMap.broadcast object_data
     end
@@ -101,7 +111,7 @@ module Game
         klass = Game.const_get class_name
 
         # Type will be a string if it has been serialized.
-        parent.add_object klass.new(type.to_sym, x, y)
+        add_object klass.new(type.to_sym, x, y)
       end
 
       info "Objects created in #{((Time.now - t).to_f * 1000).to_i}ms"
@@ -116,6 +126,15 @@ module Game
       # TODO: convert to class?/name?
       color
     end
+
+    def update
+      @player.update
+      @objects.each {|o| o.update }
+
+      if parent.server?
+        Messages::Sync.broadcast [@player] + @objects.reject {|o| o.needs_sync? }
+      end
+    end
     
     def draw
       @terrain_shader.time = milliseconds.fdiv 1000
@@ -123,12 +142,52 @@ module Game
         @map_pixel_buffer.draw 0, 0, ZOrder::TILES, shader: @terrain_shader
         @world_maker.draw if $window.debugging?
       end
+
+      @outline_shader.use do
+        # TODO: AABB this?
+        player_x, player_y = @player.x, @player.y
+        @objects.each do |o|
+          o.draw if Gosu::distance(player_x, player_y, o.x, o.y) < 350
+        end
+
+        @player.draw
+      end
+
+      #@lighting.each do |light|
+      #  parent.pixel.draw light.x * world_scale, light.y * world_scale, ZOrder::LIGHT, 2, 2, Gosu::Color::WHITE, :add
+      #end
+
+      #$window.translate @camera_x / 2.0, @camera_y / 2.0 do
+      #@map.lighting.draw
+      #end
+
+      draw_debug if $window.debugging?
+    end
+
+    def draw_debug
+      @objects.each do |object|
+        object.draw_physics
+        object.draw_name
+      end
+
+      @player.draw_physics if @player
     end
 
     def draw_mini
       $window.scale @scale do
         @map_pixel_buffer.draw 0, 0, ZOrder::TILES
       end
+
+      @objects.each {|o| o.draw_mini }
+      @player.draw_mini
+    end
+
+    def add_object(object)
+      @objects << object
+    end
+
+    def remove_object(object)
+      @objects.delete object
     end
   end
 end

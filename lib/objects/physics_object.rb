@@ -122,7 +122,7 @@ module Game
     end
 
     def destroy
-      parent.remove_object self
+      parent.map.remove_object self
 
       parent.space.remove_body @body
       parent.space.remove_shape @shape

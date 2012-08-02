@@ -4,7 +4,7 @@ module Game
   class Messages::CreateEnemy < Messages::Message
     class << self
       def process(state, type, x, y)
-        state.add_object Enemy.new(type, x, y)
+        state.map.add_object Enemy.new(type, x, y)
       end
 
       protected

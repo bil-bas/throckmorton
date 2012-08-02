@@ -63,7 +63,7 @@ module Game
                               y + offset_y(angle, SHOOT_OFFSET),
                               angle,
                               options
-      parent.add_object bullet
+      parent.map.add_object bullet
     end
   end
 end

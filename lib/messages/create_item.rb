@@ -4,7 +4,7 @@ module Game
   class Messages::CreateItem < Messages::Message
     class << self
       def process(state, type, x, y)
-        state.add_object Game.const_get(type).new(x, y)
+        state.map.add_object Game.const_get(type).new(x, y)
       end
 
       protected
